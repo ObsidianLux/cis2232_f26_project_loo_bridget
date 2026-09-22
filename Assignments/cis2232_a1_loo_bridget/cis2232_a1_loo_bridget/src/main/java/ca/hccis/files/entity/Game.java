@@ -108,6 +108,11 @@ public class Game {
         isMercyWin = mercyWin;
     }
 
+    private int getPlusMinus(String team) {
+        if (team.equals(this.getTeamOneName())) return this.getTeamOneScore() - this.getTeamTwoScore();
+        else return this.getTeamTwoScore() - this.getTeamOneScore();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Game game)) return false;
@@ -117,5 +122,19 @@ public class Game {
     @Override
     public int hashCode() {
         return Objects.hashCode(getGameId());
+    }
+
+    public String toString() {
+        return """
+                Game %d
+                Team - Score - Plus/Minus
+                %s - %d - %d
+                %s - %d - %d
+                %s
+                """.formatted(this.getGameId(), this.getTeamOneName(), this.getTeamOneScore(), this.getPlusMinus(this.getTeamOneName()), this.getTeamTwoName(), this.getTeamTwoScore(), this.getPlusMinus(this.getTeamTwoName()), this.isMercyWin() ? "Mercy Win" : "");
+    }
+
+    public void display() {
+        System.out.println(this);
     }
 }
