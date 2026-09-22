@@ -128,11 +128,21 @@ public class Controller {
     public static void initialize() {
         Path path = Paths.get(DATA_PATH);
 
-        // Check if the file exists already.
-        if (Files.exists(path)) {
-            readAll();
-        // The file doesn't exist yet, so inform the user. The file will be created the first time a write to file is attempted.
-        } else System.out.println("No Tracked Games.");
+        try {
+            // Make sure the target file path has a parent directory and if it doesn't exist, create it.
+            if (path.getParent() != null) {
+                Files.createDirectories(path.getParent());
+            }
+
+            // Check if the file exists already. If it does, get data from it.
+            if (Files.exists(path)) {
+                readAll();
+            }
+
+            // If the file does not exist yet, it will be created the first time a write command is called.
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -181,15 +191,19 @@ public class Controller {
         try {
             // false means the file will be overwritten instead of new content appended to the end.
             FileWriter writer = new FileWriter(DATA_PATH, false);
-            int teamsWritten = 0;
+            int gamesWritten = 0;
 
-            for (Team team : teamMap.values()) {
-                writer.append(gson.toJson(team));
+            for (Game game : gameMap.values()) {
+                writer.append(gson.toJson(game));
                 writer.append(System.lineSeparator());
-                teamsWritten++;
+                gamesWritten++;
             }
 
-            System.out.println(teamsWritten + " teams written to file.");
+            if (gamesWritten == gameMap.size()) {
+                System.out.println(MESSAGE_SUCCESS);
+            } else {
+                System.out.println(MESSAGE_ERROR + ": " + gamesWritten + " of " + gameMap.size() + " games recorded were written to file.");
+            }
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
