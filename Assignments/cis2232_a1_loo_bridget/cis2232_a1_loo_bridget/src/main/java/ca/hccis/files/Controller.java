@@ -112,7 +112,8 @@ public class Controller {
      */
     public static void viewStandings() {
         // TODO DONE Display team info sorted by number of wins.
-        teamMap.values().stream().sorted(Comparator.comparing(Team::getWins)).forEach(Team::display);
+        // TODO If multiple teams have the same number of wins, fallback on the win percentage.
+        teamMap.values().stream().sorted(Comparator.comparing(Team::getWins).reversed()).forEach(Team::display);
     }
 
     public static void viewGames() {
