@@ -52,9 +52,9 @@ public class Controller {
 
         // TODO DONE Menu is shown until user chooses to exit.
         do {
-            menuOption = InputUtility.getInputMenu(MENU, MENU_OPTIONS);
+            menuOption = InputUtility.getInputMenu(MENU, MENU_OPTIONS).toUpperCase();
 
-            switch (menuOption.toUpperCase()) {
+            switch (menuOption) {
                 case EXIT:
                     System.out.println(MESSAGE_EXIT);
                     break;
