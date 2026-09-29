@@ -1,48 +1,25 @@
-# cis2232\_f26\_project\_loo\_bridget
-
-Create an application that can be used to manage a softball league. 
-
-This application will need to track the following statistics:
-
-
-
-Team Names
-
-Wins
-
-Losses
-
-Plus/Minus
-
-Mercy Wins.
-
-Win Percentage.
-
-Games played
-
-Standings
-
-
-
-Games are 7 innings in length, however a game ends if a team is up by 10 runs after the 5th inning.
-
-
-
-Prompt the user to enter the two teams that are playing and input the score. Use logic to determine the team with the higher score gets a win, and the loser takes an L. 
-
-
-
-Wins and losses will be tracked, so they can be tracked and displayed to the user after they’re entered.
-
-
-
-Prompt the user to ask if the game was a mercy rule win. 
-
-
-
-Display the teams plus/minus – This is the difference in score in a game. (Example – Team A beats Team B by a score of 10-7, Team A has a plus/minus of +3, while Team B gets a -3)
-
-
-
-Then sort the teams by amount of wins.
-
+# Softball League Manager
+An app for team managers to simplify tracking softball games and viewing team standings.
+For each game, it will keep track of which teams played, their scores, and whether the winning team won under the Mercy Rule.
+Team managers will be able to see each team's overall standing based on the records of each game provided.
+## Development Team
+**BA / Business Client:** Richard Baird
+**Developer:** Bridget Loo
+**Project Manager / QA:** Shabnam Rohani
+## Colour
+**Primary:** Sky Blue
+## Fields
+| Name              | Data Type | Description                                        |
+| ----------------- | --------- | -------------------------------------------------- |
+| gameId            | int       | The unique identifier for a game.                  |
+| teamOneName       | string    | Name of Team 1.                                    |
+| teamTwoName       | string    | Name of Team 2.                                    |
+| teamOneScore      | int       | Team 1's score.                                    |
+| teamTwoScore      | int       | Team 2's score.                                    |
+| scoreDifferential | int       | The difference in score between the two teams.     |
+| isMercyWin        | boolean   | Whether or not the winning team won by mercy rule. |
+## Calculation
+**Team Win Percentage**  = Number of Wins / (Number of Wins + Number of Losses)
+**Number of Games for a Team** = Number of Wins + Number of Losses
+**Game Score Differential** = Team 1 Score - Team 2 Score (and vice versa)
+Count the total number of wins, losses, and mercy wins for each team.
