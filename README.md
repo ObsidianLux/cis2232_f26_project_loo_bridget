@@ -30,3 +30,5 @@ Team managers will be able to see each team's overall standing based on the reco
 **Game Score Differential** = Team 1 Score - Team 2 Score (and vice versa)
 
 Count the total number of wins, losses, and mercy wins for each team.
+
+*Additional calculations for team standings to be determined.*
