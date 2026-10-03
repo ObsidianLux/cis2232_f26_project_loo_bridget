@@ -80,17 +80,27 @@ public class Controller {
         Game newGame = new Game();
 
         if (gameMap.isEmpty()) {
-            newGame.getInformation();
+            newGame.getInformation(1);
         } else {
-            int gameID = InputUtility.getInputInt("Game Number: ", 0, -1, false);
+            int gameID = Collections.max(gameMap.keySet()) + 1;
 
-            if (!gameMap.containsKey(gameID)) {
-                newGame.getInformation(gameID);
+            // Get the team names first and check whether the game has been tracked already or not.
+            String homeTeam = InputUtility.getInputString("Home Team: ", true, 1, -1);
+            String roadTeam = InputUtility.getInputString("Road Team: ", true, 1, -1);
+
+            if (!gameMap.containsValue(new Game(gameID, homeTeam, roadTeam))) {
+                newGame.getInformation(gameID, homeTeam, roadTeam);
             } else {
                 // TODO Display existing record.
                 boolean overwriteGame = InputUtility.getInputBoolean("This game number is already tracked. Would you like to overwrite the existing record?");
 
                 if (overwriteGame) {
+                    // Remove the existing game from the map.
+                    gameMap.entrySet().removeIf(entry -> {
+                        Game game = entry.getValue();
+                        return game.getHomeTeam().equals(homeTeam) && game.getRoadTeam().equals(roadTeam);
+                    });
+
                     newGame.getInformation(gameID);
                 } else return; // Exit early if the user doesn't want to overwrite the game.
             }

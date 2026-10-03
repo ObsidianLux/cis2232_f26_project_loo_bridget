@@ -1,8 +1,5 @@
 package ca.hccis.files.entity;
 
-import ca.hccis.files.bo.TeamBO;
-import ca.hccis.files.util.InputUtility;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -59,12 +56,12 @@ public class Team {
     }
 
     public double getWinPercent() {
-        return TeamBO.determineStanding(this.teamName, this.games);
+        return (double) this.getWins() / this.getGamesPlayed();
     }
 
     public int getMercyWins() {
         int mercyWinCount = 0;
-        for (Game game : this.games) if (game.isMercyWin()) mercyWinCount++;
+        for (Game game : this.games) if (game.isMercyWin() && game.getWinningTeam().equals(this.teamName)) mercyWinCount++;
         return mercyWinCount;
     }
 

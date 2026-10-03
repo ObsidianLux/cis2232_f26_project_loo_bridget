@@ -5,8 +5,8 @@ import ca.hccis.files.util.InputUtility;
 public class Inning {
     private int inningNumber;
 
-    private int teamOneRuns;
-    private int teamTwoRuns;
+    private int homeTeam;
+    private int roadTeam;
 
     public Inning() {}
 
@@ -14,32 +14,54 @@ public class Inning {
         this.inningNumber = inningNumber;
     }
 
-    public Inning(int inningNum, int teamOneRuns, int teamTwoRuns) {
+    public Inning(int inningNum, int homeTeam, int roadTeam) {
         this.inningNumber = inningNum;
-        this.teamOneRuns = teamOneRuns;
-        this.teamTwoRuns = teamTwoRuns;
+        this.homeTeam = homeTeam;
+        this.roadTeam = roadTeam;
     }
 
     public void getInformation() {
-        // Get the number of runs for each team in this inning.
-        this.teamOneRuns = InputUtility.getInputInt("First at-Bat Number of Runs for Inning #%d: ".formatted(inningNumber), 0, -1, false);
-        this.teamTwoRuns = InputUtility.getInputInt("Last at-Bat Number of Runs for Inning #%d: ".formatted(inningNumber), 0, -1, false);
+        boolean isValid;
+
+        do {
+            int roadRuns = InputUtility.getInputInt("Road team runs in inning #%d".formatted(this.inningNumber));
+
+            if (roadRuns >= 0) {
+                isValid = true;
+                this.roadTeam = roadRuns;
+            } else {
+                isValid = false;
+                System.out.println("Please provide a valid number of runs.");
+            }
+        } while (!isValid);
+
+        do {
+            int homeRuns = InputUtility.getInputInt("Home team runs in inning #%d".formatted(this.inningNumber));
+
+            if (homeRuns >= 0) {
+                isValid = true;
+                this.roadTeam = homeRuns;
+            } else {
+                isValid = false;
+                System.out.println("Please provide a valid number of runs.");
+            }
+        } while (!isValid);
     }
 
-    public int getTeamTwoRuns() {
-        return teamTwoRuns;
+    public int getRoadTeam() {
+        return roadTeam;
     }
 
-    public void setTeamTwoRuns(int teamTwoRuns) {
-        this.teamTwoRuns = teamTwoRuns;
+    public void setRoadTeam(int roadTeam) {
+        this.roadTeam = roadTeam;
     }
 
-    public int getTeamOneRuns() {
-        return teamOneRuns;
+    public int getHomeTeam() {
+        return homeTeam;
     }
 
-    public void setTeamOneRuns(int teamOneRuns) {
-        this.teamOneRuns = teamOneRuns;
+    public void setHomeTeam(int homeTeam) {
+        this.homeTeam = homeTeam;
     }
 
     public int getInningNumber() {

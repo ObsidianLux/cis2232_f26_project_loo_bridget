@@ -142,7 +142,7 @@ public class InputUtility {
      * @since 20260218
      * @author BML
      */
-    private static int getInputInt(String message) {
+    public static int getInputInt(String message) {
         int output;
 
         if (isGUI) {
