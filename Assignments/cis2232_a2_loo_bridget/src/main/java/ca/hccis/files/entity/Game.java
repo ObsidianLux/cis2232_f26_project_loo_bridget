@@ -67,6 +67,11 @@ public class Game {
         getGameInfo();
     }
 
+    /**
+     * Used by the getInformation methods to get the rest of the game's info from the user.
+     * @since 20261002
+     * @author BML
+     */
     private void getGameInfo() {
         // Ask the user if the game was forfeited.
         this.setForfeited(InputUtility.getInputBoolean("Was this game forfeited?"));
@@ -114,6 +119,11 @@ public class Game {
         }
     }
 
+    /**
+     * Create and return an inning after getting info about it from the user.
+     * @param inningNumber The inning's unique identifier (e.g. inning 1, inning 5, etc.).
+     * @return The inning
+     */
     private Inning createInning(int inningNumber) {
         Inning inning = new Inning(inningNumber);
         inning.getInformation();

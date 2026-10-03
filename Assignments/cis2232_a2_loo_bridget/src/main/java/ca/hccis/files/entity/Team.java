@@ -43,22 +43,38 @@ public class Team {
         return this.games.size();
     }
 
+    /**
+     * Get the number of wins for this team from its collection of games.
+     * @return The number of wins.
+     */
     public int getWins() {
         int winCount = 0;
         for (Game game : this.games) if (game.getWinningTeam().equals(this.teamName)) winCount++;
         return winCount;
     }
 
+    /**
+     * Get the number of losses for this team from its collection of games.
+     * @return The number of losses.
+     */
     public int getLosses() {
         int lossCount = 0;
         for (Game game : this.games) if (!game.getWinningTeam().equals(this.teamName)) lossCount++;
         return lossCount;
     }
 
+    /**
+     * Calculate the win percentage for this team.
+     * @return The win percentage.
+     */
     public double getWinPercent() {
         return (double) this.getWins() / this.getGamesPlayed();
     }
 
+    /**
+     * Get the number of mercy wins for this team from its collection of games.
+     * @return The number of mercy wins.
+     */
     public int getMercyWins() {
         int mercyWinCount = 0;
         for (Game game : this.games) if (game.isMercyWin() && game.getWinningTeam().equals(this.teamName)) mercyWinCount++;
