@@ -127,7 +127,7 @@ public class SkillsAssessmentSquashTechnicalDAO {
             //******************************************************************
             //Loop through the result set using the next method.
             //******************************************************************
-            assessments = loadList(rs);
+            assessments = loadList(rs); // Returns all the squash matches.
 
         } catch (SQLException e) {
 

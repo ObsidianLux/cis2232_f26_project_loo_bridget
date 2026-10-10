@@ -24,10 +24,11 @@ label {
 <div class="container has-text-centered">
     <h2 class="title is-2" th:text="#{label.report.athlete.assessor.report}">_</h2>
 
+    <!-- This sends the data to the ReportController to the method with @RequestMapping squash/name/submit -->
     <form th:action="@{/report/squash/name/submit}" method="post" class="wbb"
           style="display:inline-block;text-align:left!important">
         <label>Name (Athlete/Assessor): </label>
-        <input type="text" th:field="${reportInput.name}"></input>
+        <input type="text" th:field="${reportInput.name}"></input> <!-- This binds the input to the ReportController reportSquashNameSubmit()'s "@ModelAttribute("reportInput") ReportSquash reportSquash" parameter -->
         <br></br>
         <button style="display:block;margin-top:24px!important" class="centered">Submit</button>
     </form>

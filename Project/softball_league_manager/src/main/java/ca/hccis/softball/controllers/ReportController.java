@@ -1,142 +1,90 @@
 package ca.hccis.softball.controllers;
 
-import ca.hccis.softball.bo.SkillsAssessmentSquashTechnicalBO;
-import ca.hccis.softball.dao.SkillsAssessmentSquashTechnicalDAO;
-import ca.hccis.softball.entity.ReportSquash;
-import ca.hccis.softball.jpa.entity.SkillsAssessmentSquashTechnical;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
+import org.springframework.ui.Model;
 
 /**
- * Controller to administer reports of the project.
- *
- * @author BJM
- * @since 20251009
+ * Controller to administer reports for the project.
+ * @author BML
+ * @since 20261009
  */
 @Controller
 @RequestMapping("/report")
 public class ReportController {
-
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
     /**
-     * Send the user to list of reports view.
-     *
-     * @param model
-     * @param session
-     * @return To the appropriate view
-     * @author BJM
-     * @since 20251009
+     * Sends the user to the view with the list of available reports.
+     * @param model A holder for model attributes
+     * @param session The current HTTP session
+     * @return The Home view
+     * @author BML
+     * @since 20261009
      */
     @RequestMapping("")
     public String home(Model model, HttpSession session) {
-
-        //BJM 20200602 Issue#1 Set the current date in the session
-        logger.info("Running the reports controller base method");
-        return "report/list";
+        // TODO Issue #1: Set the current date in the session.
+        logger.info("Running the reports controller base method.");
+        return "report/menu";
     }
 
     /**
-     * Method to send user to the athlete/assessor name report.
-     *
-     * @param model
-     * @return view for list
-     * @author BJM
-     * @since 2025-10-06
+     * Sends the user to the view with the standings of all tracked teams.
+     * @param model A holder for model attributes
+     * @return The standings report view
+     * @author BML
+     * @since 20261009
      */
-    @RequestMapping("/squash/name")
-    public String reportSquashName(Model model) {
-        logger.info("Running the reports controller squash name method");
-        model.addAttribute("reportInput",new ReportSquash());
-        return "report/reportSquashName";
+    @RequestMapping("/standings")
+    public String reportStandings(Model model) {
+        logger.info("Running the ReportController reportStandings() method.");
+
+        // TODO: Interact with the TeamDAO class.
+
+        // TODO: Write model code to get the appropriate information from the DB.
+
+        // TODO: Add the data to a collection in the ReportStandings class.
+
+        // TODO: Add a message in case the report does not contain any data.
+
+        // TODO DONE: Add the object to the model so it can be used in the view.
+        model.addAttribute("reportInput", reportStandings);
+
+        // Send the user to the Standings report view.
+        return "report/reportStandings";
     }
 
     /**
-     * Method to send user to the score name report.
-     *
-     * @param model
-     * @return view for list
-     * @author BJM
-     * @since 2025-10-09
+     * Send the user to the view that requests the team name for the team history report to generate.
+     * @param model A holder for model attributes
+     * @return The report input view
+     * @author BML
+     * @since 20261009
      */
-    @RequestMapping("/squash/score")
-    public String reportSquashScore(Model model) {
-        logger.info("Running the reports controller squash score method");
-        model.addAttribute("reportInput",new ReportSquash());
-        return "report/reportSquashScore";
-    }
+    @RequestMapping("/team/history")
+    public String reportTeamHistory(Model model) {
+        logger.info("Running the ReportController reportTeamHistory() method.");
 
-
-    /**
-     * Process the report - name
-     *
-     * @param model
-     * @param reportSquash Object containing inputs for the report
-     * @return view to show report
-     * @author BJM
-     * @since 2025-10-06
-     */
-    @RequestMapping("/squash/name/submit")
-    public String reportSquashNameSubmit(Model model, @ModelAttribute("reportInput") ReportSquash reportSquash) {
-
-        System.out.println("Name from input form:"+reportSquash.getName());
-
-        //Write some model code to go to the db and get the appropriate assessments
-        //Add them to a collection in the ReportSquash class
-        SkillsAssessmentSquashTechnicalBO skillsAssessmentSquashTechnicalBO = new SkillsAssessmentSquashTechnicalBO();
-        ArrayList<SkillsAssessmentSquashTechnical> theList = skillsAssessmentSquashTechnicalBO.processSelectAllByAthleteAssessorName(reportSquash.getName());
-        reportSquash.setSkillsAssessmentSquashTechnicals(theList);
-
-        //Add a message in case the report does not contain any data
-        if (theList != null && theList.isEmpty()) {
-            model.addAttribute("message", "No assessments found for that name");
-            System.out.println("BJM - no data found");
-        }
-
-        //Put object in model so it can be used on the view (html)
-        model.addAttribute("reportInput", reportSquash);
-
-        return "report/reportSquashName"; //Send user to another view.
+        // Add the provided team name to the model attributes.
+        model.addAttribute("reportInput", new ReportHistory());
+        return "report/reportTeamHistory";
     }
 
     /**
-     * Process the report - name
-     *
-     * @param model
-     * @param reportSquash Object containing inputs for the report
-     * @return view to show report
-     * @author BJM
-     * @since 2025-10-06
+     * Send the user to the view that
+     * @param model A holder for model attributes
+     * @param reportHistory A team history report object
+     * @return The team history report view
+     * @author BML
+     * @since 20261009
      */
-    @RequestMapping("/squash/score/submit")
-    public String reportSquashScoreSubmit(Model model, @ModelAttribute("reportInput") ReportSquash reportSquash) {
+    @RequestMapping("report/team/history/submit")
+    public String reportTeamHistorySubmit(Model model, @ModelAttribute("reportInput") ReportHistory reportHistory) {
 
-        System.out.println("Min from input form:"+reportSquash.getMinScore());
-
-        //Write some model code to go to the db and get the appropriate assessments
-        //Add them to a collection in the ReportSquash class
-        SkillsAssessmentSquashTechnicalDAO squashDAO = new SkillsAssessmentSquashTechnicalDAO();
-        ArrayList<SkillsAssessmentSquashTechnical> theList = squashDAO.selectAllByScoreMinMax(reportSquash.getMinScore(), reportSquash.getMaxScore());
-        reportSquash.setSkillsAssessmentSquashTechnicals(theList);
-
-        //Add a message in case the report does not contain any data
-        if (theList != null && theList.isEmpty()) {
-            model.addAttribute("message", "No assessments found for that name");
-            System.out.println("BJM - no data found");
-        }
-
-        //Put object in model so it can be used on the view (html)
-        model.addAttribute("reportInput", reportSquash);
-
-        return "report/reportSquashScore"; //Send user to another view.
     }
-
-
 }

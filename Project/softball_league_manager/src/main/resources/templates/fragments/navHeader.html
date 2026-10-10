@@ -26,11 +26,12 @@
                 </div>
             </div>
             <div class="navbar-end">
+                <!-- No hard-coded values here. Labels are pulled from messages.properties. -->
                 <div class="navbar-item has-dropdown is-hoverable">
-                    <a th:href="@{/report}" href="/about" class="accent navbar-link">Reports</a>
+                    <a th:href="@{/report}" href="/report" class="accent navbar-link">Reports</a>
                     <div class="accent-background navbar-dropdown">
                         <a th:href="@{/report/squash/name}" class="accent navbar-item"
-                           th:text="#{label.report.athlete.assessor.report}">Name report-placeholder</a>
+                           th:text="#{label.report.standings}">Name report-placeholder</a> <!-- th:text is what shows up in the browser. th:href is the url (view goes to the ReportController, see @RequestMapping in controller) -->
                         <a th:href="@{/report/squash/score}" class="accent navbar-item"
                            th:text="#{label.report.score.range}">Score range report-placeholder</a>
                     </div>
