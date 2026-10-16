@@ -24,6 +24,12 @@ Team managers will be able to see each team's overall standing based on the reco
 | isMercyWin        | boolean   | Whether or not the winning team won by mercy rule. |
 ## Calculation
 **Winner of a Game**  = The greater of (total runs for the home team) vs. (total runs for the road team)
-
-## Report
-All tracked games will be analyzed and unique teams will be identified. The number of wins and losses will be tallied for each team and their individual standings will be calculated from those numbers. Each team will then be display to the user in descending order based on their standing.
+## Reports
+### Team Standings Report
+View a list of all teams in the order of their standing within the league. 
+Analyzes unique teams to tally the number of wins and losses, and calculates their standing from those values. 
+### Record of Games Report
+View all games that have been tracked, including which teams played and how they scored.
+### Games by Team Report
+Select a team to view a list of all the games they played and what the outcomes of those games were.
+Uses the final scores for each game to calculate the plus/minus for the team the resulted from each game.
