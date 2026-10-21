@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!-- =================================================================== -->
-    <!-- Parent Platform Definition                                          -->
-    <!-- =================================================================== -->
+
+    <!-- Parent Platform Definition (required if omitting versions in dependencies) -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -13,29 +12,22 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <!-- =================================================================== -->
-    <!-- Project Metadata                                                    -->
-    <!-- =================================================================== -->
-    <groupId>ca.hccis.squash</groupId>
-    <artifactId>softball_league_manager</artifactId>
+    <!-- Project Metadata -->
+    <groupId>org.hccis.softball</groupId>
+    <artifactId>cis2232_project_from_scratch</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>squash_skills_w26</name>
-    <description>Squash Skills Application</description>
+    <name>softball_league_manager</name>
+    <description>Softball League Manager Application</description>
     <packaging>jar</packaging>
 
-    <!-- =================================================================== -->
-    <!-- Compilation and Environment Properties                              -->
-    <!-- =================================================================== -->
+    <!-- Compilation and Environment Properties -->
     <properties>
-        <java.version>21</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
-    <!-- =================================================================== -->
-    <!-- Project Dependencies                                                -->
-    <!-- =================================================================== -->
+    <!-- Project Dependencies -->
     <dependencies>
         <!-- Core Spring Boot Starters -->
         <dependency>
@@ -62,11 +54,6 @@
         </dependency>
 
         <!-- Database Connectors -->
-        <!-- <dependency>-->
-        <!--     <groupId>mysql</groupId>-->
-        <!--     <artifactId>mysql-connector-java</artifactId>-->
-        <!--     <scope>runtime</scope>-->
-        <!-- </dependency>-->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -87,11 +74,6 @@
         </dependency>
 
         <!-- JSON Processing Utilities -->
-        <!-- <dependency>-->
-        <!--     <groupId>com.google.code.gson</groupId>-->
-        <!--     <artifactId>gson</artifactId>-->
-        <!--     <version>2.8.5</version>-->
-        <!-- </dependency>-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -142,9 +124,7 @@
         </dependency>
     </dependencies>
 
-    <!-- =================================================================== -->
-    <!-- Build Tooling and Plugins                                           -->
-    <!-- =================================================================== -->
+    <!-- Build Tooling and Plugins -->
     <build>
         <plugins>
             <plugin>
@@ -155,8 +135,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <source>25</source>
+                    <target>25</target>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,73 +1,36 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:include="fragments/head :: headerFragment">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: headerFragment}">
     <title id="pageTitle">Softball League Manager</title>
-    <!--        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
 </head>
 <body>
-<nav th:replace="fragments/navHeader :: navbar"></nav>
+<header>
+    <nav th:replace="~{fragments/navHeader :: navbar}"></nav>
+</header>
+<main>
+    <h1 class="center-align quantico-bold">Team Standings</h1>
+    <div class="card-container">
+        <div class="card team" th:each="team : ${teams}">
+            <p th:text="${team.teamName}" class="card-primary full-row corners-top"></p>
 
-<!--        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
-<div style="width:600px; height:350px;">
-    <canvas id="assessmentChart"></canvas>
-</div>
+            <p class="card-secondary half-row">Games Played</p>
+            <p class="card-value half-row" th:text="${team.getNumberOfGamesPlayed()}"></p>
 
-<script th:inline="javascript">
-    const assessmentData = [[${assessments}]]; //Note possible syntax warning issue but functions correctly.
-    console.log('Assessment Data:', assessmentData);
+            <p class="card-tertiary"># of Wins</p>
+            <p class="card-tertiary"># of Mercy Wins</p>
+            <p class="card-tertiary"># of Losses</p>
+            <p class="card-tertiary"># of Forfeits</p>
 
-    const athleteNames = assessmentData.map(item => item.athleteName);
+            <p class="card-value" th:text="${team.getNumberOfWins()}"></p>
+            <p class="card-value" th:text="${team.getNumberOfMercyWins()}"></p>
+            <p class="card-value" th:text="${team.getNumberOfLosses()}"></p>
+            <p class="card-value" th:text="${team.getNumberOfForfeits()}"></p>
 
-    //const forehandDrives = [1,2,3];
-    const forehandDrives = assessmentData.map(item => item.forehandDrives);
-    const technicalScores = assessmentData.map(item => item.technicalScore);
-
-    const ctx = document.getElementById('assessmentChart');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: athleteNames,
-            datasets: [{
-                label: 'FH Drives',
-                data: forehandDrives,
-                borderWidth: 1,
-                // --- ADD TRENDLINE CONFIG HERE ---
-                trendlineLinear: {
-                    style: 'rgba(255, 99, 132, .8)',
-                    lineStyle: 'solid', // "solid", "dashed"
-                    width: 3
-                }
-            },
-                {
-                    label: 'Technical Score',
-                    data: technicalScores,
-                    borderWidth: 1,
-                    // --- ADD TRENDLINE CONFIG HERE ---
-                    trendlineLinear: {
-                        style: 'rgba(255, 99, 132, .8)',
-                        lineStyle: 'solid', // "solid", "dashed"
-                        width: 3
-                    }
-                }
-
-
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    })
-    ;
-</script>
-
-
-<footer th:replace="fragments/footer :: footer"></footer>
-
-
+            <p class="card-secondary half-row corner-4">Win Percentage</p>
+            <p class="card-value half-row corner-3" th:text="${team.getWinPercentageString()}"></p>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

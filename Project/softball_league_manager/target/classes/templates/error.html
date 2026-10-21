@@ -1,13 +1,16 @@
-<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head th:include="fragments/head :: headerFragment">
-        <title id="pageTitle">From head.html</title>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/head :: headerFragment">
+    <meta charset="UTF-8">
+    <title id="pageTitle">From head.html</title>
+</head>
+<body>
+<header>
     <nav th:replace="fragments/navHeader :: navbar"></nav>
-
-    <div class="container">
-        <h2 class="title is-2"><span th:text=#{label.error}></span></h2>
-    </div>
-    <footer th:replace="fragments/footer :: footer"></footer>
-    </body>
+</header>
+<main>
+    <h2 th:text="#{label.error}"></h2>
+</main>
+<footer th:replace="fragments/footer :: footer"></footer>
+</body>
 </html>

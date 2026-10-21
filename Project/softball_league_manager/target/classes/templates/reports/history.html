@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: headerFragment}">
+    <title id="pageTitle">Softball League Manager</title>
+</head>
+<body>
+<header>
+    <nav th:replace="~{fragments/navHeader :: navbar}"></nav>
+</header>
+<main class="align-items-center">
+    <h1 class="quantico-bold" th:text="#{label.report.history}"></h1>
+
+
+    <form th:action="@{/reports/history/view}" method="post">
+        <p th:text="#{report.history.info}"></p>
+        <div class="field-horizontal">
+            <label for="select-team" th:text="#{label.report.history.select}"></label>
+            <select name="team" id="select-team" th:field="${reportInput.team}">
+                <option th:each="team : ${reportInput.teams}" th:value="${team.teamName}" th:text="${team.teamName}"></option>
+            </select>
+        </div>
+
+        <input type="submit" value="Submit">
+    </form>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
