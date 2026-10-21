@@ -4,6 +4,7 @@ import ca.hccis.softball.bo.GameBO;
 import ca.hccis.softball.entity.ReportHistory;
 import ca.hccis.softball.jpa.entity.Game;
 
+import ca.hccis.softball.util.CisUtilityFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,15 +59,17 @@ public class ReportController {
 
         GameBO gameBO = new GameBO();
         ArrayList<Game> games = gameBO.processSelectAllByTeam(reportHistory.getTeam());
-        System.out.println("Games: " + games.size());
 
         // Display a message if there is no data for the report.
         if (games.isEmpty()) {
             model.addAttribute("message", "No games found for that team.");
             System.out.println("No data found for team: " + reportHistory.getTeam());
-        }
+        } else {
+            // Write the report to a file.
+            CisUtilityFile.writeReportToFile("gamesByTeamReport", games);
 
-        reportHistory.setGames(games);
+            reportHistory.setGames(games);
+        }
 
         // Add the report object to the model so it can be used in the report view.
         model.addAttribute("reportInput", reportHistory);

@@ -30,14 +30,16 @@ public class GameBO {
         else return homeRuns > roadRuns ? homeTeam : roadTeam;
     }
 
+    /**
+     * Select all games that a team played in.
+     * @param team The team to filter by.
+     * @return A list of games.
+     * @author BML
+     * @since 20261021
+     */
     public ArrayList<Game> processSelectAllByTeam(String team) {
         GameDAO gameDAO = new GameDAO();
-        ArrayList<Game> games = gameDAO.selectAllByTeamName(team);
-
-        // Write the report to a file.
-        CisUtilityFile.writeReportToFile("gamesByTeamReport", games);
-
-        return games;
+        return gameDAO.selectAllByTeamName(team);
     }
 
     public static GameResults getGameResults(int homeTeamId, int roadTeamId, ArrayList<Inning> innings) {
