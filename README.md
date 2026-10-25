@@ -12,9 +12,13 @@ Team managers will be able to see each team's overall standing based on the reco
 **Project Manager / QA:** Shabnam Rohani
 ## Colours
 **Cloud Blue**: #EDF4FA
+
 **Powder Sky**: #CFE3F1
+
 **Calm Ocean**: #8FB6D8
+
 **Dusty Denim**: #5F86A6
+
 **Midnight Blue**: #243A5E
 ## Fields
 | Name              | Data Type | Description                                        |
