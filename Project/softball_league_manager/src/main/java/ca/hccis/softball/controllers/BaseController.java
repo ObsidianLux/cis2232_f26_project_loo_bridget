@@ -1,11 +1,11 @@
 package ca.hccis.softball.controllers;
 
-import ca.hccis.softball.bo.TeamBO;
+import ca.hccis.softball.bo.GameBO;
 import ca.hccis.softball.entity.Team;
 import ca.hccis.softball.jpa.entity.Game;
 import ca.hccis.softball.repositories.GameRepository;
-import ca.hccis.softball.util.CisUtility;
 
+import ca.hccis.softball.util.Utility;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class BaseController {
     @RequestMapping("/")
     public String home(HttpSession session, Model model) {
         // TODO DONE Issue #1 Set the current date in the session.
-        String today = CisUtility.getCurrentDate("yyyy-MM-dd");
+        String today = Utility.getCurrentDate("yyyy-MM-dd");
         session.setAttribute("today", today);
 
         // Get the games.
@@ -49,8 +49,9 @@ public class BaseController {
         _gr.findAll().forEach(games::add);
         model.addAttribute("games", games);
 
-        ArrayList<Team> teams = TeamBO.selectAllTeams();
-        teams.sort(Comparator.comparingDouble(Team::getWinPercentage).reversed());
+        ArrayList<Team> teams = GameBO.selectAllTeams();
+        // Sort by win percentage, then by number of mercy wins, and finally by number of forfeit wins. Reverse so that the highest standing is listed first.
+        teams.sort(Comparator.comparingDouble(Team::getWinPercentage).thenComparingInt(Team::getMercyWins).thenComparingInt(Team::getForfeitWins).reversed());
         model.addAttribute("teams", teams);
 
         // Return the view.

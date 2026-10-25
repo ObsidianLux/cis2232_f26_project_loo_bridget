@@ -8,26 +8,50 @@
     <nav th:replace="~{fragments/navHeader :: navbar}"></nav>
 </header>
 <main>
-    <h1 class="center-align quantico-bold">Team Standings</h1>
-    <div class="card-container">
-        <div class="card team" th:each="team : ${teams}">
-            <p th:text="${team.teamName}" class="card-primary full-row corners-top"></p>
+    <hgroup>
+        <h1 class="center-align quantico-bold">Team Standings</h1>
+        <p class="subtitle">Teams are ordered first by their Win Percentage (PCT), then if there is a tie, by their number of Mercy Wins and Forfeit Wins.</p>
+    </hgroup>
 
-            <p class="card-secondary half-row">Games Played</p>
-            <p class="card-value half-row" th:text="${team.getNumberOfGamesPlayed()}"></p>
+    <div class="card-container margin-top-20">
+        <div class="card" th:each="team, iterStat : ${teams}">
+            <hgroup>
+                <h2 th:text="${team.getTeamName()}" class="quantico-bold font-secondary-colour"></h2>
+            </hgroup>
 
-            <p class="card-tertiary"># of Wins</p>
-            <p class="card-tertiary"># of Mercy Wins</p>
-            <p class="card-tertiary"># of Losses</p>
-            <p class="card-tertiary"># of Forfeits</p>
+            <div class="card-body grid row-2 col-2 row-gap">
+                <div class="metric">
+                    <p class="metric-label">Games</p>
+                    <p class="metric-value" th:text="${team.getNumberOfGamesPlayed()}"></p>
+                </div>
 
-            <p class="card-value" th:text="${team.getNumberOfWins()}"></p>
-            <p class="card-value" th:text="${team.getNumberOfMercyWins()}"></p>
-            <p class="card-value" th:text="${team.getNumberOfLosses()}"></p>
-            <p class="card-value" th:text="${team.getNumberOfForfeits()}"></p>
+                <div class="metric">
+                    <p class="metric-label">PCT</p>
+                    <p class="metric-value" th:text="${team.getWinPercentageString()}"></p>
+                </div>
 
-            <p class="card-secondary half-row corner-4">Win Percentage</p>
-            <p class="card-value half-row corner-3" th:text="${team.getWinPercentageString()}"></p>
+                <div class="metric">
+                    <p class="metric-label font-win">Wins</p>
+                    <div class="metric-group">
+                        <p class="metric-value" th:text="${team.getWins().total()}"></p>
+                        <p class="metric-divider">•</p>
+                        <p class="metric-value" th:text="${team.getWins().mercy()}"></p>
+                        <p class="metric-divider">•</p>
+                        <p class="metric-value" th:text="${team.getWins().forfeit()}"></p>
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <p class="metric-label font-loss">Losses</p>
+                    <div class="metric-group">
+                        <p class="metric-value" th:text="${team.getLosses().total()}"></p>
+                        <p class="metric-divider">•</p>
+                        <p class="metric-value" th:text="${team.getLosses().mercy()}"></p>
+                        <p class="metric-divider">•</p>
+                        <p class="metric-value" th:text="${team.getLosses().forfeit()}"></p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>

@@ -1,20 +1,22 @@
 package ca.hccis.softball.entity;
 
-import ca.hccis.softball.bo.TeamBO;
+import ca.hccis.softball.bo.GameBO;
 import ca.hccis.softball.jpa.entity.Game;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Team {
     private String teamName;
     private ArrayList<Game> games = new ArrayList<>();
 
-    private int numberOfWins = 0;
-    private int numberOfLosses = 0;
-    private int numberOfMercyWins = 0;
-    private int numberOfForfeits = 0;
-    private double winPercentage = 0;
+    public record Wins(int total, int mercy, int forfeit) {}
+    public record Losses(int total, int mercy, int forfeit) {}
+
+    private Wins wins = new Wins(0, 0, 0);
+    private Losses losses = new Losses(0, 0, 0);
 
     public Team() {}
 
@@ -50,6 +52,10 @@ public class Team {
         return this.games;
     }
 
+    public ArrayList<Game> getPlayedGames() {
+        return this.games.stream().filter(Game::getPlayed).collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public void setGames(ArrayList<Game> games) {
         this.games = games;
         this.calculateStanding();
@@ -74,61 +80,70 @@ public class Team {
     }
 
     public int getNumberOfGamesPlayed() {
-        return this.games.size();
+        return this.getPlayedGames().size();
     }
 
-    public int getNumberOfWins() {
-        return numberOfWins;
-    }
-
-    public void setNumberOfWins(int numberOfWins) {
-        this.numberOfWins = numberOfWins;
-    }
-
-    public int getNumberOfLosses() {
-        return numberOfLosses;
-    }
-
-    public void setNumberOfLosses(int numberOfLosses) {
-        this.numberOfLosses = numberOfLosses;
-    }
-
-    public int getNumberOfMercyWins() {
-        return numberOfMercyWins;
-    }
-
-    public void setNumberOfMercyWins(int numberOfMercyWins) {
-        this.numberOfMercyWins = numberOfMercyWins;
-    }
-
-    public int getNumberOfForfeits() {
-        return numberOfForfeits;
-    }
-
-    public void setNumberOfForfeits(int numberOfForfeits) {
-        this.numberOfForfeits = numberOfForfeits;
-    }
+    public int getNumberOfGamesScheduled() { return this.games.size(); }
 
     public double getWinPercentage() {
-        return winPercentage;
-    }
-
-    public void setWinPercentage(double winPercentage) {
-        this.winPercentage = winPercentage;
-    }
-
-    public void calculateStanding() {
-        TeamBO.Standing standing = TeamBO.getTeamStanding(this);
-
-        this.setNumberOfWins(standing.numberOfWins());
-        this.setNumberOfLosses(standing.numberOfLosses());
-        this.setNumberOfMercyWins(standing.numberOfMercyWins());
-        this.setNumberOfForfeits(standing.numberOfForfeits());
-        this.setWinPercentage(standing.winPercentage());
+        return (this.getNumberOfGamesPlayed() == 0 ? 0 : (double) this.getWins().total / this.getNumberOfGamesPlayed());
     }
 
     public String getWinPercentageString() {
-        return String.format("%.3f", winPercentage);
+        // The decimal followed by three zeros forces exactly 3 decimal spots without anything before the decimal.
+        DecimalFormat df = new DecimalFormat(".000");
+        return df.format(this.getWinPercentage());
+    }
+
+    public Wins getWins() {
+        return wins;
+    }
+
+    public void setWins(Wins wins) {
+        this.wins = wins;
+    }
+
+    public Losses getLosses() {
+        return losses;
+    }
+
+    public void setLosses(Losses losses) {
+        this.losses = losses;
+    }
+
+    public int getMercyWins() {
+        return this.getWins().mercy;
+    }
+
+    public int getForfeitWins() {
+        return this.getWins().forfeit;
+    }
+
+    public void calculateStanding() {
+        int numberOfWins = 0;
+        int numberOfMercyWins = 0;
+        int numberOfForfeitWins = 0;
+
+        int numberOfLosses = 0;
+        int numberOfMercyLosses = 0;
+        int numberOfForfeitLosses = 0;
+
+        // Loop through each game in the team's games property.
+        for (Game game : this.getPlayedGames()) {
+            if (GameBO.getWinningTeam(game).equals(this.getTeamName())) {
+                numberOfWins++;
+                if (game.getWasMercyWin()) numberOfMercyWins++;
+                else if (game.getWasForfeited()) numberOfForfeitWins++;
+            }
+            else {
+                numberOfLosses++;
+                if (game.getWasForfeited()) numberOfForfeitLosses++;
+                else if (game.getWasMercyWin()) numberOfMercyLosses++;
+            }
+        }
+
+        this.setWins(new Wins(numberOfWins, numberOfMercyWins, numberOfForfeitWins));
+        this.setLosses(new Losses(numberOfLosses, numberOfMercyLosses, numberOfForfeitLosses));
     }
 
     @Override

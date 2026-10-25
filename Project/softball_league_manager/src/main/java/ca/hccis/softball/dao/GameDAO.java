@@ -1,9 +1,13 @@
 package ca.hccis.softball.dao;
 
+import ca.hccis.softball.entity.Inning;
 import ca.hccis.softball.jpa.entity.Game;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -102,23 +106,60 @@ public class GameDAO {
     private ArrayList<Game> loadList(ResultSet rs) throws SQLException {
         ArrayList<Game> games = new ArrayList<>();
 
+        Gson gson = new Gson();
+        Type inningListType = new TypeToken<ArrayList<Inning>>() {}.getType();
+
         // Loop through the result set to convert each record.
         while (rs.next()) {
             Game game = new Game();
-            game.setId(rs.getInt("id"));
-            game.setForfeited(rs.getBoolean("forfeited"));
-            game.setIsMercyWin(rs.getBoolean("isMercyWin"));
-            game.setScoreDifferential(rs.getInt("scoreDifferential"));
 
+            game.setId(rs.getInt("id"));
             game.setHomeTeam(rs.getString("homeTeam"));
             game.setRoadTeam(rs.getString("roadTeam"));
-            game.setWinningTeam(rs.getString("winningTeam"));
-            game.setInnings(rs.getString("innings"));
+            game.setDate(rs.getDate("date").toLocalDate());
+            game.setHomeScore(rs.getInt("homeScore"));
+            game.setRoadScore(rs.getInt("roadScore"));
+            game.setWasForfeited(rs.getBoolean("wasForfeited"));
+            game.setWasMercyWin(rs.getBoolean("wasMercyWin"));
+            game.setPlayed(rs.getBoolean("played"));
+
+            // Extract raw JSON string from the database.
+            String jsonInnings = rs.getString("innings");
+
+            // Convert the JSON string to ArrayList<Inning> using Gson.
+            ArrayList<Inning> inningsList;
+            if (jsonInnings != null && !jsonInnings.isBlank()) {
+                inningsList = gson.fromJson(jsonInnings, inningListType);
+            } else {
+                // If the JSON string is empty, set to empty ArrayList.
+                inningsList = new ArrayList<>();
+            }
+
+            game.setInnings(inningsList);
 
             games.add(game);
         }
 
         // Returns an empty ArrayList if no games were retrieved.
         return games;
+    }
+
+    public Game getGameById(int id) {
+        Game game = null;
+
+        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM SoftballGame WHERE id = ?;")) {
+            try {
+                stmt.setInt(1, id);
+                rs = stmt.executeQuery();
+                game = loadList(rs).get(0);
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+
+        // Returns null if no game was retrieved.
+        return game;
     }
 }

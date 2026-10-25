@@ -9,6 +9,9 @@
 
     --font-on-dark: white;
     --font-on-light: black;
+
+    --win-colour: #80EF80;
+    --loss-colour: #FF746C;
 }
 
 * {
@@ -37,6 +40,9 @@ header {
     background-color: var(--dusty-denim);
     color: var(--font-on-dark);
     padding: 5px 0;
+
+    position: sticky;
+    top: 0;
 
     nav {
         display: flex;
@@ -114,30 +120,9 @@ footer {
     color: var(--font-on-dark);
 }
 
-/* #region  GENERAL STYLING */
+/* #region  FORM & INPUT STYLING */
 
-.vert-align {
-    display: flex;
-    align-items: center
-}
-
-.center-align {
-    text-align: center;
-}
-
-.full-width {
-    width: 100%;
-}
-
-.align-items-center {
-    align-items: center;
-}
-
-/* #endregion */
-
-/* #region  FORM STYLING */
-
-form {
+.form {
     background-color: white;
     border-radius: 10px;
 
@@ -166,6 +151,10 @@ select {
     border-radius: 10px;
     padding: 5px 0 5px 5px;
     width: 200px;
+
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 .field-horizontal {
@@ -175,118 +164,245 @@ select {
     align-items: center;
 }
 
+.link-button {
+    text-decoration: none;
+    background-color: var(--dusty-denim);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: var(--font-on-dark);
+
+    &:hover {
+        background-color: var(--calm-ocean);
+        cursor: pointer;
+    }
+}
+
+.primary-button {
+    background-color: var(--dusty-denim);
+    color: var(--font-on-dark);
+
+    &:hover {
+        cursor: pointer;
+        background-color: var(--calm-ocean);
+    }
+}
+
 /* #endregion */
 
-/* #region  Card Styling */
+/* #region  CARD STYLING */
 
-/* The element that a series of cards is stored in. */
 .card-container {
     width: 100%;
-    height: fit-content;
 
-    display: grid;
+    display: flex;
+    flex-flow: row wrap;
     gap: 20px;
 
-    /* Single column when the screen width is smaller */
-    @media (width <= 1023px) {
-        grid-template-columns: 1fr;
-    }
-
-    /* Two columns when the screen width is bigger */
-    @media (width >= 1024px) {
-        grid-template-columns: 1fr 1fr;
-    }
+    justify-content: center;
 }
 
 .card {
-    display: grid;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    background-color: white;
 
-    &.game {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: repeat(4, max-content);
+    border-radius: 10px;
 
-        .full-row {
-            grid-column-end: span 2;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 15px;
+
+    align-items: center;
+
+    width: 250px;
+
+    hgroup {
+        display: flex;
+        flex-flow: column nowrap;
+
+        h2 {
+            width: 100%;
+            text-align: center;
+            font-size: xx-large;
+        }
+
+        p {
+            width: 100%;
+            text-align: center;
+            font-size: large;
         }
     }
 
-    &.team {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        grid-template-rows: repeat(5, max-content);
-
-        .half-row {
-            grid-column-end: span 2;
-        }
-
-        .full-row {
-            grid-column-end: span 4;
-        }
+    &:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        transition: 300ms;
     }
 
-    > *:not(.no-border) {
-        padding: 5px;
+    .card-body {
+        &.grid {
+            display: grid;
+            width: 100%;
 
-        text-align: center;
-        vertical-align: middle;
+            &.row-2 {
+                grid-template-rows: repeat(2, max-content);
+            }
 
-        /* Using a 0.5px spread radius instead of a border because the border was thicker than I liked */
-        box-shadow: 0 0 0 0.5px black;
+            &.col-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            &.row-gap {
+                row-gap: 20px;
+            }
+        }
+
+
     }
-}
-
-/* Primary label */
-.card-primary {
-    background-color: var(--midnight-blue);
-    color: var(--font-on-dark);
-    font-weight: bold;
-    font-size: x-large;
-}
-
-/* Secondary label */
-.card-secondary {
-    background-color: var(--dusty-denim);
-    color: var(--font-on-dark);
-    font-weight: bold;
-}
-
-/* Tertiary label */
-.card-tertiary {
-    background-color: var(--calm-ocean);
-    color: var(--font-on-light);
-}
-
-/* Standard value */
-.card-value {
-    background-color: var(--powder-sky);
-    color: var(--font-on-light);
-}
-
-/* Singular rounded corners */
-/* Doing it this way because child elements don't conveniently inherit only the correct corners from their parents ;_; */
-
-/* Top left and right */
-.corners-top {
-    border-radius: 10px 10px 0 0;
-}
-
-/* Top left */
-.corner-1 {
-    border-radius: 10px 0 0 0;
-}
-
-/* Top right */
-.corner-2 {
-    border-radius: 0 10px 0 0;
-}
-
-/* Bottom right */
-.corner-3 {
-    border-radius: 0 0 10px 0;
-}
-
-/* Bottom left */
-.corner-4 {
-    border-radius: 0 0 0 10px;
 }
 
 /* #endregion */
+
+.chart-container {
+    width: 100%;
+}
+
+.metric {
+    display: flex;
+    flex-flow: column nowrap;
+
+    .metric-group {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 5px;
+
+        justify-content: center;
+        align-items: center;
+    }
+
+    .metric-label {
+        text-align: center;
+        text-transform: uppercase;
+        color: var(--midnight-blue);
+    }
+
+    .metric-value {
+        text-align: center;
+        font-size: x-large;
+    }
+
+    .metric-divider {
+        text-align: center;
+        font-size: large;
+    }
+}
+
+/* #region  GENERAL STYLING */
+
+.vert-align {
+    display: flex;
+    align-items: center
+}
+
+.center-align {
+    text-align: center;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+/* For text that goes directly below the header of the page */
+.subtitle {
+    text-align: center;
+
+    &.small {
+        font-size: small;
+        font-style: italic;
+    }
+}
+
+.margin-top-20 {
+    margin-top: 20px;
+}
+
+/* Colour-coded based on value of 'win' or 'loss' */
+.bg-win {
+    background-color: var(--win-colour);
+    color: var(--font-on-light);
+}
+
+.bg-loss {
+    background-color: var(--loss-colour);
+    color: var(--loss-colour);
+}
+
+.font-win {
+    color: var(--win-colour) !important;
+}
+
+.font-loss {
+    color: var(--loss-colour) !important;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.is-hoverable {
+    background-color: var(--dusty-denim);
+    border: none;
+    color: var(--font-on-dark);
+
+    &:hover {
+        background-color: var(--calm-ocean);
+        cursor: pointer;
+    }
+}
+
+.min-content {
+    width: min-content;
+}
+
+.font-secondary-colour {
+    color: var(--dusty-denim);
+}
+
+.flex-container {
+    display: flex;
+
+    &.row {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+        width: 100%;
+    }
+}
+
+/* #endregion */
+
+#teamHistoryForm {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 15px;
+}
+
+#historyHeader {
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: 10px;
+
+    > * {
+        text-align: center;
+    }
+}
+
+#historyChart {
+    max-height: 300px;
+}

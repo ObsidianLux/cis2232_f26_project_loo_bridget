@@ -1,10 +1,12 @@
 package ca.hccis.softball.controllers;
 
 import ca.hccis.softball.bo.GameBO;
+import ca.hccis.softball.dao.GameDAO;
 import ca.hccis.softball.entity.ReportHistory;
+import ca.hccis.softball.entity.Team;
 import ca.hccis.softball.jpa.entity.Game;
 
-import ca.hccis.softball.util.CisUtilityFile;
+import ca.hccis.softball.util.Utility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -41,7 +44,7 @@ public class ReportController {
         ReportHistory report = new ReportHistory();
         logger.debug("reportInput Teams: {}", Arrays.toString(report.getTeams().toArray()));
 
-        model.addAttribute("reportInput", report);
+        model.addAttribute("reportHistory", report);
 
         return "/reports/history";
     }
@@ -54,26 +57,23 @@ public class ReportController {
      * @since 20261018
      */
     @RequestMapping("/history/view")
-    public String teamGamesResult(Model model, @ModelAttribute ("reportInput") ReportHistory reportHistory) {
+    public String teamGamesResult(Model model, @ModelAttribute ("reportHistory") ReportHistory reportHistory) throws IOException {
         logger.info("Running the ReportController teamGamesResult() method.");
 
-        GameBO gameBO = new GameBO();
-        ArrayList<Game> games = gameBO.processSelectAllByTeam(reportHistory.getTeam());
+        reportHistory.setTeam(reportHistory.getTeamByName());
 
         // Display a message if there is no data for the report.
-        if (games.isEmpty()) {
-            model.addAttribute("message", "No games found for that team.");
-            System.out.println("No data found for team: " + reportHistory.getTeam());
+        if (reportHistory.getTeam().getNumberOfGamesPlayed() == 0) {
+            model.addAttribute("message", "This team has not played any games.");
+            System.out.println("No data found for team: " + reportHistory.getTeamName());
         } else {
             // Write the report to a file.
-            CisUtilityFile.writeReportToFile("gamesByTeamReport", games);
-
-            reportHistory.setGames(games);
+            Utility.writeGamesToFile("teamHistoryReport", reportHistory.getTeam().getPlayedGames());
         }
 
         // Add the report object to the model so it can be used in the report view.
-        model.addAttribute("reportInput", reportHistory);
+        model.addAttribute("reportHistory", reportHistory);
 
-        return "/reports/historyResults";
+        return "/reports/history";
     }
 }

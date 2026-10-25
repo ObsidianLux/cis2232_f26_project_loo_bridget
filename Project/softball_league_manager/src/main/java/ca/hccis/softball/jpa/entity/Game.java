@@ -1,13 +1,20 @@
 package ca.hccis.softball.jpa.entity;
 
-import com.google.gson.Gson;
+import ca.hccis.softball.bo.GameBO;
+
+import ca.hccis.softball.entity.Inning;
+import ca.hccis.softball.util.JsonListConverter;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.ColumnDefault;
+
+import jakarta.ws.rs.DefaultValue;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Entity
@@ -17,25 +24,6 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-
-    @NotNull
-    @ColumnDefault("0")
-    @Column(name = "forfeited", nullable = false)
-    private Boolean forfeited;
-
-    @NotNull
-    @ColumnDefault("0")
-    @Column(name = "isMercyWin", nullable = false)
-    private Boolean isMercyWin;
-
-    @NotNull
-    @Column(name = "scoreDifferential", nullable = false)
-    private Integer scoreDifferential;
-
-    @Lob
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "innings", columnDefinition = "LONGTEXT")
-    private String innings;
 
     @Size(max = 20)
     @NotNull
@@ -47,10 +35,33 @@ public class Game {
     @Column(name = "roadTeam", nullable = false, length = 20)
     private String roadTeam;
 
-    @Size(max = 20)
     @NotNull
-    @Column(name = "winningTeam", nullable = false, length = 20)
-    private String winningTeam;
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
+
+    @Column(name = "wasForfeited")
+    private Boolean wasForfeited;
+
+    @Column(name = "wasMercyWin")
+    private Boolean wasMercyWin;
+
+    @Column(name = "homeScore")
+    private Integer homeScore;
+
+    @Column(name = "roadScore")
+    private Integer roadScore;
+
+    @Lob
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "innings", columnDefinition = "LONGTEXT")
+    @Convert(converter = JsonListConverter.class)
+    private ArrayList<Inning> innings;
+
+    @NotNull
+    @Column(name = "played", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean played;
+
+    public Game() {}
 
     public Integer getId() {
         return id;
@@ -60,35 +71,27 @@ public class Game {
         this.id = id;
     }
 
-    public Boolean getForfeited() {
-        return forfeited;
+    public Boolean getWasForfeited() {
+        return wasForfeited;
     }
 
-    public void setForfeited(Boolean forfeited) {
-        this.forfeited = forfeited;
+    public void setWasForfeited(Boolean forfeited) {
+        this.wasForfeited = forfeited;
     }
 
-    public Boolean getIsMercyWin() {
-        return isMercyWin;
+    public Boolean getWasMercyWin() {
+        return wasMercyWin;
     }
 
-    public void setIsMercyWin(Boolean isMercyWin) {
-        this.isMercyWin = isMercyWin;
+    public void setWasMercyWin(Boolean isMercyWin) {
+        this.wasMercyWin = isMercyWin;
     }
 
-    public Integer getScoreDifferential() {
-        return scoreDifferential;
-    }
-
-    public void setScoreDifferential(Integer scoreDifferential) {
-        this.scoreDifferential = scoreDifferential;
-    }
-
-    public String getInnings() {
+    public ArrayList<Inning> getInnings() {
         return innings;
     }
 
-    public void setInnings(String innings) {
+    public void setInnings(ArrayList<Inning> innings) {
         this.innings = innings;
     }
 
@@ -108,28 +111,49 @@ public class Game {
         this.roadTeam = roadTeam;
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Integer getHomeScore() {
+        return homeScore;
+    }
+
+    public Integer getRoadScore() {
+        return roadScore;
+    }
+
     public String getWinningTeam() {
-        return winningTeam;
+        return GameBO.getWinningTeam(this);
     }
 
-    public void setWinningTeam(String winningTeam) {
-        this.winningTeam = winningTeam;
+    public String getPlusMinus(String teamName) {
+        return GameBO.getPlusMinus(this, teamName);
     }
 
-    /**
-     * Use Gson to serialize this instance in JSON format.
-     * @return JSON-formatted string.
-     * @author BML
-     * @since 20261010
-     */
-    public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
+    public void setHomeScore(Integer homeScore) {
+        this.homeScore = homeScore;
+    }
+
+    public void setRoadScore(Integer roadScore) {
+        this.roadScore = roadScore;
+    }
+
+    public Boolean getPlayed() {
+        return played;
+    }
+
+    public void setPlayed(Boolean played) {
+        this.played = played;
     }
 
     @Override
     public String toString() {
-        return "ID: %d; Home Team: %s; Road Team: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Score Differential: %d; Innings: %s".formatted(id, homeTeam, roadTeam, winningTeam, isMercyWin, forfeited, scoreDifferential, innings);
+        return "ID: %d; Home Team: %s; Road Team: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Innings: %s".formatted(id, homeTeam, roadTeam, GameBO.getWinningTeam(this), wasMercyWin, wasForfeited, innings.stream().map(Inning::toString));
     }
 
     @Override

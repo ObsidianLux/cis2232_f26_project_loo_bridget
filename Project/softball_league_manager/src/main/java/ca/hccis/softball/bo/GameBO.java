@@ -1,33 +1,27 @@
 package ca.hccis.softball.bo;
 
 import ca.hccis.softball.dao.GameDAO;
-import ca.hccis.softball.entity.Inning;
+import ca.hccis.softball.entity.Team;
 import ca.hccis.softball.jpa.entity.Game;
-import ca.hccis.softball.util.CisUtilityFile;
 
 import java.util.ArrayList;
 
 public class GameBO {
-    public record GameResults(int winningTeam, boolean isMercyWin, int scoreDifferential) {}
-
     /**
-     * Determine which team won the game based on how many runs their scored across all innings.
-     * @param innings All the innings in the game.
-     * @param homeTeam The name of the home team.
-     * @param roadTeam The name of the road team.
-     * @return The name of the winning team or an empty string if they tied.
+     * Get the name of the winning team.
+     * @param game The game to check
+     * @return The name of the winning team
+     * @author BML
+     * @since 20261025
      */
-    public static String determineWinner(ArrayList<Inning> innings, String homeTeam, String roadTeam) {
-        int homeRuns = 0;
-        int roadRuns = 0;
+    public static String getWinningTeam(Game game) {
+        return game.getHomeScore() > game.getRoadScore() ? game.getHomeTeam() : game.getRoadTeam();
+    }
 
-        for (Inning inning : innings) {
-            homeRuns += inning.getHomeTeamRuns();
-            roadRuns += inning.getRoadTeamRuns();
-        }
-
-        if (homeRuns == roadRuns) return "";
-        else return homeRuns > roadRuns ? homeTeam : roadTeam;
+    public static String getPlusMinus(Game game, String teamName) {
+        boolean isWinner = teamName.equals(getWinningTeam(game));
+        int scoreDifference = Math.abs(game.getHomeScore() - game.getRoadScore());
+        return (isWinner ? "+" : "-") + scoreDifference;
     }
 
     /**
@@ -37,22 +31,47 @@ public class GameBO {
      * @author BML
      * @since 20261021
      */
-    public ArrayList<Game> processSelectAllByTeam(String team) {
+    public static ArrayList<Game> selectAllByTeam(String team) {
         GameDAO gameDAO = new GameDAO();
         return gameDAO.selectAllByTeamName(team);
     }
 
-    public static GameResults getGameResults(int homeTeamId, int roadTeamId, ArrayList<Inning> innings) {
-        int homeRuns = 0;
-        int roadRuns = 0;
+    /**
+     * Get a list of all unique teams in the league.
+     * @return List of teams
+     * @author BML
+     * @since 20261020
+     */
+    public static ArrayList<Team> selectAllTeams() {
+        ArrayList<Game> games = new GameDAO().selectAll();
+        ArrayList<Team> teams = new ArrayList<>();
 
-        for (Inning inning : innings) {
-            homeRuns += inning.getHomeTeamRuns();
-            roadRuns += inning.getRoadTeamRuns();
+        if (!games.isEmpty()) {
+            for (Game game : games) {
+                // If the teams list is empty, both the home team and road team can be added without further checks.
+                if (teams.isEmpty()) {
+                    teams.add(new Team(game.getHomeTeam(), game));
+                    teams.add(new Team(game.getRoadTeam(), game));
+                } else {
+                    // Check the teams list for the home team.
+                    Team homeTeam = new Team(game.getHomeTeam(), game);
+                    int homeTeamIndex = teams.indexOf(homeTeam);
+
+                    // If the home team isn't on the list, add it. Otherwise, add the game to the existing element.
+                    if (homeTeamIndex == -1) teams.add(homeTeam);
+                    else teams.get(homeTeamIndex).addGame(game);
+
+                    // If the road team isn't on the list, add it. Otherwise, add the game to the existing element.
+                    Team roadTeam = new Team(game.getRoadTeam(), game);
+                    int roadTeamIndex = teams.indexOf(roadTeam);
+
+                    if (roadTeamIndex == -1) teams.add(roadTeam);
+                    else teams.get(roadTeamIndex).addGame(game);
+                }
+            }
         }
 
-        int winningTeamId = homeRuns > roadRuns ? homeTeamId : roadTeamId;
-
-        return new GameResults(winningTeamId, innings.size() == 5, Math.abs(homeRuns - roadRuns));
+        // Returns an empty array if no teams were found.
+        return teams;
     }
 }

@@ -5,8 +5,8 @@ import com.google.gson.Gson;
 public class Inning {
     private int inningNumber;
 
-    private int homeTeamRuns;
-    private int roadTeamRuns;
+    private int homeRuns;
+    private int roadRuns;
 
     public Inning() {}
 
@@ -14,10 +14,10 @@ public class Inning {
         this.inningNumber = inningNumber;
     }
 
-    public Inning(int inningNum, int homeTeamRuns, int roadTeamRuns) {
+    public Inning(int inningNum, int homeRuns, int roadRuns) {
         this.inningNumber = inningNum;
-        this.homeTeamRuns = homeTeamRuns;
-        this.roadTeamRuns = roadTeamRuns;
+        this.homeRuns = homeRuns;
+        this.roadRuns = roadRuns;
     }
 
     /**
@@ -31,24 +31,24 @@ public class Inning {
         Inning inning = gson.fromJson(json, Inning.class);
 
         this.inningNumber = inning.getInningNumber();
-        this.homeTeamRuns = inning.getHomeTeamRuns();
-        this.roadTeamRuns = inning.getRoadTeamRuns();
+        this.homeRuns = inning.getHomeRuns();
+        this.roadRuns = inning.getRoadRuns();
     }
 
-    public int getRoadTeamRuns() {
-        return roadTeamRuns;
+    public int getRoadRuns() {
+        return roadRuns;
     }
 
-    public void setRoadTeamRuns(int roadTeamRuns) {
-        this.roadTeamRuns = roadTeamRuns;
+    public void setRoadRuns(int roadRuns) {
+        this.roadRuns = roadRuns;
     }
 
-    public int getHomeTeamRuns() {
-        return homeTeamRuns;
+    public int getHomeRuns() {
+        return homeRuns;
     }
 
-    public void setHomeTeamRuns(int homeTeamRuns) {
-        this.homeTeamRuns = homeTeamRuns;
+    public void setHomeRuns(int homeRuns) {
+        this.homeRuns = homeRuns;
     }
 
     public int getInningNumber() {
@@ -57,10 +57,5 @@ public class Inning {
 
     public void setInningNumber(int inningNumber) {
         this.inningNumber = inningNumber;
-    }
-
-    public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
     }
 }
