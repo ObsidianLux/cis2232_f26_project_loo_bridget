@@ -38,9 +38,15 @@ Team managers will be able to see each team's overall standing based on the reco
 
 ## Report
 **Standings**
-On the home page, teams are displayed in order of their standings within the league (sorted in descending order). Displays the number of games, current standing, number of wins (total, mercy rule, and forfeit), and number of losses (total, mercy rule, and forfeit).
+
+On the home page, teams are displayed in order of their standings within the league (sorted in descending order). 
+
+Displays the number of games, current standing, number of wins (total, mercy rule, and forfeit), and number of losses (total, mercy rule, and forfeit).
 
 **Team History Report**
+
 Select a team and get a list of all the games that that team played in (excluding scheduled games that have not happened yet).
+
 A chart displays the team's score compared to their opponent's score for each game.
+
 Each game is displayed in a card with the outcome, the opponent, the number of innings, the plus/minus value, and the final scores.
