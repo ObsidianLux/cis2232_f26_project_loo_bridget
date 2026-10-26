@@ -4,7 +4,7 @@
 <nav th:fragment="navbar" role="navigation" aria-label="main navigation">
     <a href="../index.html" th:href="@{/}" th:text="#{application.name}" class="navbar-brand quantico-bold"></a>
     <ul>
-        <li><a href="/league/games" th:href="@{/league/view}" th:text="#{nav.view}"></a></li>
+        <li><a href="/league/view" th:href="@{/league/view}" th:text="#{nav.view}"></a></li>
         <li><a href="/league/add" th:href="@{/league/add}" th:text="#{nav.add}"></a></li>
         <li><a href="/reports/history" th:href="@{/reports/history}" th:text="#{nav.history}"></a></li>
     </ul>
