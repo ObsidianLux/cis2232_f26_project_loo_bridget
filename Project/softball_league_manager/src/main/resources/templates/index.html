@@ -9,8 +9,8 @@
 </header>
 <main>
     <hgroup>
-        <h1 class="center-align quantico-bold">Team Standings</h1>
-        <p class="subtitle">Teams are ordered first by their Win Percentage (PCT), then if there is a tie, by their number of Mercy Wins and Forfeit Wins.</p>
+        <h1 class="center-align quantico-bold" th:text="#{index.header}"></h1>
+        <p class="subtitle" th:text="#{index.subtitle}"></p>
     </hgroup>
 
     <div class="card-container margin-top-20">
@@ -21,33 +21,33 @@
 
             <div class="card-body grid row-2 col-2 row-gap">
                 <div class="metric">
-                    <p class="metric-label">Games</p>
+                    <p class="metric-label" th:text="#{card.metric.game}"></p>
                     <p class="metric-value" th:text="${team.getNumberOfGamesPlayed()}"></p>
                 </div>
 
                 <div class="metric">
-                    <p class="metric-label">PCT</p>
+                    <p class="metric-label" th:text="#{card.metric.pct}"></p>
                     <p class="metric-value" th:text="${team.getWinPercentageString()}"></p>
                 </div>
 
                 <div class="metric">
-                    <p class="metric-label font-win">Wins</p>
+                    <p class="metric-label font-win" th:text="#{card.metric.win}"></p>
                     <div class="metric-group">
                         <p class="metric-value" th:text="${team.getWins().total()}"></p>
-                        <p class="metric-divider">•</p>
+                        <p class="metric-divider" th:text="#{card.metric.divider.bullet}"></p>
                         <p class="metric-value" th:text="${team.getWins().mercy()}"></p>
-                        <p class="metric-divider">•</p>
+                        <p class="metric-divider" th:text="#{card.metric.divider.bullet}"></p>
                         <p class="metric-value" th:text="${team.getWins().forfeit()}"></p>
                     </div>
                 </div>
 
                 <div class="metric">
-                    <p class="metric-label font-loss">Losses</p>
+                    <p class="metric-label font-loss" th:text="#{card.metric.loss}"></p>
                     <div class="metric-group">
                         <p class="metric-value" th:text="${team.getLosses().total()}"></p>
-                        <p class="metric-divider">•</p>
+                        <p class="metric-divider" th:text="#{card.metric.divider.bullet}"></p>
                         <p class="metric-value" th:text="${team.getLosses().mercy()}"></p>
-                        <p class="metric-divider">•</p>
+                        <p class="metric-divider" th:text="#{card.metric.divider.bullet}"></p>
                         <p class="metric-value" th:text="${team.getLosses().forfeit()}"></p>
                     </div>
                 </div>
