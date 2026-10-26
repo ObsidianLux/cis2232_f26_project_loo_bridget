@@ -18,8 +18,10 @@ import java.util.ResourceBundle;
  * @since 20261016
  */
 public class GameDAO {
-    private static ResultSet rs;
-    private Connection conn = null;
+    private final String connectionString;
+    private final String userName;
+    private final String password;
+
     private static final Logger logger = LoggerFactory.getLogger(GameDAO.class);
 
     public GameDAO() {
@@ -28,18 +30,9 @@ public class GameDAO {
         ResourceBundle rb = ResourceBundle.getBundle(propertyFileName);
 
         // Get the database connection information.
-        String connectionString = rb.getString("spring.datasource.url");
-        String userName = rb.getString("spring.datasource.username");
-        String password = rb.getString("spring.datasource.password");
-
-        // Connect to the database.
-        try {
-            // Use DriverManager to get a connection to the MySQL database.
-            // Adding the Java connector to MySQL in the application's dependencies enables this connection.
-            conn = DriverManager.getConnection(connectionString, userName, password);
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+        connectionString = rb.getString("spring.datasource.url");
+        userName = rb.getString("spring.datasource.username");
+        password = rb.getString("spring.datasource.password");
     }
 
     /**
@@ -49,22 +42,17 @@ public class GameDAO {
      * @since 20261016
      */
     public ArrayList<Game> selectAll() {
-        ArrayList<Game> games = new ArrayList<>();
-
-        // Perform try with conn resource. Doing it this way should automatically close the statement upon exiting the try block.
-        try (Statement stmt = conn.createStatement()) {
-            try {
-                rs = stmt.executeQuery("SELECT * FROM SoftballGame");
-                games = loadList(rs);
-            } catch (SQLException e) {
-                logger.error(e.getMessage());
-            }
+        try (
+                Connection conn = DriverManager.getConnection(connectionString, userName, password);
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM SoftballGame")
+        ) {
+            return loadList(rs);
         } catch (SQLException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
+            // Returns an empty ArrayList if no games were retrieved.
+            return new ArrayList<>();
         }
-
-        // Returns an empty ArrayList if no games were retrieved.
-        return games;
     }
 
     /**
@@ -75,24 +63,22 @@ public class GameDAO {
      * @since 20261016
      */
     public ArrayList<Game> selectAllByTeamName(String teamName) {
-        ArrayList<Game> games = new ArrayList<>();
+        String query = "SELECT * FROM SoftballGame WHERE homeTeam = ? OR roadTeam = ?;";
 
-        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM SoftballGame WHERE homeTeam = ? OR roadTeam = ?;")) {
-            try {
-                stmt.setString(1, teamName);
-                stmt.setString(2, teamName);
-
-                rs = stmt.executeQuery();
-                games = loadList(rs);
-            } catch (SQLException e) {
-                logger.error(e.getMessage());
+        try (
+                Connection conn = DriverManager.getConnection(connectionString, userName, password);
+                PreparedStatement stmt = conn.prepareStatement(query)
+                ) {
+            stmt.setString(1, teamName);
+            stmt.setString(2, teamName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return loadList(rs);
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
+            // Returns an empty ArrayList if no games were retrieved.
+            return new ArrayList<>();
         }
-
-        // Returns an empty ArrayList if no games were retrieved.
-        return games;
     }
 
     /**
@@ -142,24 +128,5 @@ public class GameDAO {
 
         // Returns an empty ArrayList if no games were retrieved.
         return games;
-    }
-
-    public Game getGameById(int id) {
-        Game game = null;
-
-        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM SoftballGame WHERE id = ?;")) {
-            try {
-                stmt.setInt(1, id);
-                rs = stmt.executeQuery();
-                game = loadList(rs).get(0);
-            } catch (SQLException e) {
-                logger.error(e.getMessage());
-            }
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-
-        // Returns null if no game was retrieved.
-        return game;
     }
 }
