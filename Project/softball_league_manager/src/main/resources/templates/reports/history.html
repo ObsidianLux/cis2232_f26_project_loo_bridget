@@ -35,6 +35,8 @@
         </div>
 
         <script th:if="${reportHistory.getTeam() != null}" th:inline="javascript">
+            /* global Chart */
+
             /**
              * @typedef {Object} HistoryReportData
              * @property {string} teamName
