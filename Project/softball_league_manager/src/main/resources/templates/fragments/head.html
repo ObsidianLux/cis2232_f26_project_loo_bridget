@@ -2,6 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="headerFragment">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title id="pageTitle" th:text="#{application.name}"></title>
 
     <!-- Google Fonts -->
@@ -10,12 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
     <!-- Styling -->
-    <link rel="stylesheet" href="/css/styles.css" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css"/>
 
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!--    <script type="text/javascript" src="/js/historyResults.js" defer></script>-->
-<!--    <script type="text/javascript" src="/js/types.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>`A
 </head>
 <body></body>
 </html>
