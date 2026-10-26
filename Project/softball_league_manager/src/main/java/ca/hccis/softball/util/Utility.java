@@ -74,7 +74,7 @@ public class Utility {
      */
     private static void writeReportToFile(String fileName, ArrayList<String> lines) throws IOException {
         // Append the current date to the given filename along with the .txt file extension.
-        String fullFileName = DEFAULT_DIRECTORY + fileName + getCurrentDate("_yyyyMMddhhmmss") + ".txt";
+        String fullFileName = DEFAULT_DIRECTORY + fileName + getCurrentDate("_yyyyMMddHHmmss") + ".txt";
 
         // Get the path object for the directory.
         Path path = Paths.get(DEFAULT_DIRECTORY);
