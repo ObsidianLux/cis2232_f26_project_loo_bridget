@@ -17,7 +17,7 @@
         <form th:action="@{/reports/history/view}" method="post" id="teamHistoryForm">
             <div class="field-horizontal">
                 <label for="select-team" th:text="#{history.form.select}"></label>
-                <select name="team" id="select-team" th:field="${reportHistory.teamName}">
+                <select id="select-team" th:field="${reportHistory.teamName}">
                     <option th:each="team : ${reportHistory.getTeams()}" th:value="${team.getTeamName()}" th:text="${team.getTeamName()}"></option>
                 </select>
             </div>
