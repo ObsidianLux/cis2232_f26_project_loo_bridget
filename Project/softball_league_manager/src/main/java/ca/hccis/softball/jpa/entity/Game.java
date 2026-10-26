@@ -9,13 +9,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import jakarta.ws.rs.DefaultValue;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "softballgame", schema = "cis2232_softball_league")
@@ -51,8 +48,6 @@ public class Game {
     @Column(name = "roadScore")
     private Integer roadScore;
 
-    @Lob
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "innings", columnDefinition = "LONGTEXT")
     @Convert(converter = JsonListConverter.class)
     private ArrayList<Inning> innings;
@@ -153,17 +148,17 @@ public class Game {
 
     @Override
     public String toString() {
-        return "ID: %d; Home Team: %s; Road Team: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Innings: %s".formatted(id, homeTeam, roadTeam, GameBO.getWinningTeam(this), wasMercyWin, wasForfeited, innings.stream().map(Inning::toString));
+        return "ID: %d; Home Team: %s; Road Team: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Innings: %s".formatted(id, homeTeam, roadTeam, GameBO.getWinningTeam(this), wasMercyWin, wasForfeited, innings.stream().map(Inning::toString).collect(Collectors.joining(", ")));
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Game game)) return false;
-        return (Objects.equals(getHomeTeam(), game.getHomeTeam()) && Objects.equals(getRoadTeam(), game.getRoadTeam())) || (Objects.equals(getHomeTeam(), game.getRoadTeam()) && Objects.equals(getRoadTeam(), game.getHomeTeam()));
+        return (Objects.equals(getId(), game.getId()));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getHomeTeam(), getRoadTeam());
+        return Objects.hash(getId());
     }
 }
