@@ -46,7 +46,7 @@ public class ReportController {
 
         model.addAttribute("reportHistory", report);
 
-        return "/reports/history";
+        return "reports/history";
     }
 
     /**
@@ -74,6 +74,6 @@ public class ReportController {
         // Add the report object to the model so it can be used in the report view.
         model.addAttribute("reportHistory", reportHistory);
 
-        return "/reports/history";
+        return "reports/history";
     }
 }

@@ -77,6 +77,6 @@ public class BaseController {
      */
     @RequestMapping("/view")
     public String view() {
-        return "/league/games";
+        return "league/games";
     }
 }
