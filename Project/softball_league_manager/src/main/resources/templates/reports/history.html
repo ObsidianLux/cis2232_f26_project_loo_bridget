@@ -98,11 +98,11 @@
         <div class="card-container flex row nowrap scrollable">
             <div class="card" th:each="game : ${reportHistory.getGames()}">
                 <hgroup>
-                    <h2 th:with="isWinner=${game.getWinningTeam() == reportHistory.getTeamName()}" th:text="${isWinner ? #{label.win} : #{label.loss}}" th:classappend="${isWinner ? 'font-win' : 'font-loss'}"></h2>
+                    <h2 th:with="isWinner=${game.getWinningTeam() == reportHistory.getTeamName()}" th:text="${isWinner ? '__#{label.win}__' : '__#{label.loss}__'}" th:classappend="${isWinner ? 'font-win' : 'font-loss'}"></h2>
                     <p class="subtitle small" th:with="exceptional=${game.getWasMercyWin() or game.getWasForfeited()}">
-                        <span th:text="${game.getHomeTeam() == reportHistory.getTeam() ? #{label.home} : #{label.road}}"></span>
+                        <span th:text="${game.getHomeTeam() == reportHistory.getTeam() ? '__#{label.home}__' : '__#{label.road}__'}"></span>
                         <span th:if="${exceptional}" th:text="#{card.metric.divider.bullet}"></span>
-                        <span th:if="${exceptional}" th:text="${game.getWasMercyWin() ? #{label.mercy} : #{label.forfeit}}"></span>
+                        <span th:if="${exceptional}" th:text="${game.getWasMercyWin() ? '__#{label.mercy}__' : '__#{label.forfeit}__'}"></span>
                     </p>
                 </hgroup>
 
