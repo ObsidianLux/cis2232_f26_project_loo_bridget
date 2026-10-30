@@ -55,6 +55,12 @@ public class ReportHistory {
         return null;
     }
 
+    /**
+     * Get the datasets and x-axis labels for the Team History report chart.
+     * @return The datasets and labels.
+     * @author BML
+     * @since 20261030
+     */
     public HistoryReportData getHistoryReportData() {
         List<String> xAxisLabels = new ArrayList<>();
         List<Integer> teamScoreDataSet = new ArrayList<>();
@@ -63,7 +69,9 @@ public class ReportHistory {
         // Only include played games in the report.
         ArrayList<Game> games = this.getGames().stream().filter(Game::getPlayed).collect(Collectors.toCollection(ArrayList::new));
 
+        // Loop through the played games.
         for (Game game : games) {
+            // Determine whether the team being reported on is the home team or road team for this game.
             boolean teamIsHome = this.getTeamName().equals(game.getHomeTeam());
 
             xAxisLabels.add("%s (%s)".formatted(getOpponentTeamName(game.getHomeTeam(), game.getRoadTeam()), game.getDate().toString()));

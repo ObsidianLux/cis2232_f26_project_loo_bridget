@@ -71,23 +71,23 @@
                         },
                         title: {
                             display: true,
-                            text: "Scores by Game"
+                            text: "Runs per Team (by Game)"
                         }
                     },
                     scales: {
                         y: {
                             ticks: {
-                                precision: 0
+                                precision: 0 // Prevents decimal values on the y-axis.
                             },
                             title: {
                                 display: true,
-                                text: "Score"
+                                text: "# of Runs"
                             }
                         },
                         x: {
                             title: {
-                                display: true,
-                                text: "Game"
+                                display: false,
+                                text: "Game Date"
                             }
                         }
                     }
@@ -95,7 +95,7 @@
             });
         </script>
 
-        <div class="card-container flex row nowrap scrollable">
+        <div class="card-container flex row nowrap margin-top-20">
             <div class="card" th:each="game : ${reportHistory.getGames()}">
                 <hgroup>
                     <h2 th:with="isWinner=${game.getWinningTeam() == reportHistory.getTeamName()}" th:text="${isWinner ? '__#{label.win}__' : '__#{label.loss}__'}" th:classappend="${isWinner ? 'font-win' : 'font-loss'}"></h2>
