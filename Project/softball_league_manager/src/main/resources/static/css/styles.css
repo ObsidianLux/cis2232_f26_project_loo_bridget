@@ -29,9 +29,9 @@
     font-style: normal;
 }
 
-html {
-    min-width: 246px;
+/*region BASE STYLING*/
 
+html {
     width: 100%;
     height: 100%;
 }
@@ -78,7 +78,8 @@ header {
             background-color: var(--midnight-blue);
         }
 
-        .navbar-link:active{
+        /* TODO Make this work */
+        a:active {
             color: var(--dusty-denim) !important;
         }
     }
@@ -105,6 +106,7 @@ body {
         padding: 10px 40px;
 
         h1 {
+            /* All h1 elements in the main element will have this font colour. */
             color: var(--midnight-blue);
         }
     }
@@ -120,20 +122,9 @@ footer {
     color: var(--font-on-dark);
 }
 
-/* #region  FORM & INPUT STYLING */
+/*endregion*/
 
-.form {
-    background-color: white;
-    border-radius: 10px;
-
-    /* All child elements in a form are displayed vertically and are aligned to the middle of the form horizontally. */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-
-    padding: 20px;
-}
+/*region FORM & INPUT STYLING*/
 
 input[type="submit"] {
     border-radius: 10px;
@@ -188,9 +179,9 @@ select {
     }
 }
 
-/* #endregion */
+/*endregion*/
 
-/* #region  CARD STYLING */
+/*region CARD STYLING*/
 
 .card-container {
     width: 100%;
@@ -217,6 +208,11 @@ select {
 
     width: 250px;
 
+    &:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        transition: 300ms;
+    }
+
     hgroup {
         display: flex;
         flex-flow: column nowrap;
@@ -233,71 +229,134 @@ select {
             font-size: large;
         }
     }
+}
 
-    &:hover {
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        transition: 300ms;
-    }
+/* Perfectly round circle */
+.form-number {
+    width: fit-content;
+    aspect-ratio: 1;
+    padding: 10px;
+    border-radius: 50%;
 
-    .card-body {
-        &.grid {
-            display: grid;
-            width: 100%;
+    background-color: white;
+    color: var(--font-on-light);
+    border: thin solid var(--font-on-light);
+}
 
-            &.row-2 {
-                grid-template-rows: repeat(2, max-content);
-            }
+/*endregion*/
 
-            &.col-2 {
-                grid-template-columns: 1fr 1fr;
-            }
+/*region DISPLAY STYLING*/
 
-            &.row-gap {
-                row-gap: 20px;
+.grid {
+    display: grid;
+    width: 100%;
+
+    &:not(form) {
+        &.col-1 {
+            grid-template-columns: 1fr;
+
+            .full-row {
+                grid-column: span 1;
             }
         }
 
+        &.col-2 {
+            grid-template-columns: 1fr 1fr;
 
+            .full-row {
+                grid-column: span 2;
+            }
+        }
+    }
+
+    &:has(form) {
+        &.col-4 {
+            grid-template-columns: min-content 1fr min-content 1fr;
+
+            .full-row {
+                grid-column: span 4;
+            }
+        }
+    }
+
+    &.row-2 {
+        grid-template-rows: repeat(2, max-content);
+    }
+
+    &.row-1 {
+        grid-template-rows: max-content;
+    }
+
+    &.row-gap {
+        row-gap: 20px;
+    }
+
+    &.col-gap {
+        column-gap: 20px;
     }
 }
 
-/* #endregion */
+.flex-container {
+    display: flex;
 
-.chart-container {
+    &.row {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+        width: 100%;
+    }
+
+    &.col {
+        flex-direction: column;
+        flex-wrap: nowrap;
+
+        > * {
+            height: fit-content;
+        }
+    }
+}
+
+/*endregion*/
+
+/*region TOAST & TOOLTIP*/
+
+.toast {
+    background-color: var(--powder-sky);
+    padding: 20px 30px;
     width: 100%;
 }
 
-.metric {
-    display: flex;
-    flex-flow: column nowrap;
+/* Tooltip container position setup */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
 
-    .metric-group {
-        display: flex;
-        flex-flow: row nowrap;
-        gap: 5px;
+    /* Generate the tooltip dynamically from the data attribute data */
+    &:hover::after {
+        content: attr(data-tooltip); /* Pulls content from the HTML attribute */
 
-        justify-content: center;
-        align-items: center;
-    }
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        z-index: 10;
 
-    .metric-label {
-        text-align: center;
-        text-transform: uppercase;
-        color: var(--midnight-blue);
-    }
+        transform: translateX(-50%);
 
-    .metric-value {
-        text-align: center;
-        font-size: x-large;
-    }
+        background-color: #333;
+        color: #fff;
 
-    .metric-divider {
-        text-align: center;
-        font-size: large;
+        padding: 6px 10px;
+        border-radius: 4px;
+
+        white-space: nowrap;
+        font-size: small;
+        font-weight: normal;
     }
 }
 
-/* #region  GENERAL STYLING */
+/*endregion*/
+
+/*region GENERAL STYLING*/
 
 .vert-align {
     display: flex;
@@ -328,6 +387,14 @@ select {
 
 .margin-top-20 {
     margin-top: 20px;
+}
+
+.margin-x-auto {
+    margin: 0 auto;
+}
+
+.margin-top-auto {
+    margin-top: auto;
 }
 
 /* Colour-coded based on value of 'win' or 'loss' */
@@ -372,19 +439,43 @@ select {
     color: var(--dusty-denim);
 }
 
-.flex-container {
-    display: flex;
+.chart-container {
+    width: 100%;
+}
 
-    &.row {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: space-evenly;
-        width: 100%;
+.metric {
+    display: flex;
+    flex-flow: column nowrap;
+
+    .metric-group {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 5px;
+
+        justify-content: center;
+        align-items: center;
+    }
+
+    .metric-label {
+        text-align: center;
+        text-transform: uppercase;
+        color: var(--midnight-blue);
+    }
+
+    .metric-value {
+        text-align: center;
+        font-size: x-large;
+    }
+
+    .metric-divider {
+        text-align: center;
+        font-size: large;
     }
 }
 
-/* #endregion */
+/*endregion*/
 
+/*region STYLING BY ID*/
 #teamHistoryForm {
     display: flex;
     flex-flow: row nowrap;
@@ -406,3 +497,4 @@ select {
 #historyChart {
     max-height: 300px;
 }
+/*endregion*/
