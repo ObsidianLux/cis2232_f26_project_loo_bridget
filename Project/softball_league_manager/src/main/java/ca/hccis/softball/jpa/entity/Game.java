@@ -148,7 +148,8 @@ public class Game {
 
     @Override
     public String toString() {
-        return "ID: %d; Home Team: %s; Road Team: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Innings: %s".formatted(id, homeTeam, roadTeam, GameBO.getWinningTeam(this), wasMercyWin, wasForfeited, innings.stream().map(Inning::toString).collect(Collectors.joining(", ")));
+        if (this.played) return "ID: %d; Home Team: %s; Road Team: %s; Date: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Innings: %s; Home Score: %d; Road Score: %d".formatted(id, homeTeam, roadTeam, date.toString(), GameBO.getWinningTeam(this), wasMercyWin, wasForfeited, innings.stream().map(Inning::toString).collect(Collectors.joining(", ")), homeScore, roadScore);
+        else return "ID: %d; Home Team: %s; Road Team: %s; Date: %s".formatted(id, homeTeam, roadTeam, date.toString());
     }
 
     @Override
