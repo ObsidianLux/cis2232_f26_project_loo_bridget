@@ -95,14 +95,21 @@
             });
         </script>
 
-        <div class="card-container flex row nowrap scrollable">
+        <div class="card-container flex row nowrap margin-top-20">
             <div class="card" th:each="game : ${reportHistory.getGames()}">
-                <hgroup>
-                    <h2 th:with="isWinner=${game.getWinningTeam() == reportHistory.getTeamName()}" th:text="${isWinner ? #{label.win} : #{label.loss}}" th:classappend="${isWinner ? 'font-win' : 'font-loss'}"></h2>
-                    <p class="subtitle small" th:with="exceptional=${game.getWasMercyWin() or game.getWasForfeited()}">
-                        <span th:text="${game.getHomeTeam() == reportHistory.getTeam() ? #{label.home} : #{label.road}}"></span>
-                        <span th:if="${exceptional}" th:text="#{card.metric.divider.bullet}"></span>
-                        <span th:if="${exceptional}" th:text="${game.getWasMercyWin() ? #{label.mercy} : #{label.forfeit}}"></span>
+                <hgroup th:with="isWinner=${game.getWinningTeam() == reportHistory.getTeamName()}">
+
+                    <h2 th:if="${isWinner}" th:text="#{label.win}" th:classappend="font-win"></h2>
+                    <h2 th:unless="${isWinner}" th:text="#{label.loss}" th:classappend="font-loss"></h2>
+
+                    <p class="subtitle small" th:with="isHomeTeam=${game.getHomeTeam() == reportHistory.getTeam()}">
+                        <span th:if="${isHomeTeam}" th:text="#{label.home}"></span>
+                        <span th:unless="${isHomeTeam}" th:text="#{label.road}"></span>
+
+                        <span th:if="${game.getWasMercyWin() or game.getWasForfeited()}" th:text="#{card.metric.divider.bullet}"></span>
+
+                        <span th:if="${game.getWasMercyWin()}" th:text="#{label.mercy}"></span>
+                        <span th:if="${game.getWasForfeited()}" th:text="#{label.forfeit}"></span>
                     </p>
                 </hgroup>
 
