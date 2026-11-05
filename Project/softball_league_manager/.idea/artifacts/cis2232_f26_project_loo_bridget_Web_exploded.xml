@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="cis2232_f26_project_loo_bridget:Web exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/cis2232_f26_project_loo_bridget_Web_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="cis2232_f26_project_loo_bridget/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="cis2232_f26_project_loo_bridget" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

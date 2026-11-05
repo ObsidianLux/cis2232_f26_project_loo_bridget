@@ -14,7 +14,7 @@
 
     <!-- Project Metadata -->
     <groupId>org.hccis.softball</groupId>
-    <artifactId>cis2232_project_from_scratch</artifactId>
+    <artifactId>cis2232_f26_project_loo_bridget</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>softball_league_manager</name>
     <description>Softball League Manager Application</description>
@@ -112,10 +112,10 @@
         </dependency>
 
         <!-- Spring GraphQL starter -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-graphql</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-graphql</artifactId>-->
+<!--        </dependency>-->
 
         <!-- Stateless JWT Validation Starter -->
         <dependency>
