@@ -23,7 +23,35 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
     </aside>
 
     <main>
-        <h1 th:text="#{add.title}"></h1>
+        <hgroup>
+            <h1 class="center-align quantico-bold" th:text="#{add.title}"></h1>
+        </hgroup>
+        <form method="post" th:action="@{/league/add/submit}" class="grid col-4 row-2 row-gap">
+            <datalist id="teamNames">
+                <option th:each="teamName : ${teamNames}" th:value="${teamName}"></option>
+            </datalist>
+
+            <p class="form-number">1</p>
+            <div>
+                <label for="inputHomeTeam" th:text="#{add.homeTeam.label}"></label>
+                <input list="teamNames" id="inputHomeTeam" th:field="homeTeam" th:placeholder="#{input.combobox.placeholder}" required>
+            </div>
+
+            <p class="form-number">2</p>
+            <div>
+                <label for="inputRoadTeam" th:text="#{add.roadTeam.label}"></label>
+                <input list="teamNames" id="inputRoadTeam" th:field="roadTeam" th:placeholder="#{input.combobox.placeholder}" required>
+            </div>
+
+            <p class="form-number">3</p>
+            <div>
+                <label for="inputGameDay" th:text="#{add.date.label}"></label>
+                <input type="date" id="inputGameDay" th:field="gameDay" required>
+            </div>
+
+            <p class="form-number">4</p>
+            <input type="button" th:value="#{add.next.label}">
+        </form>
     </main>
 </body>
 </html>
