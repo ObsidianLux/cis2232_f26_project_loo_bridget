@@ -69,20 +69,20 @@ Purpose: Sprint 3 - View, Update, Delete Functionalities. Allows the user to vie
 
                         <div class="card-body grid row-2 col-2 row-gap">
                             <div class="metric">
-                                <p class="metric-label" th:text="#{card.metric.inning}" th:data-tooltip="#{games.tooltip.inning}"></p>
+                                <p class="metric-label" th:text="#{metric.inning}" th:data-tooltip="#{games.tooltip.inning}"></p>
                                 <p class="metric-value" th:text="${game.getInnings().size()}"></p>
                             </div>
 
                             <div class="metric">
-                                <p class="metric-label" th:text="#{card.metric.score}" th:data-tooltip="#{games.tooltip.score}"></p>
+                                <p class="metric-label" th:text="#{metric.score}" th:data-tooltip="#{games.tooltip.score}"></p>
                                 <p class="metric-value">
                                     <span th:text="${game.getHomeScore()}"></span>
-                                    <span th:text="#{card.metric.divider.colon}"></span>
+                                    <span th:text="#{metric.divider.colon}"></span>
                                     <span th:text="${game.getRoadScore()}"></span>
                                 </p>
                             </div>
 
-                            <p class="full-row center-align" th:if="${game.getWasMercyWin() or game.getWasForfeited()}" th:text="${game.getWasMercyWin() ? 'Mercy Win' : 'Forfeited'}" th:data-tooltip="#{games.tooltip.exceptionalOutcome}"></p>
+                            <p class="full-row center-align" th:if="${game.getWasMercyWin() or game.getWasForfeited()}" th:text="${game.getWasMercyWin() ? 'Mercy Win' : 'Forfeited'}"></p>
 
                             <a th:href="@{/league/update(id=${game.getId()})}" class="link-button margin-x-auto" th:text="#{games.button.update}"></a>
                             <a th:href="@{/league/delete(id=${game.getId()})}" class="link-button margin-x-auto" th:text="#{games.button.delete}"></a>
