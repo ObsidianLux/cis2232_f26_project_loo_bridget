@@ -37,6 +37,7 @@ public class GameDAO {
 
     /**
      * Select all games.
+     * TODO SPRINT 3 - List Functionality.
      * @return A list of all games.
      * @author BML
      * @since 20261016
@@ -128,5 +129,99 @@ public class GameDAO {
 
         // Returns an empty ArrayList if no games were retrieved.
         return games;
+    }
+
+    /**
+     * Insert a new game record into the SoftballGame table.
+     * TODO SPRINT 3 - Add Functionality
+     * @param game The game to add.
+     * @return True if successfully inserted, otherwise false.
+     * @author BML
+     * @since 20261028
+     */
+    public boolean insertGame(Game game) {
+        String query = "INSERT INTO SoftballGame (homeTeam, roadTeam, date, wasForfeited, wasMercyWin, homeScore, roadScore, innings, played) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+        try (
+                Connection conn = DriverManager.getConnection(connectionString, userName, password);
+                PreparedStatement stmt = conn.prepareStatement(query)
+        ) {
+            stmt.setString(1, game.getHomeTeam());
+            stmt.setString(2, game.getRoadTeam());
+            stmt.setObject(3, game.getDate());
+            stmt.setBoolean(4, game.getWasForfeited());
+            stmt.setBoolean(5, game.getWasMercyWin());
+            stmt.setInt(6, game.getHomeScore());
+            stmt.setInt(7, game.getRoadScore());
+            stmt.setObject(8, game.getInnings());
+            try (ResultSet rs = stmt.executeQuery()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+            // Couldn't insert the record.
+            return false;
+        }
+    }
+
+    /**
+     * Update an existing game record in the SoftballGame table.
+     * TODO SPRINT 3 - Update Functionality
+     * @param game The game to update with the updated data.
+     * @return True if successfully updated, otherwise false.
+     * @author BML
+     * @since 20261028
+     */
+    public boolean updateGame(Game game) {
+        String query = "UPDATE SoftballGame SET homeTeam = ?, roadTeam = ?, date = ?, wasForfeited = ?, wasMercyWin = ?, homeScore = ?, roadScore = ?, innings = ?, played = ? WHERE id = ?;";
+
+        try (
+                Connection conn = DriverManager.getConnection(connectionString, userName, password);
+                PreparedStatement stmt = conn.prepareStatement(query)
+        ) {
+            stmt.setString(1, game.getHomeTeam());
+            stmt.setString(2, game.getRoadTeam());
+            stmt.setObject(3, game.getDate());
+            stmt.setBoolean(4, game.getWasForfeited());
+            stmt.setBoolean(5, game.getWasMercyWin());
+            stmt.setInt(6, game.getHomeScore());
+            stmt.setInt(7, game.getRoadScore());
+            stmt.setObject(8, game.getInnings());
+            stmt.setBoolean(9, game.getPlayed());
+            stmt.setInt(10, game.getId());
+            try (ResultSet rs = stmt.executeQuery()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+            // Couldn't update the record.
+            return false;
+        }
+    }
+
+    /**
+     * Delete an existing game record from the SoftballGame table using its ID.
+     * TODO SPRINT 3 - Delete Functionality
+     * @param gameID The ID of the game to delete.
+     * @return True if successfully delete, otherwise false.
+     * @author BML
+     * @since 20261028
+     */
+    public boolean deleteGame(int gameID) {
+        String query = "DELETE FROM SoftballGame WHERE id = ?;";
+
+        try (
+                Connection conn = DriverManager.getConnection(connectionString, userName, password);
+                PreparedStatement stmt = conn.prepareStatement(query)
+        ) {
+            stmt.setInt(1, gameID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+            // Couldn't delete the record.
+            return false;
+        }
     }
 }
