@@ -18,6 +18,14 @@ public class GameBO {
         return game.getHomeScore() > game.getRoadScore() ? game.getHomeTeam() : game.getRoadTeam();
     }
 
+    /**
+     * Get the score differential for a specific team in a game.
+     * @param game The game to get the differential from
+     * @param teamName The team to get the differential for
+     * @return The score differential
+     * @author BML
+     * @since 20261103
+     */
     public static String getPlusMinus(Game game, String teamName) {
         boolean isWinner = teamName.equals(getWinningTeam(game));
         int scoreDifference = Math.abs(game.getHomeScore() - game.getRoadScore());

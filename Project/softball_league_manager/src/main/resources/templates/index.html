@@ -1,60 +1,205 @@
+<!--
+Author: Bridget Loo
+Date: 2026-11-03
+Class: CIS-2232
+Purpose: Index / home page for the Softball League Manager app.
+-->
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: headerFragment}">
-    <title id="pageTitle">Softball League Manager</title>
-</head>
-<body>
-<header>
-    <nav th:replace="~{fragments/navHeader :: navbar}"></nav>
-</header>
-<main>
-    <hgroup>
-        <h1 class="center-align quantico-bold" th:text="#{index.header}"></h1>
-        <p class="subtitle" th:text="#{index.subtitle}"></p>
-    </hgroup>
 
-    <div class="card-container margin-top-20">
-        <div class="card" th:each="team, iterStat : ${teams}">
+<!-- Enable Thymeleaf -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link})}">
+    <!--
+     Replaces this head element with the headerFragment fragment in the head.html file.
+     Passes the local title and link elements to the head fragment which will inject the title and link elements.
+     I've done this because I want to have more control over what the title of a page is and I want to have separate stylesheets for each page while also having a global stylesheet.
+     If I didn't have a stylesheet for this page, I could just pass _ instead of ~{::link}.
+    -->
+    <title th:text="#{application.name}"></title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+
+<body>
+    <aside th:replace="~{fragments/navSidebar :: navSidebar('index')}">
+        <!--
+        Replaces this aside element with the navSidebar fragment in the navSidebar.html file.
+        Passes the word 'index' into the fragment so that it assigns the 'active' class to the correct navigation item.
+        -->
+    </aside>
+
+    <main>
+        <section>
+            <h1 th:text="#{index.heading.upcoming}" class="quantico-bold"></h1>
+            <div>
+                <!-- Table for upcoming games. -->
+                <table>
+                    <thead class="font-secondary-colour">
+                        <tr>
+                            <th th:text="#{table.upcoming.date}" scope="col"></th>
+                            <th th:text="#{table.upcoming.home}" scope="col"></th>
+                            <th th:text="#{table.upcoming.road}" scope="col"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <!-- Only the next 5 games are displayed, even if there are more upcoming games in the database. -->
+
+                        <!--
+                        'upcomingGames' refers to an attribute that was added to the model by the Controller that mapped to this page.
+                        'game' refers to each instance of the Game class in the 'upcomingGames' list.
+                        -->
+                        <tr th:each="game : ${upcomingGames}">
+                            <td th:text="${game.getDate()}"></td>
+                            <td th:text="${game.getHomeTeam()}"></td>
+                            <td th:text="${game.getRoadTeam()}"></td>
+                        </tr>
+
+                        <!-- If there are fewer than 5 upcoming games, Thymeleaf creates enough empty rows to get the row count up to 5.  -->
+                        <tr th:if="${upcomingGames.size() < 5}" th:each="i : ${#numbers.sequence(1, 5 - upcomingGames.size())}">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+
+                    <!-- The footer of this table has a link to the page where the user can add a new game to the database. -->
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">
+                                <a class="link-button" th:href="@{/league/add}" th:text="#{table.upcoming.add}"></a>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h1 th:text="#{index.heading.past}" class="quantico-bold"></h1>
+            <div>
+                <table>
+                    <thead class="font-secondary-colour">
+                        <tr>
+                            <th th:text="#{table.past.date}"></th>
+                            <th th:text="#{table.past.score}"></th>
+                            <th th:text="#{table.past.winner}"></th>
+                            <th th:text="#{table.past.loser}"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <!-- Only the 5 most recently played games are displayed, even if there are more played games in the database. -->
+
+                        <!--
+                        'pastGames' refers to an attribute that was added to the model by the Controller that mapped to this page.
+                        'game' refers to each instance of the Game class in the 'pastGames' list.
+                        -->
+
+                        <!-- th:with checks whether the home team was the winner or not. The result is used to determine which values to display in certain cells. -->
+                        <tr th:each="game : ${pastGames}" th:with="homeWin=${game.getHomeTeam() == game.getWinningTeam()}">
+                            <td th:text="${game.getDate()}"></td>
+
+                            <td>
+                                <!-- If the winner was the home team, use the home team's score. Otherwise, use the road team's score. -->
+                                <span th:text="${homeWin ? game.getHomeScore() : game.getRoadScore()}"></span>
+                                <span th:text="#{metric.divider.colon}"></span>
+
+                                <!-- Basically the opposite of the first span -->
+                                <span th:text="${homeWin ? game.getRoadScore() : game.getHomeScore()}"></span>
+                            </td>
+
+                            <td th:text="${game.getWinningTeam()}"></td>
+
+                            <!-- Displays the name of the team that didn't win by checking the result of the parent element's th:with. -->
+                            <td th:text="${homeWin ? game.getRoadTeam() : game.getHomeTeam()}"></td>
+                        </tr>
+
+                        <!-- If there are fewer than 5 past games, Thymeleaf creates enough empty rows to get the row count up to 5.  -->
+                        <tr th:if="${pastGames.size() < 5}" th:each="i : ${#numbers.sequence(1, 5 - pastGames.size())}">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+
+                    <!-- The footer of this table has a link to the page where the user can view all games in the database. -->
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <a class="link-button" th:href="@{/league/view}" th:text="#{table.past.view}"></a>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <section id="standings">
+            <!-- Semantic group for the heading elements -->
             <hgroup>
-                <h2 th:text="${team.getTeamName()}" class="quantico-bold font-secondary-colour"></h2>
+                <h1 th:text="#{index.heading.standing}" class="primary-heading"></h1>
+                <p th:text="#{index.heading.standing.subtitle}" class="subtitle"></p>
             </hgroup>
 
-            <div class="card-body grid row-2 col-2 row-gap">
-                <div class="metric">
-                    <p class="metric-label" th:text="#{card.metric.game}"></p>
-                    <p class="metric-value" th:text="${team.getNumberOfGamesPlayed()}"></p>
-                </div>
+            <!-- TODO: Tooltips -->
 
-                <div class="metric">
-                    <p class="metric-label" th:text="#{card.metric.pct}"></p>
-                    <p class="metric-value" th:text="${team.getWinPercentageString()}"></p>
-                </div>
+            <div class="card-container">
+                <!--
+                'teams' refers to an attribute that was added to the model by the Controller that mapped to this page.
+                'team' refers to an instance of the Team class in the 'teams' list.
+                -->
+                <div class="card" th:each="team : ${teams}">
+                    <hgroup>
+                        <h2 th:text="${team.getTeamName()}" class="quantico-bold font-secondary-colour"></h2>
+                    </hgroup>
 
-                <div class="metric">
-                    <p class="metric-label font-win" th:text="#{card.metric.win}"></p>
-                    <div class="metric-group">
-                        <p class="metric-value" th:text="${team.getWins().total()}"></p>
-                        <p class="metric-divider" th:text="#{card.metric.divider.bullet}"></p>
-                        <p class="metric-value" th:text="${team.getWins().mercy()}"></p>
-                        <p class="metric-divider" th:text="#{card.metric.divider.bullet}"></p>
-                        <p class="metric-value" th:text="${team.getWins().forfeit()}"></p>
-                    </div>
-                </div>
+                    <!-- The card body has 4 'metrics' that I created with inspiration from Streamlit's native metric component. -->
+                    <div class="card-body-standing">
+                        <div class="metric">
+                            <p class="metric-label" th:text="#{metric.game}"></p>
+                            <p class="metric-value" th:text="${team.getNumberOfGamesPlayed()}"></p>
+                        </div>
 
-                <div class="metric">
-                    <p class="metric-label font-loss" th:text="#{card.metric.loss}"></p>
-                    <div class="metric-group">
-                        <p class="metric-value" th:text="${team.getLosses().total()}"></p>
-                        <p class="metric-divider" th:text="#{card.metric.divider.bullet}"></p>
-                        <p class="metric-value" th:text="${team.getLosses().mercy()}"></p>
-                        <p class="metric-divider" th:text="#{card.metric.divider.bullet}"></p>
-                        <p class="metric-value" th:text="${team.getLosses().forfeit()}"></p>
+                        <div class="metric">
+                            <p class="metric-label" th:text="#{metric.pct}"></p>
+                            <p class="metric-value" th:text="${team.getWinPercentageString()}"></p>
+                        </div>
+
+                        <div class="metric">
+                            <p class="metric-label font-win" th:text="#{metric.win}"></p>
+
+                            <!-- Displays the total number of wins, the number of wins via Mercy Rule, and the number of wins by forfeit. -->
+                            <div class="metric-group">
+                                <p class="metric-value" th:text="${team.getWins().total()}"></p>
+                                <p class="metric-divider" th:text="#{metric.divider.bullet}"></p>
+                                <p class="metric-value" th:text="${team.getWins().mercy()}"></p>
+                                <p class="metric-divider" th:text="#{metric.divider.bullet}"></p>
+                                <p class="metric-value" th:text="${team.getWins().forfeit()}"></p>
+                            </div>
+                        </div>
+
+                        <div class="metric">
+                            <p class="metric-label font-loss" th:text="#{metric.loss}"></p>
+
+                            <!-- Displays the total number of losses, the number of losses via Mercy Rule, and the number of losses by forfeit. -->
+                            <div class="metric-group">
+                                <p class="metric-value" th:text="${team.getLosses().total()}"></p>
+                                <p class="metric-divider" th:text="#{metric.divider.bullet}"></p>
+                                <p class="metric-value" th:text="${team.getLosses().mercy()}"></p>
+                                <p class="metric-divider" th:text="#{metric.divider.bullet}"></p>
+                                <p class="metric-value" th:text="${team.getLosses().forfeit()}"></p>
+                            </div>
+                        </div>
+
+                        <!-- Links to the Team History Report and passes the team name as a parameter to generate the report without having to select the team first. -->
+                        <a class="link-button" th:href="@{/reports/history/view(teamName=${team.getTeamName()})}" th:text="#{index.standing.history}"></a>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</main>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
+        </section>
+    </main>
 </body>
+
 </html>

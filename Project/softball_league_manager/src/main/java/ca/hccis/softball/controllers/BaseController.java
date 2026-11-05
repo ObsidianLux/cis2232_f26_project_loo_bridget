@@ -13,8 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 /**
  * Base controller for the general functionality of the application.
@@ -40,17 +42,33 @@ public class BaseController {
      */
     @RequestMapping("/")
     public String home(HttpSession session, Model model) {
-        // TODO DONE Issue #1 Set the current date in the session.
+        // TODO DONE Sprint 1 - Issue #1 Set the current date in the session.
         String today = Utility.getCurrentDate("yyyy-MM-dd");
         session.setAttribute("today", today);
 
         // Get the games.
         ArrayList<Game> games = new ArrayList<>();
         _gr.findAll().forEach(games::add);
-        model.addAttribute("games", games);
 
-        ArrayList<Team> teams = GameBO.selectAllTeams();
+        // Split the games into upcoming and past.
+        ArrayList<Game> upcomingGames = games.stream()
+                .filter(game -> game.getDate().isAfter(LocalDate.now()))
+                .sorted(Comparator.comparing(Game::getDate))
+                .limit(5)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<Game> pastGames = games.stream()
+                .filter(game -> game.getDate().isBefore(LocalDate.now()))
+                .sorted(Comparator.comparing(Game::getDate).reversed())
+                .limit(5)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Limit the number of games that are passed to the model to 5.
+        model.addAttribute("upcomingGames", upcomingGames);
+        model.addAttribute("pastGames", pastGames);
+
         // Sort by win percentage, then by number of mercy wins, and finally by number of forfeit wins. Reverse so that the highest standing is listed first.
+        ArrayList<Team> teams = GameBO.selectAllTeams();
         teams.sort(Comparator.comparingDouble(Team::getWinPercentage).thenComparingInt(Team::getMercyWins).thenComparingInt(Team::getForfeitWins).reversed());
         model.addAttribute("teams", teams);
 

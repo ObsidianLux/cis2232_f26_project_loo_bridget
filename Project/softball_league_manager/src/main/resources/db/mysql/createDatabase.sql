@@ -6,8 +6,8 @@ DROP TABLE IF EXISTS SoftballGame;
 CREATE TABLE SoftballGame
 (
     id int NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique id for the game',
-    homeTeam varchar(20) NOT NULL COMMENT 'The Home team''s name',
-    roadTeam varchar(20) NOT NULL COMMENT 'The Road team''s name',
+    homeTeam varchar(30) NOT NULL COMMENT 'The Home team''s name',
+    roadTeam varchar(30) NOT NULL COMMENT 'The Road team''s name',
     date DATE NOT NULL COMMENT 'The date on which the game is scheduled to be played',
     wasForfeited boolean COMMENT 'Whether the game was forfeited by one of the teams',
     wasMercyWin boolean COMMENT 'Whether the game was won because of the mercy rule',
@@ -22,7 +22,7 @@ INSERT INTO SoftballGame
  wasMercyWin, homeScore, roadScore, played, innings)
 VALUES
     (
-        1, 'Apples', 'Oranges', '2026-10-21',false, false, 5, 3, true,
+        1, 'The Umpire Strikes Back', 'Bat Intentions', '2026-10-21',false, false, 5, 3, true,
         '[
           {"inningNumber": 1, "homeRuns": 1, "roadRuns": 0},
           {"inningNumber": 2, "homeRuns": 0, "roadRuns": 2},
@@ -34,7 +34,7 @@ VALUES
         ]'
     ),
     (
-        2, 'Apples', 'Bananas', '2026-10-22', false, false, 4, 6, true,
+        2, 'The Umpire Strikes Back', 'Hit Happens', '2026-10-22', false, false, 4, 6, true,
         '[
           {"inningNumber": 1, "homeRuns": 0, "roadRuns": 1},
           {"inningNumber": 2, "homeRuns": 2, "roadRuns": 0},
@@ -46,7 +46,7 @@ VALUES
         ]'
     ),
     (
-        3, 'Bananas', 'Oranges', '2026-10-23', false, true, 3, 12, true,
+        3, 'Hit Happens', 'Bat Intentions', '2026-10-23', false, true, 3, 12, true,
         '[
           {"inningNumber": 1, "homeRuns": 0, "roadRuns": 2},
           {"inningNumber": 2, "homeRuns": 1, "roadRuns": 3},
@@ -56,7 +56,7 @@ VALUES
         ]'
     ),
     (
-        4, 'Grapes', 'Apples', '2026-10-24', false, false, 4, 5, true,
+        4, 'Scared Hitless', 'The Umpire Strikes Back', '2026-10-24', false, false, 4, 5, true,
         '[
           {"inningNumber": 1, "homeRuns": 1, "roadRuns": 0},
           {"inningNumber": 2, "homeRuns": 0, "roadRuns": 1},
@@ -68,8 +68,8 @@ VALUES
         ]'
     ),
     (
-        5, 'Oranges', 'Grapes', '2026-10-25', true, false, 0, 7, true, NULL
+        5, 'Bat Intentions', 'Scared Hitless', '2026-10-25', true, false, 0, 7, true, NULL
     );
 
 INSERT INTO SoftballGame (id, homeTeam, roadTeam, date)
-VALUES (6, 'Grapes', 'Bananas' , '2026-10-26'), (7, 'Grapefruit', 'Apples', '2026-10-27');
+VALUES (6, 'Scared Hitless', 'Hit Happens' , '2027-10-26'), (7, 'Base-ically the Best', 'The Umpire Strikes Back', '2027-10-27');
