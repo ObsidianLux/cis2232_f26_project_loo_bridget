@@ -21,8 +21,76 @@ Purpose: Sprint 3 - View, Update, Delete Functionalities. Allows the user to vie
         Passes the word 'view' into the fragment so that it assigns the 'active' class to the correct navigation item.
         -->
     </aside>
+
     <main>
-        <h1 th:text="#{games.title}"></h1>
+        <hgroup>
+            <h1 class="center-align quantico-bold" th:text="#{games.title}"></h1>
+            <!-- Display a notification if a game was deleted. -->
+            <p th:if="${deletedMessage != null}" th:text="${deletedMessage}" class="toast"></p>
+        </hgroup>
+
+        <div class="grid col-1 row-2 row-gap">
+            <div class="flex-container col">
+                <hgroup>
+                    <h2 class="center-align quantico-bold" th:text="#{games.subtitle.unplayed}" th:data-tooltip="#{games.tooltip.unplayed}"></h2>
+                </hgroup>
+
+                <!-- Display the list of unplayed games -->
+                <div class="card-container margin-top-20">
+                    <div class="card" th:each="game : ${unplayedGames}">
+                        <hgroup>
+                            <h3 class="quantico-bold">
+                                <span class="font-secondary-colour" th:text="${game.getHomeTeam()}" th:data-tooltip="#{games.tooltip.home}"></span>
+                                 vs
+                                <span class="font-secondary-colour" th:text="${game.getRoadTeam()}" th:data-tooltip="#{games.tooltip.road}"></span>
+                            </h3>
+                            <p class="subtitle small" th:text="${game.getDate()}" th:data-tooltip="#{games.tooltip.upcomingDate}"></p>
+                        </hgroup>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-container col">
+                <hgroup>
+                    <h2 class="center-align quantico-bold full-width" th:text="#{games.subtitle.played}" th:data-tooltip="#{games.tooltip.played}"></h2>
+                </hgroup>
+
+                <!-- Display the list of played games -->
+                <div class="card-container margin-top-20">
+                    <div class="card" th:each="game : ${playedGames}">
+                        <hgroup>
+                            <h3 class="quantico-bold">
+                                <span th:classappend="${game.getWinningTeam() == game.getHomeTeam() ? 'font-win' : 'font-loss'}" th:text="${game.getHomeTeam()}" th:data-tooltip="#{games.tooltip.home}"></span>
+                                 vs
+                                <span th:classappend="${game.getWinningTeam() == game.getRoadTeam() ? 'font-win' : 'font-loss'}" th:text="${game.getRoadTeam()}" th:data-tooltip="#{games.tooltip.road}"></span>
+                            </h3>
+                            <p class="subtitle small" th:text="${game.getDate()}" th:data-tooltip="#{games.tooltip.pastDate}"></p>
+                        </hgroup>
+
+                        <div class="card-body grid row-2 col-2 row-gap">
+                            <div class="metric">
+                                <p class="metric-label" th:text="#{card.metric.inning}" th:data-tooltip="#{games.tooltip.inning}"></p>
+                                <p class="metric-value" th:text="${game.getInnings().size()}"></p>
+                            </div>
+
+                            <div class="metric">
+                                <p class="metric-label" th:text="#{card.metric.score}" th:data-tooltip="#{games.tooltip.score}"></p>
+                                <p class="metric-value">
+                                    <span th:text="${game.getHomeScore()}"></span>
+                                    <span th:text="#{card.metric.divider.colon}"></span>
+                                    <span th:text="${game.getRoadScore()}"></span>
+                                </p>
+                            </div>
+
+                            <p class="full-row center-align" th:if="${game.getWasMercyWin() or game.getWasForfeited()}" th:text="${game.getWasMercyWin() ? 'Mercy Win' : 'Forfeited'}" th:data-tooltip="#{games.tooltip.exceptionalOutcome}"></p>
+
+                            <a th:href="@{/league/update(id=${game.getId()})}" class="link-button margin-x-auto" th:text="#{games.button.update}"></a>
+                            <a th:href="@{/league/delete(id=${game.getId()})}" class="link-button margin-x-auto" th:text="#{games.button.delete}"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 </body>
 </html>
