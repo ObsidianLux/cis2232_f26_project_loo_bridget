@@ -1,0 +1,193 @@
+/*
+Author: Bridget Loo
+Date: 2026-12-10
+Class: CIS-2232
+Purpose: Stylesheet specific to the history.html page.
+ */
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: min-content 1fr;
+    gap: 20px;
+
+    section {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px !important;
+
+        &.horizontal {
+            display: flex;
+            flex-flow: row nowrap;
+            gap: 20px;
+
+            /* This grid item will span 2 columns instead of 1. */
+            grid-column: span 2;
+        }
+
+        &.vertical {
+            display: flex;
+            flex-flow: column nowrap;
+            gap: 20px;
+        }
+
+        .card-container {
+            flex-flow: column nowrap;
+            justify-content: flex-start;
+
+            &:has(.total-center) {
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+
+            .card-game {
+                display: flex;
+                flex-flow: row nowrap;
+                gap: 20px;
+                justify-content: space-between;
+
+                height: min-content;
+
+                box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
+                padding: 15px;
+                background-color: var(--cloud-blue);
+
+                border-radius: 10px;
+
+                width: 100%;
+
+                &:hover {
+                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                    transition: 300ms;
+                }
+
+                > div:has(hgroup) {
+                    display: flex;
+                    flex-flow: column nowrap;
+                    gap: 5px;
+
+                    width: min-content;
+
+                    > hgroup {
+                        display: flex;
+                        flex-flow: row nowrap;
+                        gap: 20px;
+                        align-items: baseline;
+
+                        * {
+                            white-space: nowrap;
+                        }
+                    }
+
+                    > .card-game-opponent {
+                        display: flex;
+                        flex-flow: row nowrap;
+                        gap: 20px;
+                        align-items: baseline;
+
+                        > :first-child {
+                            text-transform: uppercase;
+                            color: var(--midnight-blue);
+                        }
+
+                        > :last-child {
+                            white-space: nowrap;
+                            font-weight: bold;
+                        }
+                    }
+                }
+
+                > .card-body-game {
+                    display: flex;
+                    flex-flow: row nowrap;
+                    gap: 30px;
+                    align-items: center;
+                }
+            }
+        }
+
+        .flex-row-centered {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+        }
+
+        #historyMetrics {
+            display: grid;
+            grid-template-columns: 100px 100px 100px;
+            grid-template-rows: min-content;
+            gap: 20px;
+
+            height: min-content;
+
+            .metric {
+                background-color: var(--cloud-blue);
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
+
+                justify-content: center;
+
+                &:hover {
+                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                    transition: 300ms;
+                }
+            }
+        }
+    }
+}
+
+/*region CHART STYLING*/
+
+.chart-container {
+    width: 100%;
+
+    &:has(.total-center) {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+
+        flex-grow: 1;
+    }
+}
+
+#historyChart {
+    /* TODO This works when expanding the navbar, but it stays small after collapsing the navbar again. */
+    max-width: clamp(600px, 100%, 1000px);
+}
+
+/*endregion*/
+
+/*region FONT STYLING*/
+
+.font-win {
+    color: var(--win-colour) !important;
+}
+
+.font-loss {
+    color: var(--loss-colour) !important;
+}
+
+/*endregion*/
+
+/*region FORM STYLING*/
+
+form {
+    /*background-color: white;*/
+    border-radius: 10px;
+
+    /* All child elements in a form are displayed vertically and are aligned to the middle of the form horizontally. */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+
+    padding: 20px;
+
+    width: min-content;
+    margin-left: auto;
+}
+
+/*endregion*/

@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="headerFragment">
+<head th:fragment="headerFragment(pageTitle, pageStyle)">
+    <!-- I've ignored the missing title issue with this head element because the calling html file will provide a title element to inject. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title id="pageTitle" th:text="#{application.name}"></title>
+
+    <!-- Injects page-specific title -->
+    <th:block th:replace="${pageTitle}"></th:block>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap">
 
     <!-- Styling -->
-    <link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/css/global.css}" type="text/css"/>
+    <!-- Injects page-specific styling -->
+    <th:block th:replace="${pageStyle}"></th:block>
+
+    <!-- Local Scripts -->
+    <script type="text/javascript" th:src="@{/js/script.js}" defer></script>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

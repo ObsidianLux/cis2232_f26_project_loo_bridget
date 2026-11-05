@@ -1,0 +1,49 @@
+/*
+Author: Bridget Loo
+Date: 2026-12-10
+Class: CIS-2232
+Purpose: Stylesheet specific to the index.html page.
+ */
+
+main {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+
+    #standings {
+        grid-row: span 2;
+        gap: 10px;
+    }
+
+    section {
+        display: grid;
+        grid-template-rows: min-content 1fr;
+        grid-template-columns: 1fr;
+
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .card-body-standing {
+        width: 100%;
+
+        display: grid;
+        grid-template-rows: repeat(3, max-content);
+        grid-template-columns: 1fr 1fr;
+        row-gap: 20px;
+
+        a {
+            grid-column: span 2;
+            margin: 0 auto;
+            text-align: center;
+        }
+    }
+}
+
+/* Adjust the column distribution in main when the navbar isn't collapsed. */
+:not(.collapsed) + main {
+    grid-template-columns: 3fr 2fr;
+}

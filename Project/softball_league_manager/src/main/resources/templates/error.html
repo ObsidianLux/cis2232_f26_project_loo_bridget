@@ -1,16 +1,24 @@
+<!--
+Author: Bridget Loo
+Date: 2026-11-03
+Class: CIS-2232
+Purpose: Error page that will display if there is an issue displaying the contents of a page.
+-->
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments/head :: headerFragment}">
-    <meta charset="UTF-8">
-    <title id="pageTitle">From head.html</title>
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, _)}">
+    <!-- Passing '_' into the fragment means that it will not inject any custom stylesheets. -->
+    <title th:text="#{application.name}"></title>
 </head>
 <body>
-<header>
-    <nav th:replace="~{fragments/navHeader :: navbar}"></nav>
-</header>
+<aside th:replace="~{fragments/navSidebar :: navSidebar(_)}">
+    <!--
+    Replaces this aside element with the navSidebar fragment in the navSidebar.html file.
+    Passes '_' into the fragment so that it doesn't assign the 'active' class to any navigation item.
+    -->
+</aside>
 <main>
     <h2 th:text="#{label.error}"></h2>
 </main>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

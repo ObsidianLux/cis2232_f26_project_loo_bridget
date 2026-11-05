@@ -2,16 +2,21 @@ package ca.hccis.softball.controllers;
 
 import ca.hccis.softball.bo.GameBO;
 import ca.hccis.softball.entity.Team;
+import ca.hccis.softball.jpa.entity.Game;
+import ca.hccis.softball.repositories.GameRepository;
 
 import ca.hccis.softball.util.Utility;
 import jakarta.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 /**
  * Base controller for the general functionality of the application.
@@ -20,6 +25,13 @@ import java.util.Comparator;
  */
 @Controller
 public class BaseController {
+    private final GameRepository _gr;
+
+    @Autowired
+    public BaseController(GameRepository _gr) {
+        this._gr = _gr;
+    }
+
     /**
      * Send the user to the home view.
      * @param session The current HTTP session
@@ -30,16 +42,59 @@ public class BaseController {
      */
     @RequestMapping("/")
     public String home(HttpSession session, Model model) {
-        // TODO DONE Issue #1 Set the current date in the session.
+        // TODO DONE Sprint 1 - Issue #1 Set the current date in the session.
         String today = Utility.getCurrentDate("yyyy-MM-dd");
         session.setAttribute("today", today);
 
-        ArrayList<Team> teams = GameBO.selectAllTeams();
+        // Get the games.
+        ArrayList<Game> games = new ArrayList<>();
+        _gr.findAll().forEach(games::add);
+
+        // Split the games into upcoming and past.
+        ArrayList<Game> upcomingGames = games.stream()
+                .filter(game -> game.getDate().isAfter(LocalDate.now()))
+                .sorted(Comparator.comparing(Game::getDate))
+                .limit(5)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<Game> pastGames = games.stream()
+                .filter(game -> game.getDate().isBefore(LocalDate.now()))
+                .sorted(Comparator.comparing(Game::getDate).reversed())
+                .limit(5)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Limit the number of games that are passed to the model to 5.
+        model.addAttribute("upcomingGames", upcomingGames);
+        model.addAttribute("pastGames", pastGames);
+
         // Sort by win percentage, then by number of mercy wins, and finally by number of forfeit wins. Reverse so that the highest standing is listed first.
+        ArrayList<Team> teams = GameBO.selectAllTeams();
         teams.sort(Comparator.comparingDouble(Team::getWinPercentage).thenComparingInt(Team::getMercyWins).thenComparingInt(Team::getForfeitWins).reversed());
         model.addAttribute("teams", teams);
 
         // Return the view.
         return "index";
+    }
+
+    /**
+     * Send the user to the add game view.
+     * @return The add view
+     * @author BML
+     * @since 20261020
+     */
+    @RequestMapping("/add")
+    public String add() {
+        return "/league/add";
+    }
+
+    /**
+     * Send the user to the view games view.
+     * @return The view games view
+     * @author BML
+     * @since 20261020
+     */
+    @RequestMapping("/view")
+    public String view() {
+        return "league/games";
     }
 }

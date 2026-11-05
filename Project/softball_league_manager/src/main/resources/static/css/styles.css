@@ -1,152 +1,21 @@
-:root {
-    --primary-colour: skyblue;
-
-    --cloud-blue: #EDF4FA;
-    --powder-sky: #CFE3F1;
-    --calm-ocean: #8FB6D8;
-    --dusty-denim: #5F86A6;
-    --midnight-blue: #243A5E;
-
-    --font-on-dark: white;
-    --font-on-light: black;
-
-    --win-colour: #80EF80;
-    --loss-colour: #FF746C;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-
-    font-family: "Arial", sans-serif;
-}
-
-/* Google Fonts Quantico Font */
-.quantico-bold {
-    font-family: "Quantico", sans-serif;
-    font-weight: 700;
-    font-style: normal;
-}
-
-/*region BASE STYLING*/
-
-html {
-    width: 100%;
-    height: 100%;
-}
-
-header {
-    background-color: var(--dusty-denim);
-    color: var(--font-on-dark);
-    padding: 5px 0;
-
-    position: sticky;
-    top: 0;
-
-    nav {
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        gap: 30px;
-
-        .navbar-brand {
-            padding-left: 10px;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: x-large;
-        }
-
-        ul {
-            list-style-type: none;
-
-            display: flex;
-            flex-flow: row nowrap;
-            gap: 15px;
-        }
-
-        a {
-            text-decoration: none;
-            color: var(--font-on-dark);
-
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        a:not(.navbar-brand):hover {
-            color: var(--font-on-dark);
-            background-color: var(--midnight-blue);
-        }
-
-        /* TODO Make this work */
-        a:active {
-            color: var(--dusty-denim) !important;
-        }
-    }
-}
-
-body {
-    position: relative;
-    height: 100%;
-    min-height: 100vh;
-    background-color: var(--powder-sky);
-
-    display: grid;
-    grid-template-rows: min-content auto min-content;
-
-    main {
-        background-color: var(--cloud-blue);
-
-        width: 80%;
-        margin: 0 auto;
-
-        display: flex;
-        flex-flow: column nowrap;
-        gap: 10px;
-        padding: 10px 40px;
-
-        h1 {
-            /* All h1 elements in the main element will have this font colour. */
-            color: var(--midnight-blue);
-        }
-    }
-}
-
-footer {
-    height: fit-content;
-    text-align: center;
-
-    padding: 5px 10px;
-
-    background-color: var(--dusty-denim);
-    color: var(--font-on-dark);
-}
-
-/*endregion*/
-
 /*region FORM & INPUT STYLING*/
 
-input[type="submit"] {
+.form {
+    background-color: white;
     border-radius: 10px;
-    padding: 10px 20px;
-    border: none;
 
-    &:hover {
-        cursor: pointer;
-        background-color: var(--calm-ocean);
-        color: var(--font-on-dark);
-    }
+    /* All child elements in a form are displayed vertically and are aligned to the middle of the form horizontally. */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    padding: 20px;
 }
 
-select {
-    border-radius: 10px;
-    padding: 5px 0 5px 5px;
-    width: 200px;
 
-    &:hover {
-        cursor: pointer;
-    }
-}
+
+
 
 .field-horizontal {
     display: flex;
@@ -178,182 +47,6 @@ select {
         background-color: var(--calm-ocean);
     }
 }
-
-/*endregion*/
-
-/*region CARD STYLING*/
-
-.card-container {
-    width: 100%;
-
-    display: flex;
-    flex-flow: row wrap;
-    gap: 20px;
-
-    justify-content: center;
-}
-
-.card {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    padding: 20px;
-    background-color: white;
-
-    border-radius: 10px;
-
-    display: flex;
-    flex-flow: column nowrap;
-    gap: 15px;
-
-    align-items: center;
-
-    width: 250px;
-
-    &:hover {
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        transition: 300ms;
-    }
-
-    hgroup {
-        display: flex;
-        flex-flow: column nowrap;
-
-        h2 {
-            width: 100%;
-            text-align: center;
-            font-size: xx-large;
-        }
-
-        p {
-            width: 100%;
-            text-align: center;
-            font-size: large;
-        }
-    }
-}
-
-/* Perfectly round circle */
-.form-number {
-    width: fit-content;
-    aspect-ratio: 1;
-    padding: 10px;
-    border-radius: 50%;
-
-    background-color: white;
-    color: var(--font-on-light);
-    border: thin solid var(--font-on-light);
-}
-
-/*endregion*/
-
-/*region DISPLAY STYLING*/
-
-.grid {
-    display: grid;
-    width: 100%;
-
-    &:not(form) {
-        &.col-1 {
-            grid-template-columns: 1fr;
-
-            .full-row {
-                grid-column: span 1;
-            }
-        }
-
-        &.col-2 {
-            grid-template-columns: 1fr 1fr;
-
-            .full-row {
-                grid-column: span 2;
-            }
-        }
-    }
-
-    &:has(form) {
-        &.col-4 {
-            grid-template-columns: min-content 1fr min-content 1fr;
-
-            .full-row {
-                grid-column: span 4;
-            }
-        }
-    }
-
-    &.row-2 {
-        grid-template-rows: repeat(2, max-content);
-    }
-
-    &.row-1 {
-        grid-template-rows: max-content;
-    }
-
-    &.row-gap {
-        row-gap: 20px;
-    }
-
-    &.col-gap {
-        column-gap: 20px;
-    }
-}
-
-.flex-container {
-    display: flex;
-
-    &.row {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: space-evenly;
-        width: 100%;
-    }
-
-    &.col {
-        flex-direction: column;
-        flex-wrap: nowrap;
-
-        > * {
-            height: fit-content;
-        }
-    }
-}
-
-/*endregion*/
-
-/*region TOAST & TOOLTIP*/
-
-.toast {
-    background-color: var(--powder-sky);
-    padding: 20px 30px;
-    width: 100%;
-}
-
-/* Tooltip container position setup */
-[data-tooltip] {
-    position: relative;
-    cursor: help;
-
-    /* Generate the tooltip dynamically from the data attribute data */
-    &:hover::after {
-        content: attr(data-tooltip); /* Pulls content from the HTML attribute */
-
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        z-index: 10;
-
-        transform: translateX(-50%);
-
-        background-color: #333;
-        color: #fff;
-
-        padding: 6px 10px;
-        border-radius: 4px;
-
-        white-space: nowrap;
-        font-size: small;
-        font-weight: normal;
-    }
-}
-
 /*endregion*/
 
 /*region GENERAL STYLING*/
@@ -375,26 +68,8 @@ select {
     align-items: center;
 }
 
-/* For text that goes directly below the header of the page */
-.subtitle {
-    text-align: center;
-
-    &.small {
-        font-size: small;
-        font-style: italic;
-    }
-}
-
 .margin-top-20 {
     margin-top: 20px;
-}
-
-.margin-x-auto {
-    margin: 0 auto;
-}
-
-.margin-top-auto {
-    margin-top: auto;
 }
 
 /* Colour-coded based on value of 'win' or 'loss' */
@@ -406,14 +81,6 @@ select {
 .bg-loss {
     background-color: var(--loss-colour);
     color: var(--loss-colour);
-}
-
-.font-win {
-    color: var(--win-colour) !important;
-}
-
-.font-loss {
-    color: var(--loss-colour) !important;
 }
 
 .bold {
@@ -435,47 +102,19 @@ select {
     width: min-content;
 }
 
-.font-secondary-colour {
-    color: var(--dusty-denim);
-}
-
-.chart-container {
-    width: 100%;
-}
-
-.metric {
+.flex-container {
     display: flex;
-    flex-flow: column nowrap;
 
-    .metric-group {
-        display: flex;
-        flex-flow: row nowrap;
-        gap: 5px;
-
-        justify-content: center;
-        align-items: center;
-    }
-
-    .metric-label {
-        text-align: center;
-        text-transform: uppercase;
-        color: var(--midnight-blue);
-    }
-
-    .metric-value {
-        text-align: center;
-        font-size: x-large;
-    }
-
-    .metric-divider {
-        text-align: center;
-        font-size: large;
+    &.row {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+        width: 100%;
     }
 }
 
 /*endregion*/
 
-/*region STYLING BY ID*/
 #teamHistoryForm {
     display: flex;
     flex-flow: row nowrap;
@@ -493,8 +132,3 @@ select {
         text-align: center;
     }
 }
-
-#historyChart {
-    max-height: 300px;
-}
-/*endregion*/

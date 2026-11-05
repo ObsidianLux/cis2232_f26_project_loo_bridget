@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Entity class to hold the attributes of the reports.
+ * Entity class to hold the attributes of the team history report.
  */
 public class ReportHistory {
     private Team team;
@@ -28,8 +28,12 @@ public class ReportHistory {
         this.teamName = teamName;
     }
 
+    /**
+     * Get a list of games played by the team.
+     * @return List of played games or an empty list if none have been played.
+     */
     public ArrayList<Game> getGames() {
-        return this.getTeam() != null ? this.getTeam().getPlayedGames() : null;
+        return this.getTeam() != null ? this.getTeam().getPlayedGames() : new ArrayList<>();
     }
 
     public ArrayList<Team> getTeams() {
@@ -48,6 +52,12 @@ public class ReportHistory {
         this.team = team;
     }
 
+    /**
+     * Get a Team object from the teams list by matching the name in the teamName attribute.
+     * @return The team
+     * @author BML
+     * @since 20261105
+     */
     public Team getTeamByName() {
         for (Team team : this.teams) {
             if (team.getTeamName().equals(this.teamName)) return team;
@@ -55,6 +65,12 @@ public class ReportHistory {
         return null;
     }
 
+    /**
+     * Get the datasets and x-axis labels for the Team History report chart. This method will likely appear to be unused, but it gets called in the script element in history.html.
+     * @return The datasets and labels.
+     * @author BML
+     * @since 20261030
+     */
     public HistoryReportData getHistoryReportData() {
         List<String> xAxisLabels = new ArrayList<>();
         List<Integer> teamScoreDataSet = new ArrayList<>();
@@ -63,7 +79,9 @@ public class ReportHistory {
         // Only include played games in the report.
         ArrayList<Game> games = this.getGames().stream().filter(Game::getPlayed).collect(Collectors.toCollection(ArrayList::new));
 
+        // Loop through the played games.
         for (Game game : games) {
+            // Determine whether the team being reported on is the home team or road team for this game.
             boolean teamIsHome = this.getTeamName().equals(game.getHomeTeam());
 
             xAxisLabels.add("%s (%s)".formatted(getOpponentTeamName(game.getHomeTeam(), game.getRoadTeam()), game.getDate().toString()));

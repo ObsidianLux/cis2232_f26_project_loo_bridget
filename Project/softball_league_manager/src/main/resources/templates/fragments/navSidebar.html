@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<aside th:fragment="navSidebar(currentPage)" class="collapsed">
+    <!-- When this fragment is pulled into another html page, it uses the value passed in the currentPage parameter to assign the 'active' class to the appropriate nav item. -->
+
+    <!-- The 'collapsed' class is toggled by clicking on the nav menu's toggle button. -->
+
+    <!-- All navigation icons are from Google Material Icons -->
+    <div>
+        <p class="navbar-brand quantico-bold" th:text="#{application.name}"></p>
+        <img src="/images/menu.svg" alt="Menu icon" id="nav-toggle-btn">
+    </div>
+
+    <nav role="navigation" aria-label="main navigation">
+        <ul>
+            <li th:classappend="${currentPage == 'index' ? 'active' : ''}" class="nav-item">
+                <a th:href="@{/}">
+                    <img src="/images/home.svg" alt="Home icon">
+                    <span th:text="#{nav.home}"></span>
+                </a>
+            </li>
+            <li th:classappend="${currentPage == 'view' ? 'active' : ''}" class="nav-item">
+                <a th:href="@{/league/view}">
+                    <img src="/images/calendar_today.svg" alt="Calendar today icon">
+                    <span th:text="#{nav.view}"></span>
+                </a>
+            </li>
+            <li th:classappend="${currentPage == 'add' ? 'active' : ''}" class="nav-item">
+                <a th:href="@{/league/add}">
+                    <img src="/images/calendar_add_on.svg" alt="Calendar add on icon">
+                    <span th:text="#{nav.add}"></span>
+                </a>
+            </li>
+            <li th:classappend="${currentPage == 'history' ? 'active' : ''}" class="nav-item">
+                <a th:href="@{/reports/history}">
+                    <img src="/images/history.svg" alt="History icon">
+                    <span th:text="#{nav.history}"></span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <footer>
+        <!-- Access the date from the session, which was set by the Controller the first time the index page was loaded. -->
+        <span th:text="${session.today}"></span>
+        <span th:text="#{metric.divider.bullet}"></span>
+        <span th:text="#{application.author}"></span>
+        <span th:text="#{metric.divider.bullet}"></span>
+        <span th:text="#{application.course}"></span>
+    </footer>
+</aside>
+</html>

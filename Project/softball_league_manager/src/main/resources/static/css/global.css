@@ -1,0 +1,413 @@
+/*
+Author: Bridget Loo
+Date: 2026-12-10
+Class: CIS-2232
+Purpose: Global stylesheet.
+ */
+:root {
+    --primary-colour: skyblue;
+
+    --cloud-blue: #EDF4FA;
+    --powder-sky: #CFE3F1;
+    --calm-ocean: #8FB6D8;
+    --dusty-denim: #5F86A6;
+    --midnight-blue: #243A5E;
+
+    --font-on-dark: white;
+    --font-on-light: black;
+
+    --win-colour: #80EF80;
+    --loss-colour: #FF746C;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+    font-family: "Arial", sans-serif;
+}
+
+/* Google Fonts Quantico Font */
+.quantico-bold {
+    font-family: "Quantico", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+html {
+    min-width: 246px;
+
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-flow: row nowrap;
+    column-gap: 10px;
+    padding-right: 10px;
+
+    height: 100vh;
+    background-color: var(--midnight-blue);
+}
+
+/* Container for the navigation sidebar */
+aside:has(nav) {
+    width: fit-content;
+    height: 100vh;
+
+    background-color: var(--dusty-denim);
+    color: var(--font-on-dark);
+
+    position: sticky;
+    top: 0;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+
+    /* Prevents text overflow during the collapse/expand */
+    overflow: hidden;
+
+    /* Top row with the app title and toggle button */
+    > div {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        /* Pushes the two elements to either side of the container */
+        justify-content: space-between;
+        column-gap: 10px;
+
+        height: min-content;
+
+        /* App title */
+        .navbar-brand {
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: large;
+            white-space: nowrap;
+            cursor: default;
+        }
+
+        /* Toggle button */
+        #nav-toggle-btn {
+            cursor: pointer;
+            border-radius: 5px;
+            padding: 5px;
+
+            &:hover {
+                background-color: var(--calm-ocean);
+            }
+        }
+    }
+
+    /* Nav menu */
+    nav {
+        height: fit-content;
+        flex-grow: 2;
+
+        padding-left: 10px;
+
+        > ul {
+            list-style: none;
+            padding: 0;
+
+            li {
+                margin-bottom: 5px;
+                border-radius: 5px;
+                padding: 5px;
+
+                a {
+                    text-decoration: none;
+                    color: var(--font-on-dark);
+                    white-space: nowrap;
+
+                    display: flex;
+                    flex-flow: row nowrap;
+                    align-items: center;
+                    gap: 5px;
+                }
+
+                &.active {
+                    background-color: var(--calm-ocean);
+                    font-weight: bold;
+                }
+
+                &:hover {
+                    background-color: var(--powder-sky);
+                    cursor: pointer;
+
+                    a {
+                        color: var(--font-on-light);
+                    }
+
+                    img {
+                        filter: brightness(0) contrast(100%);
+                    }
+                }
+            }
+        }
+    }
+
+    /* Footer text */
+    footer {
+        height: min-content;
+        white-space: nowrap;
+
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 5px;
+
+        > * {
+            font-size: small;
+        }
+    }
+
+    &.collapsed {
+        img {
+            justify-content: center;
+        }
+
+        .navbar-brand, a > span, footer {
+            display: none;
+        }
+
+        nav {
+            padding: 0;
+        }
+    }
+}
+
+/* Container for the main page content */
+main {
+    padding: 20px;
+    margin: 10px 0;
+    background-color: var(--calm-ocean);
+    border-radius: 10px;
+
+    /* Makes the element take up all remaining space after the navbar sets itself */
+    flex: 1;
+}
+
+/*region FONT STYLING*/
+
+.primary-heading {
+    font-family: "Quantico", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* For text that goes directly below a header */
+.subtitle {
+    font-size: small;
+    font-style: italic;
+}
+
+.font-secondary-colour {
+    color: var(--dusty-denim);
+}
+
+/*endregion*/
+
+/*region GENERAL STYLING*/
+
+.metric {
+    display: flex;
+    flex-flow: column nowrap;
+
+    .metric-group {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 5px;
+
+        justify-content: center;
+        align-items: center;
+    }
+
+    .metric-label {
+        text-align: center;
+        text-transform: uppercase;
+        color: var(--midnight-blue);
+    }
+
+    .metric-value {
+        text-align: center;
+        font-size: x-large;
+    }
+
+    .metric-divider {
+        text-align: center;
+        font-size: large;
+    }
+}
+
+.link-button {
+    text-decoration: none;
+    color: var(--dusty-denim);
+    font-weight: bold;
+
+    &:hover {
+        color: var(--midnight-blue);
+    }
+}
+
+/*endregion*/
+
+/*region TABLE STYLING*/
+
+div:has(table) {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+table {
+    height: 100%;
+    width: 100%;
+
+    background-color: var(--powder-sky);
+
+    /* Rounded corners */
+    border-collapse: separate; /* Required */
+    border-spacing: 0;          /* Removes gaps between cells */
+    border: 1px solid #ccc;
+    border-radius: 8px;        /* Adjust the roundness */
+    overflow: hidden;          /* Clips background colors of corner cells */
+
+    table-layout: auto;
+
+    caption {
+        text-align: left;
+        margin-bottom: 5px;
+    }
+
+    tr {
+        height: auto;
+    }
+
+    td {
+        background-color: var(--cloud-blue);
+    }
+
+    th, td {
+        text-align: center;
+        padding: 5px 10px;
+        white-space: nowrap;
+
+        border-bottom: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+
+        height: 20%;
+        width: max-content;
+    }
+
+    td:has(a) {
+        background-color: transparent;
+    }
+}
+
+/*endregion*/
+
+/*region CARD STYLING*/
+
+.card-container {
+    width: 100%;
+    padding: 5px;
+
+    display: flex;
+    flex-flow: row wrap;
+    gap: 20px;
+
+    justify-content: center;
+
+    overflow-y: auto;
+}
+
+.card {
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
+    padding: 15px;
+    background-color: var(--powder-sky);
+
+    border-radius: 10px;
+
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 15px;
+
+    align-items: center;
+
+    width: 300px;
+
+    hgroup {
+        display: flex;
+        flex-flow: column nowrap;
+
+        h2 {
+            text-align: center;
+
+            white-space: nowrap; /* Prevents wrapping */
+            width: 100%;
+
+            font-size: clamp(1rem, 1.3cqi, 1.5rem);
+        }
+
+        p {
+            width: 100%;
+            text-align: center;
+            font-size: large;
+        }
+    }
+
+    &:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        transition: 300ms;
+    }
+
+    .link-button {
+        background-color: var(--calm-ocean);
+        color: white;
+        border-radius: 10px;
+        border: none;
+        padding: 5px 15px;
+
+        &:hover {
+            background-color: white;
+            color: var(--midnight-blue);
+        }
+    }
+}
+
+/*endregion*/
+
+/*region INPUT STYLING*/
+
+input[type="submit"] {
+    border-radius: 10px;
+    padding: 10px 20px;
+    border: none;
+
+    &:hover {
+        cursor: pointer;
+        background-color: var(--calm-ocean);
+        color: var(--font-on-dark);
+    }
+}
+
+select {
+    border-radius: 10px;
+    padding: 5px 0 5px 5px;
+    width: 200px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+/*endregion*/

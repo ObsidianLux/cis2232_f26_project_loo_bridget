@@ -1,15 +1,29 @@
+<!--
+Author: Bridget Loo
+Date: 2026-11-20
+Class: CIS-2232
+Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the database.
+-->
 <!DOCTYPE html>
+
+<!-- Enable Thymeleaf -->
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: headerFragment}">
-    <title id="pageTitle">Softball League Manager</title>
+
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, _)}">
+    <!-- Passing '_' into the fragment means that it will not inject any custom stylesheets. -->
+    <title th:text="#{application.name}"></title>
 </head>
+
 <body>
-    <header>
-        <nav th:replace="~{fragments/navHeader :: navbar}"></nav>
-    </header>
+    <aside th:replace="~{fragments/navSidebar :: navSidebar('add')}">
+        <!--
+        Replaces this aside element with the navSidebar fragment in the navSidebar.html file.
+        Passes the word 'add' into the fragment so that it assigns the 'active' class to the correct navigation item.
+        -->
+    </aside>
+
     <main>
-        <h1 th:text="#{label.league.add}"></h1>
+        <h1 th:text="#{add.title}"></h1>
     </main>
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

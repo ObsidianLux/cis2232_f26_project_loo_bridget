@@ -1,15 +1,28 @@
+<!--
+Author: Bridget Loo
+Date: 2026-11-20
+Class: CIS-2232
+Purpose: Sprint 3 - View, Update, Delete Functionalities. Allows the user to view all games in the database and update or delete individual games.
+-->
 <!DOCTYPE html>
+
+<!-- Enable Thymeleaf -->
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: headerFragment}">
-    <title id="pageTitle">Softball League Manager</title>
+
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, _)}">
+    <!-- Passing '_' into the fragment means that it will not inject any custom stylesheets. -->
+    <title th:text="#{application.name}"></title>
 </head>
+
 <body>
-    <header>
-        <nav th:replace="~{fragments/navHeader :: navbar}"></nav>
-    </header>
+    <aside th:replace="~{fragments/navSidebar :: navSidebar('view')}">
+        <!--
+        Replaces this aside element with the navSidebar fragment in the navSidebar.html file.
+        Passes the word 'view' into the fragment so that it assigns the 'active' class to the correct navigation item.
+        -->
+    </aside>
     <main>
-        <h1 th:text="#{label.league.view}"></h1>
+        <h1 th:text="#{games.title}"></h1>
     </main>
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

@@ -1,147 +1,253 @@
+<!--
+Author: Bridget Loo
+Date: 2026-11-20
+Class: CIS-2232
+Purpose: Sprint 2 - Report Functionality. Displays a report to the user about the games a particular team has played.
+-->
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: headerFragment}">
-    <title id="pageTitle">Softball League Manager</title>
-</head>
-<body>
-<header>
-    <nav th:replace="~{fragments/navHeader :: navbar}"></nav>
-</header>
-<main class="align-items-center">
-    <div id="historyHeader">
-        <hgroup>
-            <h1 class="quantico-bold" th:text="#{history.header}"></h1>
-            <p class="subtitle" th:text="#{history.subtitle}"></p>
-        </hgroup>
 
-        <form th:action="@{/reports/history/view}" method="post" id="teamHistoryForm">
-            <div class="field-horizontal">
+<!-- Enable Thymeleaf -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link})}">
+    <!-- Injects the title and stylesheet into the head fragment. -->
+    <title th:text="#{application.name}"></title>
+    <link rel="stylesheet" th:href="@{/css/history.css}">
+</head>
+
+<body>
+    <aside th:replace="~{fragments/navSidebar :: navSidebar('history')}">
+        <!--
+        Replaces this aside element with the navSidebar fragment in the navSidebar.html file.
+        Passes the word 'history' into the fragment so that it assigns the 'active' class to the correct navigation item.
+        -->
+    </aside>
+
+    <!--
+    hasTeam = Checks whether the getTeam() method returns null or not.
+    team = Gets the team from the reportHistory object. Will be null if no team was set previously.
+    -->
+    <main th:with="hasTeam=${reportHistory.getTeam() != null}, team=${reportHistory.getTeam()}">
+        <section class="horizontal">
+            <hgroup>
+                <h1 class="quantico-bold" th:text="#{history.header}"></h1>
+                <p class="subtitle" th:text="#{history.subtitle}"></p>
+            </hgroup>
+
+            <!-- Form to select the team to generate a report for. -->
+            <form th:action="@{/reports/history/view}" method="post" id="teamHistoryForm">
                 <label for="select-team" th:text="#{history.form.select}"></label>
                 <select id="select-team" th:field="${reportHistory.teamName}">
+                    <!-- Dynamically populates the list of teams -->
                     <option th:each="team : ${reportHistory.getTeams()}" th:value="${team.getTeamName()}" th:text="${team.getTeamName()}"></option>
                 </select>
+                <input type="submit" th:value="#{history.form.submit}" class="primary-button">
+            </form>
+        </section>
+
+        <!-- TODO Display the currently loaded team's name somewhere -->
+
+        <section class="vertical" th:with="hasPlayedGames=${hasTeam and team.getNumberOfGamesPlayed() > 0}">
+            <!-- Team Metrics -->
+            <!-- All metrics default to a value of 0 if team is null. -->
+            <div th:if="${hasPlayedGames}" class="flex-row-centered">
+                <div id="historyMetrics">
+                    <!-- Number of games played -->
+                    <div class="metric">
+                        <p class="metric-label" th:text="#{metric.game}"></p>
+                        <p class="metric-value" th:text="${hasTeam ? team.getNumberOfGamesPlayed() : 0}"></p>
+                    </div>
+
+                    <!-- Number of games won -->
+                    <div class="metric">
+                        <p class="metric-label" th:text="#{metric.win}"></p>
+                        <p class="metric-value" th:text="${hasTeam ? team.getWins().total() : 0}"></p>
+                    </div>
+
+                    <!-- Number of games lost -->
+                    <div class="metric">
+                        <p class="metric-label" th:text="#{metric.loss}"></p>
+                        <p class="metric-value" th:text="${hasTeam ? team.getLosses().total() : 0}"></p>
+                    </div>
+                </div>
             </div>
-            <input type="submit" th:value="#{history.form.submit}" class="primary-button">
-        </form>
-    </div>
 
-    <div th:if="${reportHistory.getTeam() != null and reportHistory.getGames().size() == 0}">
-        <p th:text="#{history.result.none}"></p>
-    </div>
+            <!-- Container for rendering the chart. -->
+            <div class="chart-container">
+                <!-- TODO Make the tooltips in the chart more sensible. -->
+                <canvas th:if="${hasPlayedGames}" id="historyChart"></canvas>
+                <p th:unless="${hasPlayedGames}" th:text="${message}" class="total-center"></p>
+            </div>
 
-    <div class="full-width" th:if="${reportHistory.getTeam() != null and reportHistory.getGames().size() > 0}">
-        <div class="chart-container">
-            <canvas id="historyChart"></canvas>
-        </div>
+            <!-- Script for rendering the chart. Only executes if there is a team in the model. -->
+            <script th:if="${reportHistory.getTeam() != null}" th:inline="javascript">
+                // Not strictly necessary, but including global Chart at the top here prevents the IDE from flagging Chart as undefined.
+                /* global Chart */
 
-        <script th:if="${reportHistory.getTeam() != null}" th:inline="javascript">
-            /* global Chart */
+                // Defined an object to make dot notation work.
+                /**
+                 * @typedef {Object} HistoryReportData
+                 * @property {string} teamName
+                 * @property {string[]} xAxisLabels
+                 * @property {number[]} teamScoreDataSet
+                 * @property {number[]} opponentScoreDataSet
+                 */
 
-            /**
-             * @typedef {Object} HistoryReportData
-             * @property {string} teamName
-             * @property {string[]} xAxisLabels
-             * @property {number[]} teamScoreDataSet
-             * @property {number[]} opponentScoreDataSet
-             */
+                // There are workarounds to get the IDE to not flag this as an error, but they either make me nervous or they're too much work, so I've decided to simply deal with this.
+                /** @type HistoryReportData */
+                const reportData = [[${reportHistory.getHistoryReportData()}]];
 
-            /** @type HistoryReportData */
-            const reportData = [[${reportHistory.getHistoryReportData()}]];
-
-            new Chart(document.getElementById("historyChart"), {
-                type: "bar",
-                data: {
-                    labels: reportData.xAxisLabels,
-                    datasets: [
-                        {
-                            label: reportData.teamName,
-                            data: reportData.teamScoreDataSet
-                        },
-                        {
-                            label: 'Opponent',
-                            data: reportData.opponentScoreDataSet
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: "top"
-                        },
-                        title: {
-                            display: true,
-                            text: "Scores by Game"
-                        }
+                new Chart(document.getElementById("historyChart"), {
+                    type: "bar",
+                    data: {
+                        labels: reportData.xAxisLabels,
+                        datasets: [
+                            {
+                                label: reportData.teamName,
+                                data: reportData.teamScoreDataSet
+                            },
+                            {
+                                label: 'Opponent',
+                                data: reportData.opponentScoreDataSet
+                            }
+                        ]
                     },
-                    scales: {
-                        y: {
-                            ticks: {
-                                precision: 0
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: "top"
                             },
                             title: {
                                 display: true,
-                                text: "Score"
+                                text: "Runs per Team (by Game)"
                             }
                         },
-                        x: {
-                            title: {
-                                display: true,
-                                text: "Game"
+                        scales: {
+                            y: {
+                                ticks: {
+                                    precision: 0 // Prevents decimal values on the y-axis.
+                                },
+                                title: {
+                                    display: true,
+                                    text: "# of Runs"
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: false,
+                                    text: "Game Date"
+                                }
                             }
                         }
                     }
-                }
-            });
-        </script>
+                });
+            </script>
+        </section>
 
-        <div class="card-container flex row nowrap margin-top-20">
-            <div class="card" th:each="game : ${reportHistory.getGames()}">
-                <hgroup th:with="isWinner=${game.getWinningTeam() == reportHistory.getTeamName()}">
+        <section>
+            <!-- Checks whether there is any game data to display. -->
+            <div th:with="hasData=${hasTeam and reportHistory.getGames().size() > 0}" class="card-container">
+                <!-- Displays if there is a team in the model but the number of games in the model is 0. -->
+                <p th:unless="${hasData}" th:text="${message}" class="total-center"></p>
 
-                    <h2 th:if="${isWinner}" th:text="#{label.win}" th:classappend="font-win"></h2>
-                    <h2 th:unless="${isWinner}" th:text="#{label.loss}" th:classappend="font-loss"></h2>
+                <!-- Displays if there is a team in the model and the number of games in the model is greater than 0. -->
+                <!-- Each game in the games list gets its own div element. If there are no games, no div elements are printed. -->
+                <div th:if="${hasData}" class="card-game" th:each="game : ${reportHistory.getGames()}">
+                    <!--
+                    'reportHistory.getGames' refers to the getGames() method in the ReportHistory class object that was attached to the model.
+                    'game' refers to an instance of the Game class in the games list.
+                    -->
 
-                    <p class="subtitle small" th:with="isHomeTeam=${game.getHomeTeam() == reportHistory.getTeam()}">
-                        <span th:if="${isHomeTeam}" th:text="#{label.home}"></span>
-                        <span th:unless="${isHomeTeam}" th:text="#{label.road}"></span>
+                    <div>
+                        <hgroup>
+                            <!--
+                            Determines whether the winning team is the same as the team for the report.
+                            Displays the win text if the report team was the winner or the loss text is the report team was the loser.
+                            This could have all been done in the h2 tag instead of splitting it into spans, but doing it this way makes it easier to read and accurately indicates in the messages.properties file that label.win and label.loss are being used. Doing everything in the h2 tag would not allow that file to recognize that those labels are being used (they would appear greyed out).
+                            -->
+                            <h2 th:with="isWinner=${game.getWinningTeam() == reportHistory.getTeamName()}">
+                                <!-- Displays this span if isWinner is true. -->
+                                <span th:if="${isWinner}" th:text="#{label.win}" class="font-win"></span>
 
-                        <span th:if="${game.getWasMercyWin() or game.getWasForfeited()}" th:text="#{card.metric.divider.bullet}"></span>
+                                <!-- Displays this span unless isWinner is true (i.e. only displays if isWinner is false). -->
+                                <span th:unless="${isWinner}" th:text="#{label.loss}" class="font-loss"></span>
+                            </h2>
 
-                        <span th:if="${game.getWasMercyWin()}" th:text="#{label.mercy}"></span>
-                        <span th:if="${game.getWasForfeited()}" th:text="#{label.forfeit}"></span>
-                    </p>
-                </hgroup>
+                            <!--
+                            exceptional = Checks whether the game ended due to a forfeit or mercy rule.
+                            isHomeTeam = Checks whether the report team was the home team or not.
+                            -->
+                            <p class="subtitle" th:with="exceptional=${game.getWasMercyWin() or game.getWasForfeited()}, isHomeTeam=${game.getHomeTeam() == reportHistory.getTeam()}">
+                                <span>
+                                    <!-- Displays if the report team is the home team. -->
+                                    <span th:if="${isHomeTeam}" th:text="#{label.home}"></span>
 
-                <div class="card-body grid row-2 col-2 row-gap">
-                    <div class="metric">
-                        <p class="metric-label" th:text="#{card.metric.inning}"></p>
-                        <p class="metric-value" th:text="${game.getInnings().size()}"></p>
+                                    <!-- Displays unless the report team is the home team (i.e. displays if the report team isn't the home team). -->
+                                    <span th:unless="${isHomeTeam}" th:text="#{label.road}"></span>
+                                </span>
+
+                                <!-- If the game ended by mercy rule or forfeit (exceptional = true), this divider is displayed. -->
+                                <span th:if="${exceptional}" th:text="#{metric.divider.bullet}"></span>
+
+                                <!--
+                                Check is ignored and result not displayed if exceptional is false.
+                                Checks whether the game ended by Mercy Rule. It's inherently understood that if it was not ended by Mercy Rule, it was ended by Forfeit.
+                                -->
+                                <span th:with="mercyWin=${game.getWasMercyWin()}" th:if="${exceptional}">
+                                    <!-- Displays if mercyWin is true. -->
+                                    <span th:if="${mercyWin}" th:text="#{label.mercy}"></span>
+
+                                            <!-- Displays unless mercyWin is true (i.e. the game ended by forfeit). -->
+                                    <span th:unless="${mercyWin}" th:text="#{label.forfeit}"></span>
+                                </span>
+                            </p>
+                        </hgroup>
+
+                        <p class="card-game-opponent">
+                            <!-- Opponent team's name -->
+                            <span class="metric-label" th:text="#{label.versus}"></span>
+                            <span class="metric-value" th:text="${reportHistory.getOpponentTeamName(game.getHomeTeam(), game.getRoadTeam())}"></span>
+                        </p>
                     </div>
 
-                    <div class="metric">
-                        <p class="metric-label" th:text="#{card.metric.plusMinus}"></p>
-                        <p class="metric-value" th:text="${game.getPlusMinus(reportHistory.getTeamName())}"></p>
-                    </div>
+                    <!-- TODO Tooltips -->
 
-                    <div class="metric">
-                        <p class="metric-label" th:text="#{card.metric.opponent}"></p>
-                        <p class="metric-value" th:text="${reportHistory.getOpponentTeamName(game.getHomeTeam(), game.getRoadTeam())}"></p>
-                    </div>
+                    <!-- Display the game metrics, including number of innings, score differential, the opponent team's name, and the final scores. -->
+                    <div class="card-body-game">
+                        <!-- Number of innings -->
+                        <div class="metric">
+                            <p class="metric-label" th:text="#{metric.inning}"></p>
+                            <p class="metric-value" th:text="${game.getInnings().size()}"></p>
+                        </div>
 
-                    <div class="metric">
-                        <p class="metric-label" th:text="#{card.metric.score}"></p>
-                        <div class="metric-group" th:with="homeIsGreater=${game.getHomeScore() > game.getRoadScore()}">
-                            <p class="metric-value" th:text="${homeIsGreater ? game.getHomeScore() : game.getRoadScore()}"></p>
-                            <p class="metric-divider" th:text="#{card.metric.divider.colon}"></p>
-                            <p class="metric-value" th:text="${homeIsGreater ? game.getRoadScore() : game.getHomeScore()}"></p>
+                        <!-- Score differential -->
+                        <div class="metric">
+                            <p class="metric-label" th:text="#{metric.plusMinus}"></p>
+                            <p class="metric-value" th:text="${game.getPlusMinus(reportHistory.getTeamName())}"></p>
+                        </div>
+
+                        <!-- Final scores separated by a colon -->
+                        <div class="metric">
+                            <p class="metric-label" th:text="#{metric.score}"></p>
+
+                            <!-- Checks whether the home score is greater than the road score. -->
+                            <div class="metric-group" th:with="homeIsGreater=${game.getHomeScore() > game.getRoadScore()}">
+
+                                <!-- If the home score is greater than the road score, this p element displays the home score. Otherwise, it displays the road score. -->
+                                <p class="metric-value" th:text="${homeIsGreater ? game.getHomeScore() : game.getRoadScore()}"></p>
+
+                                <!-- Dividing colon -->
+                                <p class="metric-divider" th:text="#{metric.divider.colon}"></p>
+
+                                <!-- Displays the opposite score from that was displayed in the first p element. -->
+                                <p class="metric-value" th:text="${homeIsGreater ? game.getRoadScore() : game.getHomeScore()}"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</main>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
+        </section>
+    </main>
 </body>
 </html>

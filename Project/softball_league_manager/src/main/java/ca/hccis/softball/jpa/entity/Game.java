@@ -22,14 +22,14 @@ public class Game {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max = 20)
+    @Size(max = 30)
     @NotNull
-    @Column(name = "homeTeam", nullable = false, length = 20)
+    @Column(name = "homeTeam", nullable = false, length = 30)
     private String homeTeam;
 
-    @Size(max = 20)
+    @Size(max = 30)
     @NotNull
-    @Column(name = "roadTeam", nullable = false, length = 20)
+    @Column(name = "roadTeam", nullable = false, length = 30)
     private String roadTeam;
 
     @NotNull
