@@ -75,26 +75,4 @@ public class BaseController {
         // Return the view.
         return "index";
     }
-
-    /**
-     * Send the user to the add game view.
-     * @return The add view
-     * @author BML
-     * @since 20261020
-     */
-    @RequestMapping("/add")
-    public String add() {
-        return "/league/add";
-    }
-
-    /**
-     * Send the user to the view games view.
-     * @return The view games view
-     * @author BML
-     * @since 20261020
-     */
-    @RequestMapping("/view")
-    public String view() {
-        return "league/games";
-    }
 }
