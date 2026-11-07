@@ -6,8 +6,7 @@ import ca.hccis.softball.entity.Inning;
 import ca.hccis.softball.util.JsonListConverter;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,35 +16,43 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "softballgame", schema = "cis2232_softball_league")
 public class Game {
+    // Groups that guide validation when creating or updating an object.
+    public interface OnCreate {}
+    public interface OnUpdate {}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max = 30)
-    @NotNull
+    @Size(max = 30, groups = {OnCreate.class, OnUpdate.class})
+    @NotBlank(message = "Home team name is required.", groups = {OnCreate.class, OnUpdate.class})
     @Column(name = "homeTeam", nullable = false, length = 30)
     private String homeTeam;
 
-    @Size(max = 30)
-    @NotNull
+    @Size(max = 30, groups = {OnCreate.class, OnUpdate.class})
+    @NotBlank(message = "Road team name is required.", groups = {OnCreate.class, OnUpdate.class})
     @Column(name = "roadTeam", nullable = false, length = 30)
     private String roadTeam;
 
-    @NotNull
+    @NotNull(message = "Scheduled game date is required.", groups = {OnCreate.class, OnUpdate.class})
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "wasForfeited")
-    private Boolean wasForfeited;
+    @NotNull(groups = {OnUpdate.class})
+    @Column(name = "wasForfeited", nullable = false, columnDefinition = "BIT(1) DEFAULT 0")
+    private Boolean wasForfeited = false;
 
-    @Column(name = "wasMercyWin")
-    private Boolean wasMercyWin;
+    @NotNull(groups = {OnUpdate.class})
+    @Column(name = "wasMercyWin", nullable = false, columnDefinition = "BIT(1) DEFAULT 0")
+    private Boolean wasMercyWin = false;
 
-    @Column(name = "homeScore")
+    @Min(value = 0, message = "Home runs cannot be less than 0.")
+    @Column(name = "homeScore", columnDefinition = "INT UNSIGNED")
     private Integer homeScore;
 
-    @Column(name = "roadScore")
+    @Min(value = 0, message = "Road runs cannot be less than 0.")
+    @Column(name = "roadScore", columnDefinition = "INT UNSIGNED")
     private Integer roadScore;
 
     @Column(name = "innings", columnDefinition = "LONGTEXT")
@@ -53,8 +60,11 @@ public class Game {
     private ArrayList<Inning> innings;
 
     @NotNull
-    @Column(name = "played", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean played;
+    @Column(name = "played", nullable = false, columnDefinition = "BIT(1) DEFAULT FALSE")
+    private Boolean played = false;
+
+    @Transient
+    private String teamAtFault;
 
     public Game() {}
 
@@ -144,6 +154,14 @@ public class Game {
 
     public void setPlayed(Boolean played) {
         this.played = played;
+    }
+
+    public String getTeamAtFault() {
+        return this.teamAtFault;
+    }
+
+    public void setTeamAtFault(String teamName) {
+        this.teamAtFault = teamName;
     }
 
     @Override
