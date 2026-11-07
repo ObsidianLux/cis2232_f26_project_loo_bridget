@@ -9,7 +9,7 @@ Purpose: Sprint 2 - Report Functionality. Displays a report to the user about th
 <!-- Enable Thymeleaf -->
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link})}">
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link}, _)}">
     <!-- Injects the title and stylesheet into the head fragment. -->
     <title th:text="#{application.name}"></title>
     <link rel="stylesheet" th:href="@{/css/history.css}">

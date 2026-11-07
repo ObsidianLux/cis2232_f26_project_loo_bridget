@@ -6,7 +6,7 @@ Purpose: Error page that will display if there is an issue displaying the conten
 -->
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: headerFragment(~{::title}, _)}">
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, _, _)}">
     <!-- Passing '_' into the fragment means that it will not inject any custom stylesheets. -->
     <title th:text="#{application.name}"></title>
 </head>

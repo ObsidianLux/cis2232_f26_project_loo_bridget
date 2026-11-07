@@ -9,9 +9,10 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
 <!-- Enable Thymeleaf -->
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/head :: headerFragment(~{::title}, _)}">
-    <!-- Passing '_' into the fragment means that it will not inject any custom stylesheets. -->
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link}, ~{::script})}">
     <title th:text="#{application.name}"></title>
+    <link rel="stylesheet" th:href="@{/css/add.css}">
+    <script th:src="@{/js/add.js}" type="text/javascript" defer></script>
 </head>
 
 <body>

@@ -9,7 +9,7 @@ Purpose: Index / home page for the Softball League Manager app.
 <!-- Enable Thymeleaf -->
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link})}">
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link}, _)}">
     <!--
      Replaces this head element with the headerFragment fragment in the head.html file.
      Passes the local title and link elements to the head fragment which will inject the title and link elements.
