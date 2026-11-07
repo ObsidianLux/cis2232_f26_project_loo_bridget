@@ -255,6 +255,10 @@ main {
     }
 }
 
+.hidden {
+    display: none;
+}
+
 /*endregion*/
 
 /*region TABLE STYLING*/
@@ -407,6 +411,67 @@ select {
 
     &:hover {
         cursor: pointer;
+    }
+}
+
+input[type="date"] {
+    border-radius: 10px;
+    padding: 10px 20px;
+    border-style: solid;
+    border-width: thin;
+    width: 150px;
+    line-height: 1em;
+}
+
+input[type="button"] {
+    border: none;
+}
+
+input[type="number"] {
+    border-radius: 5px;
+    padding: 0 10px;
+    border-style: solid;
+    border-width: thin;
+    width: 100px;
+    line-height: 1.5rem;
+}
+
+.secondary-button {
+    background-color: var(--powder-sky);
+    color: var(--font-on-light);
+
+    border-radius: 10px;
+    padding: 10px 20px;
+
+    &:hover {
+        background-color: var(--cloud-blue);
+        color: var(--font-on-light);
+        cursor: pointer;
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
+    }
+}
+
+.primary-button {
+    padding: 10px 20px;
+    border-radius: 10px;
+
+    background-color: var(--midnight-blue);
+    color: var(--font-on-dark);
+
+    &:is(a) {
+        text-decoration: none;
+    }
+
+    &:hover:not(.disabled) {
+        cursor: pointer;
+        background-color: var(--dusty-denim);
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    &.disabled:hover {
+        cursor: not-allowed;
+        background-color: darkgray;
+        color: var(--font-on-light);
     }
 }
 
