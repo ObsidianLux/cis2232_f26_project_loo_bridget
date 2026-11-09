@@ -2,7 +2,13 @@ package ca.hccis.softball.entity;
 
 import com.google.gson.Gson;
 
-public class Inning {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Inning implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private int inningNumber;
 
     private int homeRuns;

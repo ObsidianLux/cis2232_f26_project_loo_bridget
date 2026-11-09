@@ -1,15 +1,42 @@
 package ca.hccis.softball.entity;
 
 import ca.hccis.softball.jpa.entity.Game;
+import ca.hccis.softball.validation.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
+@ConditionalRequired(
+        conditionalField = "wasForfeited",
+        dependentField = "teamAtFault",
+        message = "The team who forfeited the game is required."
+)
+@ConditionalRequired(
+        conditionalField = "wasForfeited",
+        expectedValue = false,
+        dependentField = "innings",
+        message = "The game must have at least 5 valid innings."
+)
+@MercyDifferential(
+        listField = "innings",
+        homeRuns = "homeRuns",
+        roadRuns = "roadRuns"
+)
+// TODO Fix no tie constraint.
+//@NoTie(
+//        firstScore = "homeScore",
+//        secondScore = "roadScore"
+//)
+@MinInnings(
+        innings = "innings"
+)
+@UniqueNames(
+        firstName = "homeTeam",
+        secondName = "roadTeam"
+)
 public class GameDTO {
     @Size(max = 30, message = "Team name must not exceed 30 characters.")
     @NotBlank(message = "Home team name is required.")
@@ -22,7 +49,7 @@ public class GameDTO {
     @NotNull(message = "Scheduled game date is required.")
     private LocalDate date;
 
-    private Boolean wasForfeited;
+    private Boolean wasForfeited = false;
     private String teamAtFault;
     private ArrayList<Inning> innings = new ArrayList<>();
 
