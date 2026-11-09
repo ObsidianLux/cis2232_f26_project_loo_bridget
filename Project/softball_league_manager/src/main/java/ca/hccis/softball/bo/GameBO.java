@@ -1,6 +1,7 @@
 package ca.hccis.softball.bo;
 
 import ca.hccis.softball.dao.GameDAO;
+import ca.hccis.softball.entity.Inning;
 import ca.hccis.softball.entity.Team;
 import ca.hccis.softball.jpa.entity.Game;
 
@@ -33,15 +34,67 @@ public class GameBO {
     }
 
     /**
-     * Select all games that a team played in.
-     * @param team The team to filter by.
-     * @return A list of games.
+     * Checks which team has the higher score and returns the name of the other one.
+     * @param game The game to check for
+     * @return The name of the team that forfeited
      * @author BML
-     * @since 20261021
+     * @since 20261107
      */
-    public static ArrayList<Game> selectAllByTeam(String team) {
-        GameDAO gameDAO = new GameDAO();
-        return gameDAO.selectAllByTeamName(team);
+    public static String getTeamAtFault(Game game) {
+        return game.getHomeScore() > game.getRoadScore() ? game.getRoadTeam() : game.getHomeTeam();
+    }
+
+    /**
+     * Update an existing game to indicate that it was forfeited.
+     * @param game The game to update
+     * @param teamAtFault The team who forfeited
+     * @return The updated game
+     * @author BML
+     * @since 20261107
+     */
+    public static Game setPlayForfeit(Game game, String teamAtFault) {
+        game.setPlayed(true);
+        game.setWasForfeited(true);
+        game.setWasMercyWin(false);
+
+        if (game.getHomeTeam().equals(teamAtFault)) {
+            game.setHomeScore(0);
+            game.setRoadScore(7);
+        } else {
+            game.setHomeScore(7);
+            game.setRoadScore(0);
+        }
+
+        return game;
+    }
+
+    /**
+     * Update an existing game to indicate that it was played.
+     * @param game The game to update
+     * @param innings The innings in the game
+     * @return The updated game
+     * @author BML
+     * @since 20261107
+     */
+    public static Game setPlayNotForfeit(Game game, ArrayList<Inning> innings) {
+        game.setPlayed(true);
+        game.setWasForfeited(false);
+        game.setInnings(innings);
+
+        int homeScore = 0;
+        int roadScore = 0;
+
+        for (Inning inning : innings) {
+            homeScore += inning.getHomeRuns();
+            roadScore += inning.getRoadRuns();
+        }
+
+        game.setHomeScore(homeScore);
+        game.setRoadScore(roadScore);
+
+        game.setWasMercyWin(innings.size() == 5);
+
+        return game;
     }
 
     /**

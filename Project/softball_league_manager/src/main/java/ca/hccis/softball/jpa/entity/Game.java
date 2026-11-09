@@ -6,45 +6,45 @@ import ca.hccis.softball.entity.Inning;
 import ca.hccis.softball.util.JsonListConverter;
 
 import jakarta.persistence.*;
+import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "softballgame", schema = "cis2232_softball_league")
 public class Game {
-    // Groups that guide validation when creating or updating an object.
-    public interface OnCreate {}
-    public interface OnUpdate {}
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max = 30, groups = {OnCreate.class, OnUpdate.class})
-    @NotBlank(message = "Home team name is required.", groups = {OnCreate.class, OnUpdate.class})
+    @Size(max = 30, message = "Team name must not exceed 30 characters.")
+    @NotBlank(message = "Home team name is required.")
     @Column(name = "homeTeam", nullable = false, length = 30)
     private String homeTeam;
 
-    @Size(max = 30, groups = {OnCreate.class, OnUpdate.class})
-    @NotBlank(message = "Road team name is required.", groups = {OnCreate.class, OnUpdate.class})
+    @Size(max = 30, message = "Team name must not exceed 30 characters.")
+    @NotBlank(message = "Road team name is required.")
     @Column(name = "roadTeam", nullable = false, length = 30)
     private String roadTeam;
 
-    @NotNull(message = "Scheduled game date is required.", groups = {OnCreate.class, OnUpdate.class})
+    @NotNull(message = "Scheduled game date is required.")
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @NotNull(groups = {OnUpdate.class})
-    @Column(name = "wasForfeited", nullable = false, columnDefinition = "BIT(1) DEFAULT 0")
+    @NotNull(message = "It must be clear whether the game has been played or not.")
+    @Column(name = "played", nullable = false, columnDefinition = "BIT(1) DEFAULT 0")
+    private Boolean played = false;
+
+    /* The rest of the attributes are nullable */
+
+    @Column(name = "wasForfeited", columnDefinition = "BIT(1) DEFAULT 0")
     private Boolean wasForfeited = false;
 
-    @NotNull(groups = {OnUpdate.class})
-    @Column(name = "wasMercyWin", nullable = false, columnDefinition = "BIT(1) DEFAULT 0")
+    @Column(name = "wasMercyWin", columnDefinition = "BIT(1) DEFAULT 0")
     private Boolean wasMercyWin = false;
 
     @Min(value = 0, message = "Home runs cannot be less than 0.")
@@ -59,14 +59,33 @@ public class Game {
     @Convert(converter = JsonListConverter.class)
     private ArrayList<Inning> innings;
 
-    @NotNull
-    @Column(name = "played", nullable = false, columnDefinition = "BIT(1) DEFAULT FALSE")
-    private Boolean played = false;
-
-    @Transient
-    private String teamAtFault;
-
     public Game() {}
+
+    public Game(String homeTeam, String roadTeam, LocalDate date, Boolean played) {
+        this.homeTeam = homeTeam;
+        this.roadTeam = roadTeam;
+        this.date = date;
+        this.played = played;
+    }
+
+    /* VALIDATION */
+
+    /**
+     * If the game was played, all fields are required (except innings). Otherwise, only the teams and date are required.
+     * @author BML
+     * @since 20261107
+     */
+    @PrePersist
+    @PreUpdate
+    private void validateConditionalFields() {
+        if (Boolean.TRUE.equals(this.played)) {
+            if (this.roadScore == null || this.homeScore == null || this.wasMercyWin == null || this.wasForfeited == null) {
+                throw new ValidationException("Attributes cannot be null (except innings) when the game has been played.");
+            }
+        }
+    }
+
+    /* GETTERS & SETTERS */
 
     public Integer getId() {
         return id;
@@ -128,20 +147,12 @@ public class Game {
         return homeScore;
     }
 
-    public Integer getRoadScore() {
-        return roadScore;
-    }
-
-    public String getWinningTeam() {
-        return GameBO.getWinningTeam(this);
-    }
-
-    public String getPlusMinus(String teamName) {
-        return GameBO.getPlusMinus(this, teamName);
-    }
-
     public void setHomeScore(Integer homeScore) {
         this.homeScore = homeScore;
+    }
+
+    public Integer getRoadScore() {
+        return roadScore;
     }
 
     public void setRoadScore(Integer roadScore) {
@@ -156,28 +167,25 @@ public class Game {
         this.played = played;
     }
 
-    public String getTeamAtFault() {
-        return this.teamAtFault;
+    /* BO METHODS */
+
+    public String getWinningTeam() {
+        return GameBO.getWinningTeam(this);
     }
 
-    public void setTeamAtFault(String teamName) {
-        this.teamAtFault = teamName;
+    public String getPlusMinus(String teamName) {
+        return GameBO.getPlusMinus(this, teamName);
     }
+
+    public String getTeamAtFault() {
+        return GameBO.getTeamAtFault(this);
+    }
+
+    /* OVERRIDES */
 
     @Override
     public String toString() {
-        if (this.played) return "ID: %d; Home Team: %s; Road Team: %s; Date: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Innings: %s; Home Score: %d; Road Score: %d".formatted(id, homeTeam, roadTeam, date.toString(), GameBO.getWinningTeam(this), wasMercyWin, wasForfeited, innings.stream().map(Inning::toString).collect(Collectors.joining(", ")), homeScore, roadScore);
+        if (this.played) return "ID: %d; Home Team: %s; Road Team: %s; Date: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Innings: %s; Home Score: %d; Road Score: %d".formatted(id, homeTeam, roadTeam, date.toString(), getWinningTeam(), wasMercyWin, wasForfeited, innings.stream().map(Inning::toString).collect(Collectors.joining(", ")), homeScore, roadScore);
         else return "ID: %d; Home Team: %s; Road Team: %s; Date: %s".formatted(id, homeTeam, roadTeam, date.toString());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Game game)) return false;
-        return (Objects.equals(getId(), game.getId()));
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }

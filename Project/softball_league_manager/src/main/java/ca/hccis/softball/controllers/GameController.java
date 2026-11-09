@@ -2,13 +2,18 @@ package ca.hccis.softball.controllers;
 
 import ca.hccis.softball.bo.GameBO;
 import ca.hccis.softball.dao.GameDAO;
+import ca.hccis.softball.entity.GameDTO;
+import ca.hccis.softball.entity.Inning;
 import ca.hccis.softball.entity.Team;
 import ca.hccis.softball.jpa.entity.Game;
 import ca.hccis.softball.repositories.GameRepository;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -56,7 +61,7 @@ public class GameController {
     }
 
     /**
-     * Send the user to the add game view.
+     * Send the user to the initial add game view. This view asks the user for the teams and date of the game to add.
      * TODO SPRINT 3 - Add Functionality
      * @return The add view
      * @author BML
@@ -66,10 +71,12 @@ public class GameController {
     public String add(Model model) {
         logger.info("Running the GameController add() method.");
 
-        // TODO Get a list of team names and pass to the view through the model.
+        // Get a list of team names and pass to the view through the model.
         List<String> teamNames = GameBO.selectAllTeams().stream().map(Team::getTeamName).toList();
-
         model.addAttribute("teamNames", teamNames);
+
+        // Add a GameDTO object to the model.
+        model.addAttribute("game", getNewGameDTO());
 
         return "league/add";
     }
@@ -82,8 +89,21 @@ public class GameController {
      * @since 20261020
      */
     @RequestMapping("/add/submit")
-    public String addSubmit() {
+    public String addSubmit(Model model, @Valid @ModelAttribute GameDTO game, BindingResult bindingResult) {
         logger.info("Running the GameController addSubmit() method.");
+
+        // Check DTO validation rules first. If there are errors, return to form view with error messages.
+        if (!bindingResult.hasErrors()) {
+            // Save the mapped entity.
+            _gr.save(game.getMappedGame());
+
+            // Add a success message to display to the user.
+            model.addAttribute("success", "The game was successfully scheduled!");
+
+            // Add a new GameDTO to the model if the user wants to add another game.
+            model.addAttribute("game", getNewGameDTO());
+        }
+
         return "league/add";
     }
 
@@ -138,5 +158,23 @@ public class GameController {
         }
 
         return "league/games";
+    }
+
+    /**
+     * Create a new GameDTO object to pass to the model.
+     * @return New GameDTO
+     * @author BML
+     * @since 20261109
+     */
+    private GameDTO getNewGameDTO() {
+        // Prepare 7 empty innings to pass in for numbering on the form.
+        GameDTO gameDTO = new GameDTO();
+        ArrayList<Inning> innings = new ArrayList<>();
+
+        for (int index = 1; index <= 7; index++) innings.add(new Inning(index));
+
+        gameDTO.setInnings(innings);
+
+        return gameDTO;
     }
 }
