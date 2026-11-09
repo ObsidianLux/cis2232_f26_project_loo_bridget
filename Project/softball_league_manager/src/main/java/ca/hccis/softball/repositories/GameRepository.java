@@ -20,4 +20,22 @@ public interface GameRepository extends CrudRepository<Game, Integer> {
      */
     @Query("SELECT g FROM Game g WHERE g.homeTeam LIKE %:team% OR g.roadTeam LIKE %:team%")
     List<Game> findByTeamNameContaining(@Param("team") String team);
+
+    /**
+     * Use Spring Data JPA functionality to get a list of played games.
+     * @return The list of games that have been played.
+     * @author BML
+     * @since 20261028
+     */
+    @Query("SELECT g FROM Game g WHERE g.played = TRUE")
+    List<Game> findByGamePlayed();
+
+    /**
+     * Use Spring Data JPA functionality to get a list of unplayed games.
+     * @return The list of games that have not been played.
+     * @author BML
+     * @since 20261028
+     */
+    @Query("SELECT g FROM Game g WHERE g.played = FALSE")
+    List<Game> findByGameUnplayed();
 }
