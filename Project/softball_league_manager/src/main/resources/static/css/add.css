@@ -1,84 +1,188 @@
 form {
-    display: flex;
-    flex-flow: column nowrap;
-    row-gap: 20px;
-}
-
-section {
     background-color: white;
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
 
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
+
+    height: 100%;
+
     label {
         white-space: nowrap;
     }
+}
 
-    &#formPartOne {
-        display: grid;
-        grid-template-columns: repeat(2, min-content 2fr);
-        grid-template-rows: repeat(2, min-content);
-        gap: 20px;
+#formBody {
+    display: grid;
+    grid-template-columns: min-content min-content;
+    grid-template-rows: min-content 1fr min-content;
+    gap: 20px;
+
+    grid-auto-flow: column;
+}
+
+#formBaseInfo {
+    display: grid;
+    column-gap: 20px;
+
+    grid-template-columns: min-content 1fr;
+    grid-template-rows: repeat(4, min-content);
+    row-gap: 10px;
+
+    height: min-content;
+
+    > p {
+        grid-column: span 2;
+    }
+
+    input[list] {
+        min-width: 200px;
+    }
+
+    > * {
+        /* This centers everything vertically without having to use flexbox. */
+        margin: auto 0;
+    }
+}
+
+#forfeitSelectContainer {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
+
+    height: min-content;
+
+    border: thin solid darkgray;
+    border-radius: 10px;
+    padding: 20px;
+
+    > div {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 5px;
 
         > * {
             margin: auto 0;
         }
     }
+}
 
-    &#formPartTwo:not(.hidden) {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: min-content;
-        gap: 20px;
+#formInnings {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
 
-        > div {
-            display: flex;
-            flex-flow: row nowrap;
-            gap: 20px;
-            align-items: center;
-        }
+    grid-row: span 2;
+
+    border: thin solid darkgray;
+    border-radius: 10px;
+    padding: 20px;
+
+    width: min-content;
+
+    > * {
+        display: flex;
+        width: 100%;
     }
 
-    &#formPartThree:not(.hidden) {
-        display: grid;
-        grid-template-columns: 1fr min-content;
-        grid-template-rows: repeat(2, min-content);
-        row-gap: 10px;
-        column-gap: 20px;
+    hgroup {
+        flex-flow: column nowrap;
+    }
 
-        > :first-child {
-            grid-column: span 2;
-        }
+    #inningsContainerOuter {
+        display: flex;
+        flex-flow: column nowrap;
+        gap: 10px;
 
-        > :nth-child(2) tbody {
-            overflow-y: auto;
-        }
+        width: fit-content;
 
-        > :last-child {
+        margin-right: auto;
+
+        #inningsContainerInner, #inningsMinimum, #inningsAdditional {
             display: flex;
             flex-flow: column nowrap;
+            gap: 10px;
+
+            width: fit-content;
+        }
+
+        .inning-row {
+            display: grid;
+            grid-template-columns: repeat(6, min-content);
+            grid-template-rows: min-content;
+            column-gap: 10px;
+
+            > * {
+                margin: auto 0;
+            }
+        }
+
+        .inning-number {
+            height: 1rem;
+            width: 1rem;
+
+            border: none;
+            outline: none;
+
+            text-align: center;
+            vertical-align: middle; /* Backup for inline behavior */
+            line-height: 1rem;     /* Match the height for perfect vertical centering in inputs */
+        }
+
+        .inning-row-add {
+            display: flex;
+            border: 2px dashed darkgray;
+            justify-content: center;
             align-items: center;
-            gap: 20px;
 
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
+            *:hover {
+                cursor: pointer;
+            }
 
-            > div {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(2, min-content);
-                grid-auto-flow: column;
-                row-gap: 5px;
-                column-gap: 20px;
+            &:hover {
+                border-color: #80EF80;
+
+                svg {
+                    fill: #80EF80;
+                }
+            }
+
+            > button {
+                border: none;
+                outline: none;
+                background-color: transparent;
+                height: 24px;
+                width: 100%;
             }
         }
     }
 }
 
-#buttons {
+#formSubmitButton {
     display: flex;
     flex-flow: row nowrap;
-    gap: 20px;
     justify-content: center;
+
+    height: fit-content;
+
+    grid-column: span 2;
+}
+
+.remove-button {
+    border: none;
+    padding: 5px;
+    background-color: transparent;
+    height: min-content;
+
+    &:hover {
+        cursor: pointer;
+        color: #FF746C;
+    }
+}
+
+:disabled:hover {
+    cursor: not-allowed;
 }

@@ -211,6 +211,11 @@ main {
     color: var(--dusty-denim);
 }
 
+.error-message {
+    color: red;
+    font-style: italic;
+}
+
 /*endregion*/
 
 /*region GENERAL STYLING*/
@@ -427,13 +432,16 @@ input[type="button"] {
     border: none;
 }
 
-input[type="number"] {
+input[type="number"], input[list] {
     border-radius: 5px;
     padding: 0 10px;
     border-style: solid;
     border-width: thin;
-    width: 100px;
     line-height: 1.5rem;
+
+    &:not([list]) {
+        width: 100px;
+    }
 }
 
 .secondary-button {
@@ -442,6 +450,7 @@ input[type="number"] {
 
     border-radius: 10px;
     padding: 10px 20px;
+    border-style: solid;
 
     &:hover {
         background-color: var(--cloud-blue);
@@ -457,6 +466,7 @@ input[type="number"] {
 
     background-color: var(--midnight-blue);
     color: var(--font-on-dark);
+    border-style: solid;
 
     &:is(a) {
         text-decoration: none;
