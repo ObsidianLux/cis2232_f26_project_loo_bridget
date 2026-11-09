@@ -37,13 +37,17 @@ function validateTeamNames() {
     The form's own validation will prevent submission if the fields are empty.
      */
 
-    if ((homeTeam !== "" && roadTeam !== "") && homeTeam === roadTeam) {
-        setErrorStyling();
-        return false;
-    } else {
-        setDefaultStyling();
-        return true;
+    // Unless the names are valid and not empty, forfeit checkbox is disabled.
+    if (homeTeam !== "" && roadTeam !== "") {
+        if (homeTeam === roadTeam) {
+            setErrorStyling();
+            forfeitSwitch.disabled = true;
+            return false;
+        } else forfeitSwitch.disabled = false;
     }
+
+    setDefaultStyling();
+    return true;
 
     function setDefaultStyling() {
         // Remove error styling.
@@ -92,65 +96,6 @@ function gameHasBeenPlayed() {
     }
 }
 
-/**
- * Checks whether the game was forfeited or not and that all necessary information has been provided.
- * @returns {boolean} True if all info provided, otherwise false.
- */
-function validateForfeit() {
-    const forfeited = forfeitSwitch.checked;
-
-    if (forfeited) {
-        // If forfeited is checked, a team at fault must be selected.
-        return teamAtFaultSelect.value !== "";
-    } else {
-        const errorMissingInfo = document.getElementById('invalidInningsMissingInfo');
-        const errorTie = document.getElementById('invalidInningsTie');
-        const errorMercy = document.getElementById('invalidInningsMercy');
-
-        // If forfeited is not checked, there must be at least 5 valid innings that do not end in a tie.
-        const innings = inningsContainerInner.querySelectorAll('.inning-row');
-
-        if (innings.length < 5) return false;
-        else {
-            let totalHomeRuns = 0;
-            let totalRoadRuns = 0;
-
-            innings.forEach(inning => {
-                const homeRuns = inning.querySelector('[data-field="homeRuns"]').valueAsNumber;
-                const roadRuns = inning.querySelector('[data-field="roadRuns"]').valueAsNumber;
-
-                if (Number.isNaN(homeRuns) || Number.isNaN(roadRuns)) {
-                    unhideElement(errorMissingInfo);
-
-                    return false;
-                } else {
-                    totalHomeRuns += homeRuns;
-                    totalRoadRuns += roadRuns;
-                }
-            });
-
-            hideElement(errorMissingInfo);
-
-            if (totalHomeRuns === totalRoadRuns) {
-                unhideElement(errorTie);
-                return false;
-            } else {
-                hideElement(errorTie);
-
-                if (innings.length === 5) {
-                    // If there are 5 valid innings, the score differential must be at least 10.
-                    if (Math.abs(totalRoadRuns - totalRoadRuns) < 10) {
-                        unhideElement(errorMercy);
-                        return false;
-                    } else hideElement(errorMercy);
-                } else hideElement(errorMercy);
-            }
-
-            return true;
-        }
-    }
-}
-
 /* EVENT LISTENERS */
 
 // Event listeners on the home and road team inputs to apply styling if they match.
@@ -191,31 +136,6 @@ forfeitSwitch.addEventListener('change', (event) => {
         inningInputs.forEach(input => {
             input.disabled = false;
         });
-    }
-});
-
-// Event listener for btnSubmit button click to handle validation and determine whether to submit or not.
-document.getElementById('btnSubmit').addEventListener('click', event => {
-    // Prevent the default submit behaviour to allow for validation.
-    event.preventDefault();
-
-    // Make the sure the names are valid.
-    const validNames = validateTeamNames();
-
-    if (validNames) {
-        // Don't need to check that date isn't empty because it is a required field on the form.
-
-        // Check whether the date is in the past or not.
-        const gamePlayed = gameHasBeenPlayed();
-
-        if (!gamePlayed) {
-            // The game hasn't happened yet, so submit the form.
-            form.submit();
-        } else {
-            const forfeited = validateForfeit();
-
-            if (forfeited) form.submit();
-        }
     }
 });
 
