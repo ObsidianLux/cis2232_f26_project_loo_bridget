@@ -1,0 +1,37 @@
+<!--
+Author: Bridget Loo
+Date: 2026-11-20
+Class: CIS-2232
+Purpose: Sprint 3 - Add Functionality. Display success message after adding a game.
+-->
+<!DOCTYPE html>
+
+<!-- Enable Thymeleaf -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link}, _)}">
+    <title th:text="#{application.name}"></title>
+    <link rel="stylesheet" th:href="@{/css/addSuccess.css}">
+</head>
+
+<body>
+<aside th:replace="~{fragments/navSidebar :: navSidebar('add')}">
+    <!--
+    Replaces this aside element with the navSidebar fragment in the navSidebar.html file.
+    Passes the word 'add' into the fragment so that it assigns the 'active' class to the correct navigation item.
+    -->
+</aside>
+
+<main>
+    <div>
+        <h1 class="primary-heading">Game Successfully Scheduled</h1>
+        <p>What would you like to do next?</p>
+        <div>
+            <a th:href="@{/league/add}" th:text="#{add.success.another}" class="primary-button"></a>
+            <a th:href="@{/league/list}" th:text="#{add.success.view}" class="primary-button"></a>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

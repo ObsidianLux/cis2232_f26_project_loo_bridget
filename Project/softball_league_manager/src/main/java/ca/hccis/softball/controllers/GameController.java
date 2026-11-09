@@ -89,19 +89,19 @@ public class GameController {
      * @since 20261020
      */
     @RequestMapping("/add/submit")
-    public String addSubmit(Model model, @Valid @ModelAttribute GameDTO game, BindingResult bindingResult) {
+    public String addSubmit(Model model, @Valid @ModelAttribute("game") GameDTO game, BindingResult bindingResult) {
         logger.info("Running the GameController addSubmit() method.");
 
         // Check DTO validation rules first. If there are errors, return to form view with error messages.
+        logger.info(bindingResult.toString());
+
         if (!bindingResult.hasErrors()) {
             // Save the mapped entity.
             _gr.save(game.getMappedGame());
 
-            // Add a success message to display to the user.
-            model.addAttribute("success", "The game was successfully scheduled!");
+            logger.info("Added new game to repository. Redirecting to success page...");
 
-            // Add a new GameDTO to the model if the user wants to add another game.
-            model.addAttribute("game", getNewGameDTO());
+            return "league/addSuccess";
         }
 
         return "league/add";

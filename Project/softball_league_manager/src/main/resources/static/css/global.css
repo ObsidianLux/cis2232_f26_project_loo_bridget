@@ -470,6 +470,7 @@ input[type="number"], input[list] {
 
     &:is(a) {
         text-decoration: none;
+        border: none;
     }
 
     &:hover:not(.disabled) {
