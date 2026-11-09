@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+// TODO Add validation to make sure that all games have at least 7 innings unless they haven't been played, the mercy rule applied, or they were forfeited.
+
 @ConditionalRequired(
         conditionalField = "wasForfeited",
         dependentField = "teamAtFault",
