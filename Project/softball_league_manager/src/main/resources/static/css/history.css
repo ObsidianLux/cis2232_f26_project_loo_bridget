@@ -8,13 +8,15 @@ Purpose: Stylesheet specific to the history.html page.
 main {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: min-content 1fr;
+    grid-template-rows: min-content minmax(0, 1fr);
     gap: 20px;
 
     section {
         background-color: white;
         border-radius: 10px;
         padding: 20px !important;
+
+        min-height: 0;
 
         &.horizontal {
             display: flex;
@@ -31,14 +33,25 @@ main {
             gap: 20px;
         }
 
+        &:has(.card-container) {
+            overflow: hidden;
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
         .card-container {
+            display: flex;
             flex-flow: column nowrap;
             justify-content: flex-start;
+            gap: 20px;
+
+            flex: 1 1 0;
+            min-height: 0;
+            overflow-y: auto;
 
             &:has(.total-center) {
                 justify-content: center;
                 align-items: center;
-                height: 100%;
             }
 
             .card-game {
@@ -47,8 +60,6 @@ main {
                 gap: 20px;
                 justify-content: space-between;
 
-                height: min-content;
-
                 box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
                 padding: 15px;
                 background-color: var(--cloud-blue);
@@ -56,6 +67,7 @@ main {
                 border-radius: 10px;
 
                 width: 100%;
+                flex-shrink: 0;
 
                 &:hover {
                     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
