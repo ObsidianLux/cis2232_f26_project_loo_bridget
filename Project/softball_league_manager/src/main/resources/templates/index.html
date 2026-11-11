@@ -21,12 +21,12 @@ Purpose: Index / home page for the Softball League Manager app.
 </head>
 
 <body>
-    <aside th:replace="~{fragments/navSidebar :: navSidebar('index')}">
+    <header th:replace="~{fragments/nav :: navMenu('index')}">
         <!--
-        Replaces this aside element with the navSidebar fragment in the navSidebar.html file.
+        Replaces this header element with the navMenu fragment in the nav.html file.
         Passes the word 'index' into the fragment so that it assigns the 'active' class to the correct navigation item.
         -->
-    </aside>
+    </header>
 
     <main>
         <section>

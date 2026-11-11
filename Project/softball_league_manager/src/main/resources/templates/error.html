@@ -7,16 +7,15 @@ Purpose: Error page that will display if there is an issue displaying the conten
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: headerFragment(~{::title}, _, _)}">
-    <!-- Passing '_' into the fragment means that it will not inject any custom stylesheets. -->
+    <!-- Passing '_' into the fragment means that it will not inject any custom stylesheets or scripts. -->
     <title th:text="#{application.name}"></title>
 </head>
 <body>
-<aside th:replace="~{fragments/navSidebar :: navSidebar(_)}">
+<header th:replace="~{fragments/nav :: navMenu(_)}">
     <!--
-    Replaces this aside element with the navSidebar fragment in the navSidebar.html file.
-    Passes '_' into the fragment so that it doesn't assign the 'active' class to any navigation item.
+    Replaces this header element with the navMenu fragment in the nav.html file.
     -->
-</aside>
+</header>
 <main>
     <h2 th:text="#{label.error}"></h2>
 </main>
