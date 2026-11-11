@@ -1,5 +1,3 @@
-const form = document.getElementById('formAdd');
-
 const homeTeamInput = document.getElementById('inputHomeTeam');
 const roadTeamInput = document.getElementById('inputRoadTeam');
 const gameDayInput = document.getElementById('inputGameDay');
@@ -11,9 +9,10 @@ const inningsContainerInner = document.getElementById('inningsContainerInner');
 const additionalInnings = document.getElementById('inningsAdditional');
 const addInningButton = document.getElementById('btnAddInning');
 
-/* SUBMIT VALIDATION METHODS */
-
-// Team names must not be blank and must not be the same.
+document.addEventListener('DOMContentLoaded', () => {
+    validateTeamNames();
+    gameHasBeenPlayed();
+});
 
 /**
  * Checks whether the values of the two team name fields are identical.
@@ -76,12 +75,14 @@ function gameHasBeenPlayed() {
     const date = gameDayInput.valueAsNumber;
 
     const inputs = inningsContainerInner.querySelectorAll('.inning-row input[type="number"]');
+    const buttons = inningsContainerInner.querySelectorAll('.remove-button');
 
     if (date >= Date.now()) {
         // Disable inputs for forfeit and innings.
         forfeitSwitch.disabled = true;
 
         inputs.forEach(input => input.disabled = true);
+        buttons.forEach(button => button.disabled = true);
         addInningButton.disabled = true;
 
         return false;
@@ -90,6 +91,7 @@ function gameHasBeenPlayed() {
         forfeitSwitch.disabled = false;
 
         inputs.forEach(input => input.disabled = false);
+        buttons.forEach(button => button.disabled = false);
         addInningButton.disabled = false;
 
         return true;
@@ -140,7 +142,7 @@ forfeitSwitch.addEventListener('change', (event) => {
 });
 
 // Listen for a click to add a new inning row.
-addInningButton.addEventListener('click', event => {
+addInningButton.addEventListener('click', () => {
     console.log("Clicked add!");
 
     const templateInning = document.getElementById('templateInningRow');
@@ -174,7 +176,8 @@ function updateInningNumbers() {
 
     innings.forEach((inning, index) => {
         // Set the inning number in the readonly text field. + 6 because there will always be 5 in another element and the display index should start at 1.
-        inning.querySelector('input[data-field="inningNumber"]').value = (index + 6).toString();
+        const inningNum = inning.querySelector('p[data-field="inningNumber"]');
+        inningNum.textContent = (index + 6).toString();
 
         // Set the Spring MVC name and id attributes for each field that should map to an Inning object.
         const inputs = inning.querySelectorAll('input[data-field]');

@@ -1,0 +1,34 @@
+<!--
+Author: Bridget Loo
+Date: 2026-11-20
+Class: CIS-2232
+Purpose: Sprint 3 - Update Functionality. Allows the user to edit a game's information and save to the database.
+-->
+<!DOCTYPE html>
+
+<!-- Enable Thymeleaf -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link}, ~{::script})}">
+    <title th:text="#{application.name}"></title>
+    <link rel="stylesheet" th:href="@{/css/add.css}">
+    <script th:src="@{/js/add.js}" type="text/javascript" defer></script>
+</head>
+
+<body>
+<header th:replace="~{fragments/nav :: navMenu('add')}">
+    <!--
+    Replaces this header element with the navMenu fragment in the nav.html file.
+    Passes the word 'add' into the fragment so that it assigns the 'active' class to the correct navigation item.
+    -->
+</header>
+
+<main>
+    <div>
+        <!-- TODO Display success message to user -->
+        <form th:replace="~{fragments/gameForm :: form(${teamNames}, #{update.title}, '/games/update/submit')}"></form>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
