@@ -1,6 +1,6 @@
-package ca.hccis.softball.controllers;
+package ca.hccis.softball.controller;
 
-import ca.hccis.softball.entity.ReportHistory;
+import ca.hccis.softball.model.domain.ReportHistory;
 
 import ca.hccis.softball.util.Utility;
 import org.slf4j.Logger;
