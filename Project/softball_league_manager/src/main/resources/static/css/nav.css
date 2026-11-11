@@ -1,0 +1,58 @@
+/*
+Author: Bridget Loo
+Date: 2026-12-10
+Class: CIS-2232
+Purpose: Navbar stylesheet.
+ */
+
+:root {
+    --navbar-height: 60px;
+}
+
+nav {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: var(--gap-large);
+
+    background-color: var(--midnight-blue);
+    color: var(--font-on-dark);
+
+    height: var(--navbar-height);
+
+    padding: 0 20px;
+
+    /* App title */
+    .navbar-brand {
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: large;
+
+        white-space: nowrap;
+        cursor: default;
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-flow: row nowrap;
+        list-style: none;
+        gap: var(--gap-medium);
+
+        > li > a {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--font-on-dark);
+            font-size: medium;
+            border-radius: 10px;
+
+            &.active {
+                background-color: var(--dusty-denim);
+                font-weight: bold;
+            }
+
+            &:hover {
+                background-color: var(--calm-ocean);
+            }
+        }
+    }
+}
