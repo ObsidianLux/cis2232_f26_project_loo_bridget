@@ -1,4 +1,4 @@
-package ca.hccis.softball.entity;
+package ca.hccis.softball.model.domain;
 
 import com.google.gson.Gson;
 

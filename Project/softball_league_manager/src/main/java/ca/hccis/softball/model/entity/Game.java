@@ -1,8 +1,8 @@
-package ca.hccis.softball.jpa.entity;
+package ca.hccis.softball.model.entity;
 
-import ca.hccis.softball.bo.GameBO;
+import ca.hccis.softball.model.bo.GameBO;
 
-import ca.hccis.softball.entity.Inning;
+import ca.hccis.softball.model.domain.Inning;
 import ca.hccis.softball.util.JsonListConverter;
 
 import jakarta.persistence.*;

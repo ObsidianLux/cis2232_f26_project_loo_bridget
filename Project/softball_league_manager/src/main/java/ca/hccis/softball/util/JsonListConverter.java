@@ -1,6 +1,6 @@
 package ca.hccis.softball.util;
 
-import ca.hccis.softball.entity.Inning;
+import ca.hccis.softball.model.domain.Inning;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import jakarta.persistence.AttributeConverter;

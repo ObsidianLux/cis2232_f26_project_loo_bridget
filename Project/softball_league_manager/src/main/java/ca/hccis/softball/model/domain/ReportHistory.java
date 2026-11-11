@@ -1,7 +1,7 @@
-package ca.hccis.softball.entity;
+package ca.hccis.softball.model.domain;
 
-import ca.hccis.softball.bo.GameBO;
-import ca.hccis.softball.jpa.entity.Game;
+import ca.hccis.softball.model.bo.GameBO;
+import ca.hccis.softball.model.entity.Game;
 
 import java.util.ArrayList;
 import java.util.List;

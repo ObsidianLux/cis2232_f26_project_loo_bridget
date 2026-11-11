@@ -1,7 +1,7 @@
 package ca.hccis.softball.dao;
 
-import ca.hccis.softball.entity.Inning;
-import ca.hccis.softball.jpa.entity.Game;
+import ca.hccis.softball.model.domain.Inning;
+import ca.hccis.softball.model.entity.Game;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;

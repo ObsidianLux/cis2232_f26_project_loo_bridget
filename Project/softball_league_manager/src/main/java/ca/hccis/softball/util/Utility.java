@@ -1,6 +1,6 @@
 package ca.hccis.softball.util;
 
-import ca.hccis.softball.jpa.entity.Game;
+import ca.hccis.softball.model.entity.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

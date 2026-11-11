@@ -1,6 +1,6 @@
 package ca.hccis.softball.validation;
 
-import ca.hccis.softball.entity.GameDTO;
+import ca.hccis.softball.model.dto.GameDTO;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
