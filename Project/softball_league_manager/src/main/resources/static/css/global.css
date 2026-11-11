@@ -4,6 +4,10 @@ Date: 2026-12-10
 Class: CIS-2232
 Purpose: Global stylesheet.
  */
+
+/* Quantico Bold font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Quantico:wght@700&display=swap');
+
 :root {
     --primary-colour: skyblue;
 
@@ -18,6 +22,13 @@ Purpose: Global stylesheet.
 
     --win-colour: #80EF80;
     --loss-colour: #FF746C;
+
+    --gap-small: 5px;
+    --gap-medium: 10px;
+    --gap-large: 20px;
+
+    --box-shadow-small: 0 4px 4px rgba(0, 0, 0, 0.08);
+    --box-shadow-big: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 * {
@@ -28,7 +39,7 @@ Purpose: Global stylesheet.
     font-family: "Arial", sans-serif;
 }
 
-/* Google Fonts Quantico Font */
+/* Quantico Bold font from Google Fonts */
 .quantico-bold {
     font-family: "Quantico", sans-serif;
     font-weight: 700;
@@ -43,154 +54,42 @@ html {
 }
 
 body {
-    display: flex;
-    flex-flow: row nowrap;
-    column-gap: 10px;
-    padding-right: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content minmax(0, 1fr) min-content;
 
     height: 100vh;
-    background-color: var(--midnight-blue);
-}
-
-/* Container for the navigation sidebar */
-aside:has(nav) {
-    width: fit-content;
-    height: 100vh;
-
-    background-color: var(--dusty-denim);
-    color: var(--font-on-dark);
-
-    position: sticky;
-    top: 0;
-    padding: 10px;
-
-    display: flex;
-    flex-direction: column;
-    row-gap: 20px;
-
-    /* Prevents text overflow during the collapse/expand */
-    overflow: hidden;
-
-    /* Top row with the app title and toggle button */
-    > div {
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        /* Pushes the two elements to either side of the container */
-        justify-content: space-between;
-        column-gap: 10px;
-
-        height: min-content;
-
-        /* App title */
-        .navbar-brand {
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: large;
-            white-space: nowrap;
-            cursor: default;
-        }
-
-        /* Toggle button */
-        #nav-toggle-btn {
-            cursor: pointer;
-            border-radius: 5px;
-            padding: 5px;
-
-            &:hover {
-                background-color: var(--calm-ocean);
-            }
-        }
-    }
-
-    /* Nav menu */
-    nav {
-        height: fit-content;
-        flex-grow: 2;
-
-        padding-left: 10px;
-
-        > ul {
-            list-style: none;
-            padding: 0;
-
-            li {
-                margin-bottom: 5px;
-                border-radius: 5px;
-                padding: 5px;
-
-                a {
-                    text-decoration: none;
-                    color: var(--font-on-dark);
-                    white-space: nowrap;
-
-                    display: flex;
-                    flex-flow: row nowrap;
-                    align-items: center;
-                    gap: 5px;
-                }
-
-                &.active {
-                    background-color: var(--calm-ocean);
-                    font-weight: bold;
-                }
-
-                &:hover {
-                    background-color: var(--powder-sky);
-                    cursor: pointer;
-
-                    a {
-                        color: var(--font-on-light);
-                    }
-
-                    img {
-                        filter: brightness(0) contrast(100%);
-                    }
-                }
-            }
-        }
-    }
-
-    /* Footer text */
-    footer {
-        height: min-content;
-        white-space: nowrap;
-
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        justify-content: space-between;
-        column-gap: 5px;
-
-        > * {
-            font-size: small;
-        }
-    }
-
-    &.collapsed {
-        img {
-            justify-content: center;
-        }
-
-        .navbar-brand, a > span, footer {
-            display: none;
-        }
-
-        nav {
-            padding: 0;
-        }
-    }
+    background-color: var(--calm-ocean);
 }
 
 /* Container for the main page content */
 main {
     padding: 20px;
-    margin: 10px 0;
+    margin: 20px;
     background-color: var(--calm-ocean);
     border-radius: 10px;
+    min-height: 0;
+}
 
-    /* Makes the element take up all remaining space after the navbar sets itself */
-    flex: 1;
+/* Footer text */
+footer {
+    height: min-content;
+    width: 100%;
+    white-space: nowrap;
+    padding: 5px 0;
+
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 5px;
+
+    background-color: var(--midnight-blue);
+
+    > * {
+        font-size: small;
+        color: var(--font-on-dark);
+    }
 }
 
 /*region FONT STYLING*/
@@ -214,54 +113,6 @@ main {
 .error-message {
     color: red;
     font-style: italic;
-}
-
-/*endregion*/
-
-/*region GENERAL STYLING*/
-
-.metric {
-    display: flex;
-    flex-flow: column nowrap;
-
-    .metric-group {
-        display: flex;
-        flex-flow: row nowrap;
-        gap: 5px;
-
-        justify-content: center;
-        align-items: center;
-    }
-
-    .metric-label {
-        text-align: center;
-        text-transform: uppercase;
-        color: var(--midnight-blue);
-    }
-
-    .metric-value {
-        text-align: center;
-        font-size: x-large;
-    }
-
-    .metric-divider {
-        text-align: center;
-        font-size: large;
-    }
-}
-
-.link-button {
-    text-decoration: none;
-    color: var(--dusty-denim);
-    font-weight: bold;
-
-    &:hover {
-        color: var(--midnight-blue);
-    }
-}
-
-.hidden {
-    display: none;
 }
 
 /*endregion*/
@@ -426,6 +277,10 @@ input[type="date"] {
     border-width: thin;
     width: 150px;
     line-height: 1em;
+
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 input[type="button"] {
@@ -452,6 +307,14 @@ input[type="number"], input[list] {
     padding: 10px 20px;
     border-style: solid;
 
+    &:is(a) {
+        text-decoration: none;
+        border: none;
+        height: min-content;
+        width: min-content;
+        white-space: nowrap;
+    }
+
     &:hover {
         background-color: var(--cloud-blue);
         color: var(--font-on-light);
@@ -471,6 +334,9 @@ input[type="number"], input[list] {
     &:is(a) {
         text-decoration: none;
         border: none;
+        height: min-content;
+        width: min-content;
+        white-space: nowrap;
     }
 
     &:hover:not(.disabled) {
@@ -484,6 +350,106 @@ input[type="number"], input[list] {
         background-color: darkgray;
         color: var(--font-on-light);
     }
+}
+
+/*endregion*/
+
+/*region GENERAL STYLING*/
+
+.metric {
+    display: flex;
+    flex-flow: column nowrap;
+
+    .metric-group {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 5px;
+
+        justify-content: center;
+        align-items: center;
+    }
+
+    .metric-label {
+        text-align: center;
+        text-transform: uppercase;
+        color: var(--midnight-blue);
+    }
+
+    .metric-value {
+        text-align: center;
+        font-size: x-large;
+    }
+
+    .metric-divider {
+        text-align: center;
+        font-size: large;
+    }
+}
+
+.link-button {
+    text-decoration: none;
+    color: var(--dusty-denim);
+    font-weight: bold;
+
+    &:hover {
+        color: var(--midnight-blue);
+    }
+}
+
+/* Since there is no native vertical line like there is a horizontal line, this class makes use of borders to simulate one. */
+.vertical-line {
+    border-left: 2px solid white;
+    height: 100%;
+    width: 0;
+
+    /* Adds space to the left and right */
+    margin: 0 20px;
+}
+
+.collapsible-section {
+    border: thin solid #ddd;
+    overflow: hidden;
+    flex: none;
+
+    .collapsible-header {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f4f4f4;
+        cursor: pointer;
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+        }
+    }
+
+    &[open] .icon {
+        transform: rotate(180deg);
+    }
+
+    .icon {
+        font-size: 1.1rem;
+        font-weight: bold;
+        filter: invert(1);
+        transition: transform 0.2s ease;
+    }
+
+    .collapsible-content {
+        padding: 1rem;
+        background-color: #fff;
+        border-top: 1px solid #ddd;
+    }
+}
+
+.hidden {
+    display: none !important;
 }
 
 /*endregion*/
