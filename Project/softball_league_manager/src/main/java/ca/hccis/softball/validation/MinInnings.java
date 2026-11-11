@@ -21,16 +21,19 @@ public @interface MinInnings {
 
     String innings();
     long minSize() default 5;
+    String requiredField();
 
     public static class Validator implements ConstraintValidator<MinInnings, GameDTO> {
         private String innings;
         private long minSize;
+        private String requiredField;
         private String message;
 
         @Override
         public void initialize(MinInnings constraintAnnotation) {
             this.innings = constraintAnnotation.innings();
             this.minSize = constraintAnnotation.minSize();
+            this.requiredField = constraintAnnotation.requiredField();
             this.message = constraintAnnotation.message();
         }
 
@@ -40,16 +43,15 @@ public @interface MinInnings {
 
             try {
                 BeanWrapperImpl wrapper = new BeanWrapperImpl(value);
+
                 Object listInnings = wrapper.getPropertyValue(innings);
+                int size = listInnings instanceof Collection<?> c ? c.size() : 0;
+                boolean required = Boolean.TRUE.equals(wrapper.getPropertyValue(requiredField));
 
-                // If empty or null, skip this validation (let @NotEmpty or @NotNull handle it)
-                if (!(listInnings instanceof Collection<?>) || ((Collection<?>) listInnings).isEmpty()) {
-                    return true;
-                }
+                // Games that haven't been played or were forfeited have no innings, so there's nothing to check.
+                if (size == 0 && !required) return true;
 
-                Collection<?> collection = (Collection<?>) listInnings;
-
-                if (collection.size() < minSize) {
+                if (size < minSize) {
                     context.disableDefaultConstraintViolation();
                     context.buildConstraintViolationWithTemplate(message)
                             .addPropertyNode(innings)
