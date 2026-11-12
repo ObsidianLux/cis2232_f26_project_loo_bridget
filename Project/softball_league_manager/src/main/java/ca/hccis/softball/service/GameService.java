@@ -17,22 +17,14 @@ public class GameService {
         this.gameRepository = gameRepository;
     }
 
-    /* SELECT */
+    /* READ */
 
     public List<Game> getPlayedGames() {
         return gameRepository.findByPlayedTrueOrderByDateDesc();
     }
 
-    public List<Game> getTop5PlayedGames() {
-        return gameRepository.findTop5ByPlayedTrueOrderByDateDesc();
-    }
-
     public List<Game> getUnplayedGames() {
         return gameRepository.findByPlayedFalseOrderByDateAsc();
-    }
-
-    public List<Game> getTop5UnplayedGames() {
-        return gameRepository.findTop5ByPlayedFalseOrderByDateAsc();
     }
 
     public Game getGameById(int id) {
@@ -42,7 +34,7 @@ public class GameService {
     /* UPDATE */
 
     @Transactional
-    public Game updateGame(Integer id, GameDTO gameDTO) {
+    public void updateGame(Integer id, GameDTO gameDTO) {
         // Get the existing database entity.
         Game game = gameRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id));
 
@@ -61,9 +53,6 @@ public class GameService {
 
         // Save the updated game.
         gameRepository.save(game);
-
-        // Return the updated game.
-        return game;
     }
 
     /* INSERT */
