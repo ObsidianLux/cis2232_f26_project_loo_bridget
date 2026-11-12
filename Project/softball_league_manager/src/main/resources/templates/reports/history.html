@@ -30,18 +30,18 @@ Purpose: Sprint 2 - Report Functionality. Displays a report to the user about th
     <main th:with="hasTeam=${reportHistory.getTeam() != null}, team=${reportHistory.getTeam()}">
         <section class="horizontal">
             <hgroup>
-                <h1 class="quantico-bold" th:text="#{history.header}"></h1>
-                <p class="subtitle" th:text="#{history.subtitle}"></p>
+                <h1 class="quantico-bold" th:text="#{history.heading.title}"></h1>
+                <p class="subtitle" th:text="#{history.heading.subtitle}"></p>
             </hgroup>
 
             <!-- Form to select the team to generate a report for. -->
             <form th:action="@{/reports/history/view}" method="post" id="teamHistoryForm">
-                <label for="select-team" th:text="#{history.form.select}"></label>
+                <label for="select-team" th:text="#{history.select.label.team}"></label>
                 <select id="select-team" th:field="${reportHistory.teamName}">
                     <!-- Dynamically populates the list of teams -->
                     <option th:each="team : ${reportHistory.getTeams()}" th:value="${team.getTeamName()}" th:text="${team.getTeamName()}"></option>
                 </select>
-                <input type="submit" th:value="#{history.form.submit}" class="primary-button">
+                <input type="submit" th:value="#{common.button.submit}" class="primary-button">
             </form>
         </section>
 
@@ -54,19 +54,19 @@ Purpose: Sprint 2 - Report Functionality. Displays a report to the user about th
                 <div id="historyMetrics">
                     <!-- Number of games played -->
                     <div class="metric">
-                        <p class="metric-label" th:text="#{metric.game}"></p>
+                        <p class="metric-label" th:text="#{common.metric.game}"></p>
                         <p class="metric-value" th:text="${hasTeam ? team.getNumberOfGamesPlayed() : 0}"></p>
                     </div>
 
                     <!-- Number of games won -->
                     <div class="metric">
-                        <p class="metric-label" th:text="#{metric.win}"></p>
+                        <p class="metric-label" th:text="#{common.metric.win}"></p>
                         <p class="metric-value" th:text="${hasTeam ? team.getWins().total() : 0}"></p>
                     </div>
 
                     <!-- Number of games lost -->
                     <div class="metric">
-                        <p class="metric-label" th:text="#{metric.loss}"></p>
+                        <p class="metric-label" th:text="#{common.metric.loss}"></p>
                         <p class="metric-value" th:text="${hasTeam ? team.getLosses().total() : 0}"></p>
                     </div>
                 </div>
@@ -168,10 +168,10 @@ Purpose: Sprint 2 - Report Functionality. Displays a report to the user about th
                             -->
                             <h2 th:with="isWinner=${game.getWinningTeam() == reportHistory.getTeamName()}">
                                 <!-- Displays this span if isWinner is true. -->
-                                <span th:if="${isWinner}" th:text="#{label.win}" class="font-win"></span>
+                                <span th:if="${isWinner}" th:text="#{common.label.win}" class="font-win"></span>
 
                                 <!-- Displays this span unless isWinner is true (i.e. only displays if isWinner is false). -->
-                                <span th:unless="${isWinner}" th:text="#{label.loss}" class="font-loss"></span>
+                                <span th:unless="${isWinner}" th:text="#{common.label.loss}" class="font-loss"></span>
                             </h2>
 
                             <!--
@@ -181,14 +181,14 @@ Purpose: Sprint 2 - Report Functionality. Displays a report to the user about th
                             <p class="subtitle" th:with="exceptional=${game.getWasMercyWin() or game.getWasForfeited()}, isHomeTeam=${game.getHomeTeam() == reportHistory.getTeam()}">
                                 <span>
                                     <!-- Displays if the report team is the home team. -->
-                                    <span th:if="${isHomeTeam}" th:text="#{label.home}"></span>
+                                    <span th:if="${isHomeTeam}" th:text="#{common.label.home}"></span>
 
                                     <!-- Displays unless the report team is the home team (i.e. displays if the report team isn't the home team). -->
-                                    <span th:unless="${isHomeTeam}" th:text="#{label.road}"></span>
+                                    <span th:unless="${isHomeTeam}" th:text="#{common.label.road}"></span>
                                 </span>
 
                                 <!-- If the game ended by mercy rule or forfeit (exceptional = true), this divider is displayed. -->
-                                <span th:if="${exceptional}" th:text="#{metric.divider.bullet}"></span>
+                                <span th:if="${exceptional}" th:text="#{common.metric.divider.bullet}"></span>
 
                                 <!--
                                 Check is ignored and result not displayed if exceptional is false.
@@ -196,17 +196,17 @@ Purpose: Sprint 2 - Report Functionality. Displays a report to the user about th
                                 -->
                                 <span th:with="mercyWin=${game.getWasMercyWin()}" th:if="${exceptional}">
                                     <!-- Displays if mercyWin is true. -->
-                                    <span th:if="${mercyWin}" th:text="#{label.mercy}"></span>
+                                    <span th:if="${mercyWin}" th:text="#{common.label.mercy}"></span>
 
                                             <!-- Displays unless mercyWin is true (i.e. the game ended by forfeit). -->
-                                    <span th:unless="${mercyWin}" th:text="#{label.forfeit}"></span>
+                                    <span th:unless="${mercyWin}" th:text="#{common.label.forfeit}"></span>
                                 </span>
                             </p>
                         </hgroup>
 
                         <p class="card-game-opponent">
                             <!-- Opponent team's name -->
-                            <span class="metric-label" th:text="#{label.versus}"></span>
+                            <span class="metric-label" th:text="#{common.label.versus}"></span>
                             <span class="metric-value" th:text="${reportHistory.getOpponentTeamName(game.getHomeTeam(), game.getRoadTeam())}"></span>
                         </p>
                     </div>
@@ -217,19 +217,19 @@ Purpose: Sprint 2 - Report Functionality. Displays a report to the user about th
                     <div class="card-body-game">
                         <!-- Number of innings -->
                         <div class="metric">
-                            <p class="metric-label" th:text="#{metric.inning}"></p>
+                            <p class="metric-label" th:text="#{common.metric.inning}"></p>
                             <p class="metric-value" th:text="${game.getInnings().size()}"></p>
                         </div>
 
                         <!-- Score differential -->
                         <div class="metric">
-                            <p class="metric-label" th:text="#{metric.plusMinus}"></p>
+                            <p class="metric-label" th:text="#{common.metric.plusMinus}"></p>
                             <p class="metric-value" th:text="${game.getPlusMinus(reportHistory.getTeamName())}"></p>
                         </div>
 
                         <!-- Final scores separated by a colon -->
                         <div class="metric">
-                            <p class="metric-label" th:text="#{metric.score}"></p>
+                            <p class="metric-label" th:text="#{common.metric.score}"></p>
 
                             <!-- Checks whether the home score is greater than the road score. -->
                             <div class="metric-group" th:with="homeIsGreater=${game.getHomeScore() > game.getRoadScore()}">
@@ -238,7 +238,7 @@ Purpose: Sprint 2 - Report Functionality. Displays a report to the user about th
                                 <p class="metric-value" th:text="${homeIsGreater ? game.getHomeScore() : game.getRoadScore()}"></p>
 
                                 <!-- Dividing colon -->
-                                <p class="metric-divider" th:text="#{metric.divider.colon}"></p>
+                                <p class="metric-divider" th:text="#{common.metric.divider.colon}"></p>
 
                                 <!-- Displays the opposite score from that was displayed in the first p element. -->
                                 <p class="metric-value" th:text="${homeIsGreater ? game.getRoadScore() : game.getHomeScore()}"></p>

@@ -8,13 +8,13 @@
 
         <ul class="nav-menu">
             <li>
-                <a th:href="@{/}" th:text="#{nav.home}" th:classappend="${currentPage == 'index' ? 'active' : ''}"></a>
+                <a th:href="@{/}" th:text="#{nav.label.home}" th:classappend="${currentPage == 'index' ? 'active' : ''}"></a>
             </li>
             <li>
-                <a th:href="@{/game/add}" th:text="#{nav.add}" th:classappend="${currentPage == 'add' ? 'active' : ''}"></a>
+                <a th:href="@{/game/add}" th:text="#{nav.label.add}" th:classappend="${currentPage == 'add' ? 'active' : ''}"></a>
             </li>
             <li>
-                <a th:href="@{/reports/history}" th:text="#{nav.history}" th:classappend="${currentPage == 'history' ? 'active' : ''}"></a>
+                <a th:href="@{/reports/history}" th:text="#{nav.label.history}" th:classappend="${currentPage == 'history' ? 'active' : ''}"></a>
             </li>
         </ul>
     </nav>

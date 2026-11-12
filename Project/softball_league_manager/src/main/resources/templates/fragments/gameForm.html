@@ -1,5 +1,7 @@
+<!-- IntelliJ wouldn't recognize the game object without defining a thymesVar -->
 <!--/*@thymesVar id="game" type="ca.hccis.softball.model.dto.GameDTO"*/-->
 
+<!-- TODO Include game id as @RequestParam -->
 <form th:fragment="form(teamNames, title, action)" th:action="@{${action}}" th:object="${game}" method="post">
     <!-- th:object directly ties the output of this form to the Game object that was attached to the model by the Controller. -->
 
@@ -20,17 +22,17 @@
             Little subtitle at the top to give the user a bit of guidance on how to fill out this part of the form.
             -->
 
-            <p class="subtitle" th:text="#{add.teams.info}"></p>
+            <p class="subtitle" th:text="#{add.heading.subtitle}"></p>
 
-            <label for="inputHomeTeam" th:text="#{add.homeTeam.label}"></label>
-            <input list="teamNames" id="inputHomeTeam" th:field="*{homeTeam}" th:placeholder="#{input.combobox.placeholder}">
+            <label for="inputHomeTeam" th:text="#{add.input.label.home}"></label>
+            <input list="teamNames" id="inputHomeTeam" th:field="*{homeTeam}" th:placeholder="#{add.input.placeholder.team}">
             <p class="error-message" th:if="${#fields.hasErrors('homeTeam')}" th:errors="*{homeTeam}"></p>
 
-            <label for="inputRoadTeam" th:text="#{add.roadTeam.label}"></label>
-            <input list="teamNames" id="inputRoadTeam" th:field="*{roadTeam}" th:placeholder="#{input.combobox.placeholder}">
+            <label for="inputRoadTeam" th:text="#{add.input.label.road}"></label>
+            <input list="teamNames" id="inputRoadTeam" th:field="*{roadTeam}" th:placeholder="#{add.input.placeholder.team}">
             <p class="error-message" th:if="${#fields.hasErrors('roadTeam')}" th:errors="*{roadTeam}"></p>
 
-            <label for="inputGameDay" th:text="#{add.date.label}"></label>
+            <label for="inputGameDay" th:text="#{add.input.label.date}"></label>
             <input type="date" id="inputGameDay" th:field="*{date}">
             <p class="error-message" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></p>
         </article>
@@ -38,11 +40,11 @@
         <article id="forfeitSelectContainer">
             <div>
                 <input type="checkbox" role="switch" id="switchForfeit" th:field="*{wasForfeited}" disabled>
-                <label for="switchForfeit" th:text="#{add.decision.label}"></label>
+                <label for="switchForfeit" th:text="#{add.input.label.decision}"></label>
             </div>
 
             <div>
-                <label for="teamAtFault" th:text="#{add.teamAtFault.label}"></label>
+                <label for="teamAtFault" th:text="#{add.select.label.teamAtFault}"></label>
                 <select th:field="*{teamAtFault}" id="teamAtFault" disabled></select>
             </div>
 
@@ -50,14 +52,14 @@
         </article>
 
         <article id="formSubmitButton">
-            <input type="submit" th:value="#{button.done.label}" class="primary-button" id="btnSubmit">
+            <input type="submit" th:value="#{common.button.done}" class="primary-button" id="btnSubmit">
         </article>
 
         <article id="formInnings">
             <!-- Inning information -->
             <hgroup>
-                <h2 th:text="#{add.innings.label}"></h2>
-                <p class="subtitle" th:text="#{add.innings.subtitle}"></p>
+                <h2 th:text="#{add.header.innings}"></h2>
+                <p class="subtitle" th:text="#{add.subheader.innings}"></p>
                 <p class="error-message" th:if="${#fields.hasErrors('innings')}" th:errors="*{innings}"></p>
             </hgroup>
 
@@ -67,10 +69,10 @@
                         <div class="inning-row" th:each="item, iterStat : ${innings}" th:if="${iterStat.index < 5}">
                             <p class="inning-number" data-field="inningNumber" th:text="${iterStat.index + 1}"></p>
 
-                            <label th:for="|innings[${iterStat.index}].homeRuns|" th:text="#{add.inning.home}"></label>
+                            <label th:for="|innings[${iterStat.index}].homeRuns|" th:text="#{add.input.label.inning.home}"></label>
                             <input type="number" th:id="|innings[${iterStat.index}].homeRuns|" min="0" step="1" value="0" data-field="homeRuns" th:field="*{innings[__${iterStat.index}__].homeRuns}">
 
-                            <label th:for="|innings[${iterStat.index}].roadRuns|" th:text="#{add.inning.road}"></label>
+                            <label th:for="|innings[${iterStat.index}].roadRuns|" th:text="#{add.input.label.inning.road}"></label>
                             <input type="number" th:id="|innings[${iterStat.index}].roadRuns|" min="0" step="1" value="0" data-field="roadRuns" th:field="*{innings[__${iterStat.index}__].roadRuns}">
                         </div>
                     </div>
@@ -78,13 +80,13 @@
                         <div class="inning-row" th:each="item, iterStat : ${innings}" th:if="${iterStat.index > 4}">
                             <p class="inning-number" data-field="inningNumber" th:text="${iterStat.index + 1}"></p>
 
-                            <label th:for="|innings[${iterStat.index}].homeRuns|" th:text="#{add.inning.home}"></label>
+                            <label th:for="|innings[${iterStat.index}].homeRuns|" th:text="#{add.input.label.inning.home}"></label>
                             <input type="number" th:id="|innings[${iterStat.index}].homeRuns|" min="0" step="1" value="0" data-field="homeRuns" th:field="*{innings[__${iterStat.index}__].homeRuns}">
 
-                            <label th:for="|innings[${iterStat.index}].roadRuns|" th:text="#{add.inning.road}"></label>
+                            <label th:for="|innings[${iterStat.index}].roadRuns|" th:text="#{add.input.label.inning.road}"></label>
                             <input type="number" th:id="|innings[${iterStat.index}].roadRuns|" min="0" step="1" value="0" data-field="roadRuns" th:field="*{innings[__${iterStat.index}__].roadRuns}">
 
-                            <button th:text="#{button.remove.label}" onclick="removeInning(this)" class="remove-button" type="button"></button>
+                            <button th:text="#{common.button.remove}" onclick="removeInning(this)" class="remove-button" type="button"></button>
                         </div>
                     </div>
                 </div>
@@ -104,14 +106,14 @@
             <p class="inning-number" data-field="inningNumber"></p>
 
             <!-- Need to set the id and name for the input, and the label's for. -->
-            <label th:text="#{add.inning.home}"></label>
+            <label th:text="#{add.input.label.inning.home}"></label>
             <input type="number" min="0" step="1" value="0" data-field="homeRuns">
 
             <!-- Need to set the id and name for the input, and the label's for. -->
-            <label th:text="#{add.inning.road}"></label>
+            <label th:text="#{add.input.label.inning.road}"></label>
             <input type="number" min="0" step="1" value="0" data-field="roadRuns">
 
-            <button th:text="#{button.remove.label}" onclick="removeInning(this)" class="remove-button" type="button"></button>
+            <button th:text="#{common.button.remove}" onclick="removeInning(this)" class="remove-button" type="button"></button>
         </div>
     </template>
 </form>

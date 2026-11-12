@@ -31,23 +31,22 @@ Purpose: Index / home page for the Softball League Manager app.
     <main>
         <section id="schedule">
             <div class="section-header">
-                <h1 th:text="#{index.heading.schedule}" class="primary-heading quantico-bold"></h1>
+                <h1 th:text="#{index.heading.title.schedule}" class="primary-heading quantico-bold"></h1>
 
-                <a th:href="@{/add}" th:text="#{index.button.add}" class="button primary"></a>
+                <a th:href="@{/game/add}" th:text="#{index.button.game.add}" class="button primary"></a>
             </div>
 
             <hr>
 
             <div id="scheduleButtons">
-                <!-- TODO Write script for toggle behaviour. -->
-                <button class="button toggle active" id="btnUpcomingGames" th:text="#{index.upcoming}"></button>
-                <button class="button toggle" id="btnPastGames" th:text="#{index.past}"></button>
+                <button class="button toggle active" id="btnUpcomingGames" data-toggle="scheduleUpcomingGames" th:text="#{index.button.game.upcoming}"></button>
+                <button class="button toggle" id="btnPastGames" data-toggle="schedulePastGames" th:text="#{index.button.game.past}"></button>
             </div>
 
             <div class="section-body">
                 <details class="collapsible-section" id="scheduleFilters">
                     <summary class="collapsible-header">
-                        <h3 th:text="#{label.filters}"></h3>
+                        <h3 th:text="#{common.label.filter}"></h3>
                         <img class="icon" th:src="@{/images/keyboard_arrow_down.svg}" alt="Keyboard arrow down">
                     </summary>
                     <div class="collapsible-content">
@@ -65,32 +64,31 @@ Purpose: Index / home page for the Softball League Manager app.
                 <article class="card-container" id="scheduleUpcomingGames">
                     <!-- Create a card for each upcoming game. -->
                     <div class="card-wide upcoming" th:each="game : ${upcomingGames}">
-                        <p class="subtitle colspan-2" th:text="#{label.home}"></p>
-                        <p class="subtitle colspan-2" th:text="#{label.road}"></p>
+                        <p class="subtitle colspan-2" th:text="#{common.label.home}"></p>
+                        <p class="subtitle colspan-2" th:text="#{common.label.road}"></p>
 
                         <h2 th:text="${game.getHomeTeam()}"></h2>
-                        <p class="colspan-2" th:text="#{label.versus}"></p>
+                        <p class="colspan-2" th:text="#{common.label.versus}"></p>
                         <h2 th:text="${game.getRoadTeam()}"></h2>
 
                         <div class="colspan-4">
                             <p class="subtitle" th:text="${game.getDate()}"></p>
-                            <span class="tooltip" tabindex="0" th:if="${game.getDate() < session.today}" th:data-tooltip="#{index.upcoming.warning}">
+                            <span class="tooltip" tabindex="0" th:if="${game.getDate() < session.today}" th:data-tooltip="#{index.warning.upcoming}">
                                 <img th:src="@{/images/error.svg}" alt="Error">
                             </span>
                         </div>
 
-                        <a class="button secondary colspan-2" th:href="@{/update(id=${game.getId()})}" th:text="#{button.edit.label}"></a>
+                        <a class="button secondary colspan-2" th:href="@{/update(id=${game.getId()})}" th:text="#{common.button.edit}"></a>
 
                         <!-- Confirm with the user that they want to delete the game before allowing Thymeleaf to redirect to the Controller. -->
-                        <a class="button delete colspan-2" th:href="@{/delete(id=${game.getId()})}" th:text="#{button.delete.label}" onclick="return confirm('Are you sure you want to delete this game?');"></a>
+                        <a class="button delete colspan-2" th:href="@{/delete(id=${game.getId()})}" th:text="#{common.button.delete}" onclick="return confirm('Are you sure you want to delete this game?');"></a>
                     </div>
                 </article>
             </div>
         </section>
 
         <section>
-            <h1 th:text="#{index.heading.standings}" class="primary-heading quantico-bold"></h1>
-
+            <h1 th:text="#{index.heading.title.standings}" class="primary-heading quantico-bold"></h1>
             <hr>
 
             <!-- TODO: Tooltips -->
@@ -98,7 +96,7 @@ Purpose: Index / home page for the Softball League Manager app.
             <div class="section-body">
                 <details class="collapsible-section" id="standingSort">
                     <summary class="collapsible-header">
-                        <h3 th:text="#{label.sort}"></h3>
+                        <h3 th:text="#{common.label.sort}"></h3>
                         <img class="icon" th:src="@{/images/keyboard_arrow_down.svg}" alt="Keyboard arrow down">
                     </summary>
                     <div class="collapsible-content">
@@ -112,39 +110,39 @@ Purpose: Index / home page for the Softball League Manager app.
                     'team' refers to an instance of the Team class in the 'teams' list.
                     -->
                     <div class="card-wide standing" th:each="team, iterStat : ${teams}" th:with="rank=${iterStat.index + 1}">
-                        <p class="rank subtitle" th:text="|#{label.numeric}${rank}|"></p>
+                        <p class="rank subtitle" th:text="|#{common.label.hash}${rank}|"></p>
 
                         <p class="pct" th:text="${team.getWinPercentageString()}"></p>
                         <h3 class="team quantico-bold font-secondary-colour" th:text="${team.getTeamName()}"></h3>
 
                         <!-- The card has 3 'metrics' that I created with inspiration from Streamlit's native metric component. -->
                         <div class="metric games">
-                            <p class="metric-label" th:text="#{metric.game}"></p>
+                            <p class="metric-label" th:text="#{common.metric.game}"></p>
                             <p class="metric-value" th:text="${team.getNumberOfGamesPlayed()}"></p>
                         </div>
 
                         <div class="metric wins">
-                            <p class="metric-label font-win" th:text="#{metric.win}"></p>
+                            <p class="metric-label font-win" th:text="#{common.metric.win}"></p>
 
                             <!-- Displays the total number of wins, the number of wins via Mercy Rule, and the number of wins by forfeit. -->
                             <div class="metric-group">
                                 <p class="metric-value" th:text="${team.getWins().total()}"></p>
-                                <p class="metric-divider" th:text="#{metric.divider.bullet}"></p>
+                                <p class="metric-divider" th:text="#{common.metric.divider.bullet}"></p>
                                 <p class="metric-value" th:text="${team.getWins().mercy()}"></p>
-                                <p class="metric-divider" th:text="#{metric.divider.bullet}"></p>
+                                <p class="metric-divider" th:text="#{common.metric.divider.bullet}"></p>
                                 <p class="metric-value" th:text="${team.getWins().forfeit()}"></p>
                             </div>
                         </div>
 
                         <div class="metric losses">
-                            <p class="metric-label font-loss" th:text="#{metric.loss}"></p>
+                            <p class="metric-label font-loss" th:text="#{common.metric.loss}"></p>
 
                             <!-- Displays the total number of losses, the number of losses via Mercy Rule, and the number of losses by forfeit. -->
                             <div class="metric-group">
                                 <p class="metric-value" th:text="${team.getLosses().total()}"></p>
-                                <p class="metric-divider" th:text="#{metric.divider.bullet}"></p>
+                                <p class="metric-divider" th:text="#{common.metric.divider.bullet}"></p>
                                 <p class="metric-value" th:text="${team.getLosses().mercy()}"></p>
-                                <p class="metric-divider" th:text="#{metric.divider.bullet}"></p>
+                                <p class="metric-divider" th:text="#{common.metric.divider.bullet}"></p>
                                 <p class="metric-value" th:text="${team.getLosses().forfeit()}"></p>
                             </div>
                         </div>

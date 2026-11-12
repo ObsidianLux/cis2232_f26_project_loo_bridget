@@ -26,7 +26,7 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
     <main>
         <div>
             <!-- TODO Display success message to user -->
-            <form th:replace="~{fragments/gameForm :: form(${teamNames}, #{add.title}, '/games/add/submit')}"></form>
+            <form th:replace="~{fragments/gameForm :: form(${teamNames}, #{add.heading.title}, '/games/add/submit')}"></form>
         </div>
     </main>
     <footer th:replace="~{fragments/footer :: footer}"></footer>

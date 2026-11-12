@@ -26,7 +26,7 @@ Purpose: Sprint 3 - Update Functionality. Allows the user to edit a game's infor
 <main>
     <div>
         <!-- TODO Display success message to user -->
-        <form th:replace="~{fragments/gameForm :: form(${teamNames}, #{update.title}, '/games/update/submit')}"></form>
+        <form th:replace="~{fragments/gameForm :: form(${teamNames}, #{update.heading.title}, '/games/update/submit')}"></form>
     </div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
