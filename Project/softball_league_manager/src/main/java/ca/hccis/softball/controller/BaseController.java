@@ -32,7 +32,7 @@ public class BaseController {
     @ModelAttribute
     public void addIndexAttributes(Model model) {
         // Get the upcoming and past games and add them to the model.
-        model.addAttribute("playedGames", service.getPlayedGames());
+        model.addAttribute("pastGames", service.getPlayedGames());
         model.addAttribute("upcomingGames", service.getUnplayedGames());
 
         // Get a sorted list of teams and add it to the model.
