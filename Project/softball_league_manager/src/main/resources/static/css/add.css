@@ -31,11 +31,13 @@ form {
     min-height: 0;
 
     display: grid;
-    grid-template-columns: min-content min-content;
-    grid-template-rows: min-content min-content  minmax(0, 1fr);
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: min-content min-content minmax(0, 1fr);
     gap: 20px;
 
     grid-auto-flow: column;
+
+    padding: 0 300px;
 }
 
 #formBaseInfo {
@@ -89,14 +91,11 @@ form {
     flex-flow: column nowrap;
     gap: 10px;
 
-    grid-row: span 3;
-
-    /*border: thin solid darkgray;*/
-    /*border-radius: 10px;*/
-    /*padding: 20px;*/
-
     min-height: 0;
-    width: min-content;
+    width: 100%;
+
+    grid-column: 2 / 3;
+    grid-row: 1 / 4;
 
     > * {
         display: flex;
@@ -112,19 +111,17 @@ form {
         flex-flow: column nowrap;
         gap: 10px;
 
-        width: fit-content;
+        width: 100%;
 
         flex: 1 1 0;
         min-height: 0;
         overflow-y: auto;
         scrollbar-gutter: stable;
 
-        #inningsContainerInner, #inningsMinimum, #inningsAdditional {
+        #inningsContainerInner {
             display: flex;
             flex-flow: column nowrap;
             gap: 10px;
-
-            width: fit-content;
         }
 
         .inning-row {
@@ -186,7 +183,8 @@ form {
 
     height: fit-content;
 
-    grid-column: span 2;
+    grid-row: 3 / 4;
+    grid-column: 1 / 2;
 }
 
 .remove-button {

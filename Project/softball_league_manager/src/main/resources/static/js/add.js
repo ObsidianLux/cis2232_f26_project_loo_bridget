@@ -5,7 +5,6 @@ const forfeitSwitch = document.getElementById('switchForfeit');
 const teamAtFaultSelect = document.getElementById('teamAtFault');
 
 const inningsContainerInner = document.getElementById('inningsContainerInner');
-const additionalInnings = document.getElementById('inningsAdditional');
 const addInningButton = document.getElementById('btnAddInning');
 
 function updateTeamAtFaultSelect() {
@@ -74,7 +73,7 @@ addInningButton.addEventListener('click', () => {
     const newInning = templateInning.content.cloneNode(true);
 
     // Append the inning element to the inner innings' container.
-    additionalInnings.appendChild(newInning);
+    inningsContainerInner.appendChild(newInning);
 
     // Recalculate numbering and set attributes.
     updateInningNumbers();
@@ -95,12 +94,12 @@ function removeInning(element) {
  */
 function updateInningNumbers() {
     // Get the inning rows.
-    const innings = additionalInnings.querySelectorAll('.inning-row');
+    const innings = inningsContainerInner.querySelectorAll('.inning-row');
 
     innings.forEach((inning, index) => {
-        // Set the inning number in the readonly text field. + 6 because there will always be 5 in another element and the display index should start at 1.
+        // Set the inning number in the readonly text field. + 1 to account for zero-indexing.
         const inningNum = inning.querySelector('p[data-field="inningNumber"]');
-        inningNum.textContent = (index + 6).toString();
+        inningNum.textContent = (index + 1).toString();
 
         // Set the Spring MVC name and id attributes for each field that should map to an Inning object.
         const inputs = inning.querySelectorAll('input[data-field]');

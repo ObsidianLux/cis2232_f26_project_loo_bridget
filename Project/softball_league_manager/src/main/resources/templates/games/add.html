@@ -93,34 +93,21 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                         </hgroup>
 
                         <div id="inningsContainerOuter">
-                            <div id="inningsContainerInner" th:with="innings=${#lists.isEmpty(game.innings) ? #numbers.sequence(0, 6) : game.innings}">
-                                <div id="inningsMinimum">
-                                    <div class="inning-row" th:each="item, iterStat : ${innings}" th:if="${iterStat.index < 5}">
-                                        <p class="inning-number" data-field="inningNumber" th:text="${iterStat.index + 1}"></p>
+                            <div id="inningsContainerInner">
+                                <div class="inning-row" th:each="item, iterStat : *{innings}">
+                                    <p class="inning-number" data-field="inningNumber" th:text="${iterStat.index + 1}"></p>
 
-                                        <label th:for="|innings[${iterStat.index}].homeRuns|" th:text="#{add.input.label.inning.home}"></label>
-                                        <input type="number" th:id="|innings[${iterStat.index}].homeRuns|" min="0" step="1" value="0" data-field="homeRuns" th:field="*{innings[__${iterStat.index}__].homeRuns}">
+                                    <label th:for="|innings[${iterStat.index}].homeRuns|" th:text="#{add.input.label.inning.home}"></label>
+                                    <input type="number" th:id="|innings[${iterStat.index}].homeRuns|" min="0" step="1" value="0" data-field="homeRuns" th:field="*{innings[__${iterStat.index}__].homeRuns}">
 
-                                        <label th:for="|innings[${iterStat.index}].roadRuns|" th:text="#{add.input.label.inning.road}"></label>
-                                        <input type="number" th:id="|innings[${iterStat.index}].roadRuns|" min="0" step="1" value="0" data-field="roadRuns" th:field="*{innings[__${iterStat.index}__].roadRuns}">
-                                    </div>
-                                </div>
-                                <div id="inningsAdditional">
-                                    <div class="inning-row" th:each="item, iterStat : ${innings}" th:if="${iterStat.index > 4}">
-                                        <p class="inning-number" data-field="inningNumber" th:text="${iterStat.index + 1}"></p>
+                                    <label th:for="|innings[${iterStat.index}].roadRuns|" th:text="#{add.input.label.inning.road}"></label>
+                                    <input type="number" th:id="|innings[${iterStat.index}].roadRuns|" min="0" step="1" value="0" data-field="roadRuns" th:field="*{innings[__${iterStat.index}__].roadRuns}">
 
-                                        <label th:for="|innings[${iterStat.index}].homeRuns|" th:text="#{add.input.label.inning.home}"></label>
-                                        <input type="number" th:id="|innings[${iterStat.index}].homeRuns|" min="0" step="1" value="0" data-field="homeRuns" th:field="*{innings[__${iterStat.index}__].homeRuns}">
-
-                                        <label th:for="|innings[${iterStat.index}].roadRuns|" th:text="#{add.input.label.inning.road}"></label>
-                                        <input type="number" th:id="|innings[${iterStat.index}].roadRuns|" min="0" step="1" value="0" data-field="roadRuns" th:field="*{innings[__${iterStat.index}__].roadRuns}">
-
-                                        <button th:text="#{common.button.remove}" onclick="removeInning(this)" class="remove-button" type="button"></button>
-                                    </div>
+                                    <button th:text="#{common.button.remove}" onclick="removeInning(this)" class="remove-button" type="button"></button>
                                 </div>
                             </div>
                             <div class="inning-row-add">
-                                <button id="btnAddInning" type="button">
+                                <button id="btnAddInning" type="button" th:disabled="*{wasForfeited}">
                                     <!-- This is the add box Material Icon from Google -->
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M11,17h2V13h4V11H13V7H11v4H7v2h4v4ZM5,21q-0.83,0-1.41-0.59T3,19V5Q3,4.17 3.59,3.59T5,3H19q0.83,0 1.41,0.59T21,5V19q0,0.82-0.59,1.41T19,21H5Zm0-2H19V5H5V19ZM5,5V19V5Z"/></svg>
                                 </button>
