@@ -7,6 +7,7 @@ import ca.hccis.softball.validation.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ import java.util.ArrayList;
 )
 @MercyDifferential(
         listField = "innings",
-        homeRuns = "homeRuns",
-        roadRuns = "roadRuns"
+        homeRuns = "homeScore",
+        roadRuns = "roadScore"
 )
 @NoTie(
         firstScore = "homeScore",
@@ -30,8 +31,7 @@ import java.util.ArrayList;
 )
 @MinInnings(
         innings = "innings",
-        requiredField = "inningsRequired",
-        message = "The game must have at least 5 valid innings."
+        requiredField = "inningsRequired"
 )
 @UniqueNames(
         firstName = "homeTeam",
@@ -47,8 +47,10 @@ public class GameDTO {
     private String roadTeam;
 
     @NotNull(message = "Scheduled game date is required.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
+    private Integer id;
     private Boolean wasForfeited = false;
     private String teamAtFault;
     private ArrayList<Inning> innings = new ArrayList<>();
@@ -59,6 +61,7 @@ public class GameDTO {
         this.homeTeam = game.getHomeTeam();
         this.roadTeam = game.getRoadTeam();
         this.date = game.getDate();
+        this.id = game.getId();
 
         if (game.getPlayed()) {
             this.wasForfeited = game.getWasForfeited();
@@ -127,19 +130,29 @@ public class GameDTO {
         return innings.stream().mapToInt(Inning::getRoadRuns).sum();
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     /**
      * Innings are required when the game has been played (the date is before today) and wasn't forfeited.
      */
-    public boolean areInningsRequired() {
+    public boolean isInningsRequired() {
         return date != null && date.isBefore(LocalDate.now()) && !Boolean.TRUE.equals(wasForfeited);
     }
 
     public Game getMappedGame() {
         // Determine whether the game has happened already or not.
-        Boolean played = areInningsRequired();
+        Boolean played = isInningsRequired();
 
         // Create the game with basic information.
         Game game = new Game(this.homeTeam, this.roadTeam, this.date, played);
+
+        if (this.id != null) game.setId(this.id);
 
         // If not played, return the game. Otherwise, set the rest of the attributes.
         if (played) {
