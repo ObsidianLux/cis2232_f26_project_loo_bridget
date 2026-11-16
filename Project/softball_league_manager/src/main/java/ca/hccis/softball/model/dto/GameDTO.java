@@ -14,28 +14,49 @@ import java.util.ArrayList;
 
 // TODO Add validation to make sure that all games have at least 7 innings unless they haven't been played, the mercy rule applied, or they were forfeited.
 
-@ConditionalRequired(
-        conditionalField = "wasForfeited",
-        dependentField = "teamAtFault",
-        message = "The team who forfeited the game is required."
+// This constraint applies to all games.
+@UniqueNames(
+        firstName = "homeTeam",
+        secondName = "roadTeam"
 )
+// This constraint applies if the game was forfeited.
+@TeamAtFaultRequired(
+        wasForfeited = "wasForfeited",
+        teamAtFault = "teamAtFault"
+)
+// This constraint applies if the number of innings in the game is equal to 3.
+@MercyDifferential(
+        listField = "innings",
+        homeRuns = "homeScore",
+        roadRuns = "roadScore",
+        minDifference = 15,
+        numberOfInnings = 3
+)
+// This constraint applies if the number of innings in the game is equal to 4.
+@MercyDifferential(
+        listField = "innings",
+        homeRuns = "homeScore",
+        roadRuns = "roadScore",
+        minDifference = 10,
+        numberOfInnings = 4
+)
+// This constraint applies if the number of innings in the game is equal to 5.
 @MercyDifferential(
         listField = "innings",
         homeRuns = "homeScore",
         roadRuns = "roadScore"
+        // Uses the defaults of 7 difference and 5 innings.
 )
-@NoTie(
-        firstScore = "homeScore",
-        secondScore = "roadScore",
-        listField = "innings"
-)
+// This constraint applies if the size of the innings list is greater than 0 and the game was not ended due to the Mercy Rule.
 @MinInnings(
         innings = "innings",
         requiredField = "inningsRequired"
 )
-@UniqueNames(
-        firstName = "homeTeam",
-        secondName = "roadTeam"
+// This constraint applies if the size of the innings list is greater than 0.
+@NoTie(
+        firstScore = "homeScore",
+        secondScore = "roadScore",
+        listField = "innings"
 )
 public class GameDTO {
     @Size(max = 30, message = "Team name must not exceed 30 characters.")
