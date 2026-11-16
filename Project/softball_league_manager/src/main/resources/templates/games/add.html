@@ -71,7 +71,7 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                         <div>
                             <label for="teamAtFault" th:text="#{add.select.label.teamAtFault}"></label>
                             <select th:field="*{teamAtFault}" id="teamAtFault" th:disabled="${!game.getWasForfeited()}">
-                                <option value=""></option>
+                                <option th:if="*{wasForfeited}" value=""></option>
                                 <option th:if="*{wasForfeited}" th:value="*{homeTeam}" th:selected="${game.getWasForfeited() && game.getHomeTeam() == game.getTeamAtFault()}" th:text="*{homeTeam}"></option>
                                 <option th:if="*{wasForfeited}" th:value="*{roadTeam}" th:selected="${game.getWasForfeited() && game.getRoadTeam() == game.getTeamAtFault()}" th:text="*{roadTeam}"></option>
                             </select>
