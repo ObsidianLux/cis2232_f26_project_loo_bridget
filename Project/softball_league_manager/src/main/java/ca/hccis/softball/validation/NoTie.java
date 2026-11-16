@@ -23,10 +23,14 @@ public @interface NoTie {
     String firstScore();
     String secondScore();
 
-    public static class Validator implements ConstraintValidator<NoTie, GameDTO> {
+    // The minimum number of innings required to apply this constraint.
+    long minInnings() default 7;
+
+    class Validator implements ConstraintValidator<NoTie, GameDTO> {
         private String listField;
         private String firstScore;
         private String secondScore;
+        private long minInnings;
         private String message;
 
         @Override
@@ -34,6 +38,7 @@ public @interface NoTie {
             this.listField = constraintAnnotation.listField();
             this.firstScore = constraintAnnotation.firstScore();
             this.secondScore = constraintAnnotation.secondScore();
+            this.minInnings = constraintAnnotation.minInnings();
             this.message = constraintAnnotation.message();
         }
 
@@ -44,8 +49,8 @@ public @interface NoTie {
             try {
                 BeanWrapperImpl wrapper = new BeanWrapperImpl(value);
 
-                // No innings means there is nothing to compare (not played or forfeited).
-                if (!(wrapper.getPropertyValue(listField) instanceof Collection<?> innings) || innings.isEmpty()) {
+                // No innings means there is nothing to compare (not played or forfeited) or if the number of innings is less than the minimum, it's either invalid or a mercy win.
+                if (!(wrapper.getPropertyValue(listField) instanceof Collection<?> innings) || innings.isEmpty() || innings.size() < minInnings) {
                     return true;
                 }
 
