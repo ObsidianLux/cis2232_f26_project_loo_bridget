@@ -20,10 +20,15 @@ public @interface ConditionalRequired {
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 
-    String conditionalField(); // The name of the field that determines validity.
-    String dependentField(); // The name of the field that depends on the value of another to be required.
+    // The name of the field that determines validity.
+    String conditionalField();
+
+    // The name of the field that depends on the value of another to be required.
+    String dependentField();
+
     boolean expectedValue() default true;
 
+    // This interface allows this validator to be applied more than once to a single class.
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
@@ -31,7 +36,8 @@ public @interface ConditionalRequired {
         ConditionalRequired[] value();
     }
 
-    public static class Validator implements ConstraintValidator<ConditionalRequired, GameDTO> {
+    // Validator for this custom constraint.
+    class Validator implements ConstraintValidator<ConditionalRequired, GameDTO> {
         private String conditionalField;
         private String dependentField;
         private boolean expectedValue;
@@ -47,18 +53,23 @@ public @interface ConditionalRequired {
 
         @Override
         public boolean isValid(GameDTO value, ConstraintValidatorContext context) {
-            if (value == null) {
-                return true;
-            }
+            // If there's nothing to check, return true.
+            if (value == null) return true;
 
+            // Get the object and it's values to check.
             BeanWrapperImpl wrapper = new BeanWrapperImpl(value);
             Object condValue = wrapper.getPropertyValue(conditionalField);
             Object depValue = wrapper.getPropertyValue(dependentField);
 
+            // If the expected value is the same as the actual conditional value, return true.
             boolean isConditionMet = Boolean.valueOf(expectedValue).equals(condValue);
 
+            // If the condition is met, apply the constraint. Otherwise, return true.
             if (isConditionMet) {
+                // check if the dependent value exists and isn't empty.
                 boolean isValid = depValue != null && !depValue.toString().trim().isEmpty();
+
+                // If the dependent value isn't valid, flag it and add the constraints message to the list of errors.
                 if (!isValid) {
                     context.disableDefaultConstraintViolation();
                     context.buildConstraintViolationWithTemplate(message)
