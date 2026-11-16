@@ -12,51 +12,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-// TODO Add validation to make sure that all games have at least 7 innings unless they haven't been played, the mercy rule applied, or they were forfeited.
-
 // This constraint applies to all games.
 @UniqueNames(
         firstName = "homeTeam",
         secondName = "roadTeam"
 )
-// This constraint applies if the game was forfeited.
+// This constraint applies if the game was forfeited (wasForfeited = true : the checkbox was checked on the form).
 @TeamAtFaultRequired(
         wasForfeited = "wasForfeited",
         teamAtFault = "teamAtFault"
 )
-// This constraint applies if the number of innings in the game is equal to 3.
-@MercyDifferential(
-        listField = "innings",
-        homeRuns = "homeScore",
-        roadRuns = "roadScore",
-        minDifference = 15,
-        numberOfInnings = 3
-)
-// This constraint applies if the number of innings in the game is equal to 4.
-@MercyDifferential(
-        listField = "innings",
-        homeRuns = "homeScore",
-        roadRuns = "roadScore",
-        minDifference = 10,
-        numberOfInnings = 4
-)
-// This constraint applies if the number of innings in the game is equal to 5.
-@MercyDifferential(
-        listField = "innings",
+// This constraint applies if the game was played and not forfeited (wasForfeited = false : the checkbox wasn't checked on the form).
+@PlayedGame(
+        innings = "innings",
+        requiredField = "inningsRequired",
         homeRuns = "homeScore",
         roadRuns = "roadScore"
-        // Uses the defaults of 7 difference and 5 innings.
-)
-// This constraint applies if the size of the innings list is greater than 0 and the game was not ended due to the Mercy Rule.
-@MinInnings(
-        innings = "innings",
-        requiredField = "inningsRequired"
-)
-// This constraint applies if the size of the innings list is greater than 0.
-@NoTie(
-        firstScore = "homeScore",
-        secondScore = "roadScore",
-        listField = "innings"
 )
 public class GameDTO {
     @Size(max = 30, message = "Team name must not exceed 30 characters.")
@@ -161,6 +132,7 @@ public class GameDTO {
 
     /**
      * Innings are required when the game has been played (the date is before today) and wasn't forfeited.
+     * This is used by the ValidInnings constraint on this class.
      */
     public boolean isInningsRequired() {
         return date != null && date.isBefore(LocalDate.now()) && !Boolean.TRUE.equals(wasForfeited);
