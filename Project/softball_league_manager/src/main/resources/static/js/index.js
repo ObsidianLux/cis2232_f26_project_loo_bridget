@@ -1,25 +1,23 @@
-const toggleButtons = document.querySelectorAll('.button.toggle');
+const toggleButtons = Array.from(document.getElementById('scheduleButtons').children);
+const toggleViews = document.getElementById('schedule').querySelectorAll('article');
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedView = localStorage.getItem('activeViewId') || 'scheduleUpcomingGames';
+    activateView(savedView);
+});
 
 // Event listener to catch clicks on the toggle buttons to switch display state.
-document.querySelectorAll('.button.toggle').forEach(toggle => {
-    toggle.addEventListener('click', (event) => {
-        // Check if the clicked button already has the active class on it. If it does, do nothing.
-        if (!event.target.classList.contains('active')) {
-            // Search the other toggle buttons for the active class and remove it.
-            toggleButtons.forEach(btn => {
-                if (btn.classList.contains('active')) btn.classList.remove('active');
-
-                // Add the hidden class to the related element.
-                const viewID = btn.getAttribute('data-toggle');
-                document.getElementById(viewID).classList.add('hidden');
-            });
-
-            // Add the active class to this button.
-            event.target.classList.add('active');
-
-            // Remove the hidden class from the div related to this button.
-            const activeViewID = event.target.getAttribute('data-toggle');
-            document.getElementById(activeViewID).classList.remove('hidden');
-        }
-    });
+toggleButtons.forEach(toggle => {
+    toggle.addEventListener('click', () => activateView(toggle.dataset.target));
 });
+
+function activateView(targetID) {
+    // Update the buttons.
+    toggleButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.target === targetID));
+
+    // Activate the correct view and hide the rest.
+    toggleViews.forEach(view => view.classList.toggle('hidden', view.id !== targetID));
+
+    // Save the current view in the browser's local storage.
+    localStorage.setItem('activeViewId', targetID);
+}

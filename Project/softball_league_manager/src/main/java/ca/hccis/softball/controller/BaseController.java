@@ -63,7 +63,7 @@ public class BaseController {
      * @author BML
      * @since 20261028
      */
-    @PostMapping("/delete")
+    @RequestMapping("/delete")
     public String delete(@RequestParam("id") int id) {
         logger.info("Running the GameController delete() method.");
         logger.debug("ID of game to delete: {}", id);
@@ -71,7 +71,7 @@ public class BaseController {
         // Try to delete the record.
         service.deleteGame(id);
 
-        return "index";
+        return "redirect:/";
     }
 }
 

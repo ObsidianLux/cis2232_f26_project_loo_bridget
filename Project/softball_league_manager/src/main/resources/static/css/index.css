@@ -60,148 +60,157 @@ main {
             flex: 1 1 0;
             min-height: 0;
             align-content: flex-start;
-        }
-    }
 
-    .card-wide {
-        padding: var(--gap-large);
-        box-shadow: var(--box-shadow-small);
+            .card-wide {
+                padding: var(--gap-large);
+                box-shadow: var(--box-shadow-small);
 
-        border-radius: 10px;
-        width: 100%;
+                border-radius: 10px;
+                width: 100%;
 
-        .colspan-2 {
-            grid-column: span 2;
-        }
+                .colspan-2 {
+                    grid-column: span 2;
+                }
 
-        .colspan-3 {
-            grid-column: span 3;
-        }
+                .colspan-3 {
+                    grid-column: span 3;
+                }
 
-        .colspan-4 {
-            grid-column: span 4;
-        }
+                .colspan-4 {
+                    grid-column: span 4;
+                }
 
-        .rowspan-2 {
-            grid-row: span 2;
-        }
+                .rowspan-2 {
+                    grid-row: span 2;
+                }
 
-        .rowspan-3 {
-            grid-row: span 3;
-        }
+                .rowspan-3 {
+                    grid-row: span 3;
+                }
 
-        &:hover {
-            box-shadow: var(--box-shadow-big);
-        }
+                &:hover {
+                    box-shadow: var(--box-shadow-big);
+                }
 
-        &.standing {
-            display: grid;
-            grid-template: repeat(2, min-content) / repeat(5, min-content) minmax(0, 1fr) min-content;
-            gap: var(--gap-medium);
+                &.standing {
+                    display: grid;
+                    grid-template: repeat(2, min-content) / repeat(5, min-content) minmax(0, 1fr) min-content;
+                    gap: var(--gap-medium);
 
-            > * {
-                margin: auto 0;
-            }
+                    > * {
+                        margin: auto 0;
+                    }
 
-            .rank {
-                grid-column: 1 / 2;
-                grid-row: 1 / 2;
-            }
+                    .rank {
+                        grid-column: 1 / 2;
+                        grid-row: 1 / 2;
+                    }
 
-            .pct {
-                grid-column: 2 / 3;
-                grid-row: 1 / 2;
+                    .pct {
+                        grid-column: 2 / 3;
+                        grid-row: 1 / 2;
 
-                padding: var(--gap-small);
-                border-radius: 5px;
-                background-color: var(--cloud-blue);
-                border: none;
-            }
+                        padding: var(--gap-small);
+                        border-radius: 5px;
+                        background-color: var(--cloud-blue);
+                        border: none;
+                    }
 
-            .team {
-                grid-column: 3 / 7;
-                grid-row: 1 / 2;
-            }
+                    .team {
+                        grid-column: 3 / 7;
+                        grid-row: 1 / 2;
+                    }
 
-            .games, .wins, .losses {
-                grid-row: 2 / 3;
-                padding-right: var(--gap-medium);
-            }
+                    .games, .wins, .losses {
+                        grid-row: 2 / 3;
+                        padding-right: var(--gap-medium);
+                    }
 
-            .games {
-                grid-column: 3 / 4;
-            }
+                    .games {
+                        grid-column: 3 / 4;
+                    }
 
-            .wins {
-                grid-column: 4 / 5;
-            }
+                    .wins {
+                        grid-column: 4 / 5;
+                    }
 
-            .losses {
-                grid-column: 5 / 6;
-            }
+                    .losses {
+                        grid-column: 5 / 6;
+                    }
 
-            .history {
-                grid-column: 7 / 8;
-                grid-row: 1 / 2;
-            }
-        }
+                    .history {
+                        grid-column: 7 / 8;
+                        grid-row: 1 / 2;
+                    }
+                }
 
-        &.upcoming {
-            display: grid;
-            grid-template: repeat(4, min-content) / 1fr min-content min-content 1fr;
-            gap: var(--gap-medium);
+                &.upcoming {
+                    display: grid;
+                    grid-template: repeat(4, min-content) / 1fr min-content min-content 1fr;
+                    gap: var(--gap-medium);
 
-            * {
-                margin: 0 auto;
-                text-align: center;
-            }
-        }
+                    * {
+                        margin: 0 auto;
+                        text-align: center;
+                    }
+                }
 
-        &.played {
-            display: grid;
-            grid-template: repeat(6, min-content) / 1fr min-content min-content 1fr;
-            gap: var(--gap-medium);
+                &.played {
+                    display: grid;
+                    grid-template: repeat(6, min-content) / 1fr min-content min-content 1fr;
+                    gap: var(--gap-medium);
 
-            * {
-                margin: 0 auto;
-                text-align: center;
-            }
+                    * {
+                        margin: 0 auto;
+                        text-align: center;
+                    }
 
-            .col-1 {
-                grid-column: 1 /2;
-            }
+                    table {
+                        table-layout: fixed;
+                        width: 100%;
 
-            .col-2 {
-                grid-column: 2 / 4;
-            }
+                        th, .fit-content {
+                            width: 1%;
+                        }
+                    }
 
-            .col-3 {
-                grid-column: 4 / 5;
-            }
+                    .col-1 {
+                        grid-column: 1 /2;
+                    }
 
-            .row-1 {
-                grid-row: 1 / 2;
-            }
+                    .col-2 {
+                        grid-column: 2 / 4;
+                    }
 
-            .row-2 {
-                grid-row: 2 / 3;
-            }
+                    .col-3 {
+                        grid-column: 4 / 5;
+                    }
 
-            .row-3 {
-                grid-row: 3 / 4;
-            }
+                    .row-1 {
+                        grid-row: 1 / 2;
+                    }
 
-            .row-4 {
-                grid-row: 4 / 5;
-            }
+                    .row-2 {
+                        grid-row: 2 / 3;
+                    }
 
-            .row-5 {
-                grid-row: 5 / 6;
-            }
+                    .row-3 {
+                        grid-row: 3 / 4;
+                    }
 
-            .row-1, .row-2, .row-3, .row-4, .row-5 {
-                &:not(.col-1, .col-2, .col-3) {
-                    grid-column: 1 / 5;
+                    .row-4 {
+                        grid-row: 4 / 5;
+                    }
+
+                    .row-5 {
+                        grid-row: 5 / 6;
+                    }
+
+                    .row-1, .row-2, .row-3, .row-4, .row-5 {
+                        &:not(.col-1, .col-2, .col-3) {
+                            grid-column: 1 / 5;
+                        }
+                    }
                 }
             }
         }
@@ -326,29 +335,4 @@ main {
             opacity: 1;
         }
     }
-
-    /*section {*/
-    /*    display: grid;*/
-    /*    grid-template-rows: min-content 1fr;*/
-    /*    grid-template-columns: 1fr;*/
-
-    /*    background-color: white;*/
-    /*    border-radius: 10px;*/
-    /*    padding: 20px;*/
-    /*}*/
-
-    /*.card-body-standing {*/
-    /*    width: 100%;*/
-
-    /*    display: grid;*/
-    /*    grid-template-rows: repeat(3, max-content);*/
-    /*    grid-template-columns: 1fr 1fr;*/
-    /*    row-gap: 20px;*/
-
-    /*    a {*/
-    /*        grid-column: span 2;*/
-    /*        margin: 0 auto;*/
-    /*        text-align: center;*/
-    /*    }*/
-    /*}*/
 }

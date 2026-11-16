@@ -115,11 +115,15 @@ footer {
     font-style: italic;
 }
 
+.text-nowrap {
+    white-space: nowrap !important;
+}
+
 /*endregion*/
 
 /*region TABLE STYLING*/
 
-div:has(table) {
+div:not(.card-wide):has(table) {
     overflow: auto;
     width: 100%;
     height: 100%;
@@ -450,6 +454,14 @@ input[type="number"], input[list] {
 
 .hidden {
     display: none !important;
+}
+
+.align-left {
+    margin-right: auto !important;
+}
+
+.align-right {
+    margin-left: auto !important;
 }
 
 /*endregion*/
