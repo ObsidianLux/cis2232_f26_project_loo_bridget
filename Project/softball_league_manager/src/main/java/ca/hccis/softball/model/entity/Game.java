@@ -8,6 +8,7 @@ import ca.hccis.softball.util.JsonListConverter;
 import jakarta.persistence.*;
 import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class Game {
     private String roadTeam;
 
     @NotNull(message = "Scheduled game date is required.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
