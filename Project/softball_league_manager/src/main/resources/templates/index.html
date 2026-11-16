@@ -66,9 +66,9 @@ Purpose: Index / home page for the Softball League Manager app.
                         <p class="colspan-2" th:text="#{common.label.versus}"></p>
                         <h2 th:text="${game.getRoadTeam()}"></h2>
 
-                        <div class="colspan-4">
+                        <div class="colspan-4 flex-row">
                             <p class="subtitle" th:text="${game.getDate()}"></p>
-                            <span class="tooltip" tabindex="0" th:if="${game.getDate() < session.today}" th:data-tooltip="#{index.warning.upcoming}">
+                            <span class="tooltip" tabindex="0" th:if="${game.getDate().isAfter(session.today)}" th:data-tooltip="#{index.warning.upcoming}">
                                 <img th:src="@{/images/error.svg}" alt="Error">
                             </span>
                         </div>
@@ -151,6 +151,7 @@ Purpose: Index / home page for the Softball League Manager app.
                     </summary>
                     <div class="collapsible-content">
                         <!-- TODO Add sort functionality. -->
+                        <p th:text="#{common.message.unimplemented}"></p>
                     </div>
                 </details>
 
