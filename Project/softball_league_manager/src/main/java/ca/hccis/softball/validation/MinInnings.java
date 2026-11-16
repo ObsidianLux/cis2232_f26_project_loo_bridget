@@ -24,14 +24,14 @@ public @interface MinInnings {
     String requiredField();
 
     public static class Validator implements ConstraintValidator<MinInnings, GameDTO> {
-        private String innings;
+        private String listField;
         private long minSize;
         private String requiredField;
         private String message;
 
         @Override
         public void initialize(MinInnings constraintAnnotation) {
-            this.innings = constraintAnnotation.innings();
+            this.listField = constraintAnnotation.innings();
             this.minSize = constraintAnnotation.minSize();
             this.requiredField = constraintAnnotation.requiredField();
             this.message = constraintAnnotation.message();
@@ -44,7 +44,7 @@ public @interface MinInnings {
             try {
                 BeanWrapperImpl wrapper = new BeanWrapperImpl(value);
 
-                Object listInnings = wrapper.getPropertyValue(innings);
+                Object listInnings = wrapper.getPropertyValue(listField);
                 int size = listInnings instanceof Collection<?> c ? c.size() : 0;
                 boolean required = Boolean.TRUE.equals(wrapper.getPropertyValue(requiredField));
 
@@ -54,7 +54,7 @@ public @interface MinInnings {
                 if (size < minSize) {
                     context.disableDefaultConstraintViolation();
                     context.buildConstraintViolationWithTemplate(message)
-                            .addPropertyNode(innings)
+                            .addPropertyNode(listField)
                             .addConstraintViolation();
                     return false;
                 }

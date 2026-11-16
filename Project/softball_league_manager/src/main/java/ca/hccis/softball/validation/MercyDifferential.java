@@ -23,7 +23,7 @@ public @interface MercyDifferential {
     String homeRuns();
     String roadRuns();
     long numberOfInnings() default 5;
-    long minDifference() default 10;
+    long minDifference() default 7;
 
     public static class Validator implements ConstraintValidator<MercyDifferential, GameDTO> {
         private String listField;
@@ -52,32 +52,23 @@ public @interface MercyDifferential {
                 Object collectionObj = wrapper.getPropertyValue(listField);
 
                 // If empty or null, skip this validation (let @NotEmpty or @NotNull handle it)
-                if (!(collectionObj instanceof Collection<?>) || ((Collection<?>) collectionObj).isEmpty()) {
+                if (!(collectionObj instanceof Collection<?> items) || items.isEmpty()) {
                     return true;
                 }
-
-                Collection<?> items = (Collection<?>) collectionObj;
 
                 // If the number of innings isn't 5, skip this validation.
                 if (items.size() != numberOfInnings) return true;
 
-                double sum1 = 0;
-                double sum2 = 0;
+                Object val1 = wrapper.getPropertyValue(homeRuns);
+                Object val2 = wrapper.getPropertyValue(roadRuns);
 
-                // Iterate through the ArrayList elements and aggregate target property values
-                for (Object item : items) {
-                    if (item != null) {
-                        BeanWrapperImpl itemWrapper = new BeanWrapperImpl(item);
-                        Object val1 = itemWrapper.getPropertyValue(homeRuns);
-                        Object val2 = itemWrapper.getPropertyValue(roadRuns);
+                if (val1 == null || val2 == null) return true;
 
-                        if (val1 instanceof Number) sum1 += ((Number) val1).doubleValue();
-                        if (val2 instanceof Number) sum2 += ((Number) val2).doubleValue();
-                    }
-                }
+                Double homeRuns = ((Number) val1).doubleValue();
+                Double roadRuns = ((Number) val2).doubleValue();
 
                 // Check if the difference is greater than the required threshold
-                if (Math.abs(sum1 - sum2) <= minDifference) {
+                if (Math.abs(homeRuns - roadRuns) < minDifference) {
                     context.disableDefaultConstraintViolation();
                     // Attach the error to the list property node so Thymeleaf can reference it
                     context.buildConstraintViolationWithTemplate(message)

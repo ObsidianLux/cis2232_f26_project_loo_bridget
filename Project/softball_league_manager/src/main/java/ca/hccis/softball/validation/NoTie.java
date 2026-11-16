@@ -52,7 +52,10 @@ public @interface NoTie {
                 Object firstValue = wrapper.getPropertyValue(firstScore);
                 Object secondValue = wrapper.getPropertyValue(secondScore);
 
-                if (firstValue != null && firstValue.equals(secondValue)) {
+                // If either value is null or if they're both 0, there's nothing to evaluate.
+                if (firstValue == null || secondValue == null || (((Number) firstValue).doubleValue() == 0 && firstValue.equals(secondValue))) return true;
+
+                if (firstValue.equals(secondValue)) {
                     context.disableDefaultConstraintViolation();
                     // Attach the error to the list property node so Thymeleaf can reference it.
                     context.buildConstraintViolationWithTemplate(message)
