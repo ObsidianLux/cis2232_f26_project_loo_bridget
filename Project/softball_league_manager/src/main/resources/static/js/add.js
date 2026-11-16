@@ -1,6 +1,5 @@
 const homeTeamInput = document.getElementById('inputHomeTeam');
 const roadTeamInput = document.getElementById('inputRoadTeam');
-const gameDayInput = document.getElementById('inputGameDay');
 
 const forfeitSwitch = document.getElementById('switchForfeit');
 const teamAtFaultSelect = document.getElementById('teamAtFault');
@@ -9,137 +8,61 @@ const inningsContainerInner = document.getElementById('inningsContainerInner');
 const additionalInnings = document.getElementById('inningsAdditional');
 const addInningButton = document.getElementById('btnAddInning');
 
-document.addEventListener('DOMContentLoaded', () => {
-    validateTeamNames();
-    gameHasBeenPlayed();
-});
+function updateTeamAtFaultSelect() {
+    teamAtFaultSelect.innerHTML = "";
 
-/**
- * Checks whether the values of the two team name fields are identical.
- * Applies styling to the team name inputs and displays a message to indicate to the user what the issue is if they are invalid.
- * @returns {boolean} True if the team names are unique and not empty, otherwise false.
- * @author BML
- * @since 20261107
- */
-function validateTeamNames() {
-    const teamsErrorElement = document.getElementById('teamsDuplicateError');
+    const fragment = document.createDocumentFragment();
 
-    // Get the trimmed home team name.
-    const homeTeam = homeTeamInput.value.trim();
+    // Add a blank option.
+    fragment.appendChild(new Option("", ""));
 
-    // Get the trimmed road team name.
-    const roadTeam = roadTeamInput.value.trim();
+    const teamNames = [homeTeamInput.value.trim(), roadTeamInput.value.trim()];
 
-    /*
-    Check whether both inputs have values and that they are the exact same.
-    If either is empty or if they aren't identical, keep the default styling.
-    The form's own validation will prevent submission if the fields are empty.
-     */
+    if (teamNames[0] === teamNames[1]) teamNames.pop()
 
-    // Unless the names are valid and not empty, forfeit checkbox is disabled.
-    if (homeTeam !== "" && roadTeam !== "") {
-        if (homeTeam === roadTeam) {
-            setErrorStyling();
-            forfeitSwitch.disabled = true;
-            return false;
-        } else forfeitSwitch.disabled = false;
-    }
+    teamNames.forEach(option => {
+        fragment.appendChild(new Option(option, option));
+    });
 
-    setDefaultStyling();
-    return true;
-
-    function setDefaultStyling() {
-        // Remove error styling.
-        removeInvalid(homeTeamInput);
-        removeInvalid(roadTeamInput);
-
-        // Hide the error element.
-        hideElement(teamsErrorElement);
-    }
-
-    function setErrorStyling() {
-        // Apply error styling.
-        applyInvalid(homeTeamInput);
-        applyInvalid(roadTeamInput);
-
-        // Unhide the error element.
-        unhideElement(teamsErrorElement);
-    }
-}
-
-/**
- * Checks whether the given date is in the past or not and either enables or disables other inputs based on the result.
- * @returns {boolean} True if the date is in the past, false otherwise.
- */
-function gameHasBeenPlayed() {
-    const date = gameDayInput.valueAsNumber;
-
-    const inputs = inningsContainerInner.querySelectorAll('.inning-row input[type="number"]');
-    const buttons = inningsContainerInner.querySelectorAll('.remove-button');
-
-    if (date >= Date.now()) {
-        // Disable inputs for forfeit and innings.
-        forfeitSwitch.disabled = true;
-
-        inputs.forEach(input => input.disabled = true);
-        buttons.forEach(button => button.disabled = true);
-        addInningButton.disabled = true;
-
-        return false;
-    } else {
-        // Enable inputs for forfeit and innings.
-        forfeitSwitch.disabled = false;
-
-        inputs.forEach(input => input.disabled = false);
-        buttons.forEach(button => button.disabled = false);
-        addInningButton.disabled = false;
-
-        return true;
-    }
+    teamAtFaultSelect.appendChild(fragment);
 }
 
 /* EVENT LISTENERS */
 
-// Event listeners on the home and road team inputs to apply styling if they match.
-homeTeamInput.addEventListener('change', validateTeamNames);
-roadTeamInput.addEventListener('change', validateTeamNames);
-
-// Event listener on the game date input to control the rest of the form inputs.
-gameDayInput.addEventListener('change', gameHasBeenPlayed);
+homeTeamInput.addEventListener('change', updateTeamAtFaultSelect);
+roadTeamInput.addEventListener('change', updateTeamAtFaultSelect);
 
 // Listen to forfeit checkbox to enable/disable other inputs.
 forfeitSwitch.addEventListener('change', (event) => {
-    const inningInputs = inningsContainerInner.querySelectorAll('.inning-row input[type="number"]');
-
     if (event.target.checked) {
-        // If checked, disable and clear innings and enable team at fault select.
-        inningInputs.forEach(input => {
-            input.disabled = true;
-            input.value = "0";
-        });
-
-        // Populate the select element.
-        const fragment = document.createDocumentFragment();
-        fragment.appendChild(new Option("", ""));
-
-        [homeTeamInput.value.trim(), roadTeamInput.value.trim()].forEach(option => {
-            fragment.appendChild(new Option(option, option));
-        });
-
-        teamAtFaultSelect.appendChild(fragment);
-
-        // Enable the select element.
-        teamAtFaultSelect.disabled = false;
+        // If checked, disable innings and enable team at fault select.
+        setInningsState(true);
+        setForfeitState(false);
     } else {
-        // If unchecked, disable and clear team at fault select and enable innings.
-        teamAtFaultSelect.disabled = true;
-        teamAtFaultSelect.innerHTML = '';
-
-        inningInputs.forEach(input => {
-            input.disabled = false;
-        });
+        // If unchecked, disable team at fault select and enable innings.
+        setInningsState(false);
+        setForfeitState(true);
     }
 });
+
+function setInningsState(disabled) {
+    const inningInputs = inningsContainerInner.querySelectorAll('.inning-row input[type="number"]');
+    const buttons = inningsContainerInner.querySelectorAll('.remove-button');
+
+    inningInputs.forEach(input => {
+        input.disabled = disabled;
+    });
+
+    buttons.forEach(button => button.disabled = disabled);
+
+    addInningButton.disabled = disabled;
+}
+
+function setForfeitState(disabled) {
+    // If unchecked, disable and clear team at fault select and enable innings.
+    teamAtFaultSelect.disabled = disabled;
+    if (!disabled && teamAtFaultSelect.children.length === 0) updateTeamAtFaultSelect();
+}
 
 // Listen for a click to add a new inning row.
 addInningButton.addEventListener('click', () => {

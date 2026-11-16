@@ -30,6 +30,7 @@ public class GameController {
         // Get a list of team names and pass to the view through the model.
         model.addAttribute("teamNames", GameBO.getAllUniqueTeamNames());
     }
+
     /**
      * Send the user to the initial add game view. This view asks the user for the teams and date of the game to add.
      * TODO SPRINT 3 - Add Functionality
@@ -44,11 +45,8 @@ public class GameController {
         // Add a new GameDTO object to the model to store form data.
         model.addAttribute("game", new GameDTO());
 
-        // Route to provide to the form for the action attribute.
-        model.addAttribute("action", "/game/add/submit");
-
-        // Add something to help thymeleaf determine whether the form should be 'add' or update.
-        model.addAttribute("isAdd", true);
+        // Add an attribute to the method to tell Thymeleaf that this is an add operation.
+        model.addAttribute("operation", "add");
 
         return "games/add";
     }
@@ -67,11 +65,8 @@ public class GameController {
         // Print errors to console for debugging.
         logger.info(bindingResult.toString());
 
-        // Route to provide to the form for the action attribute.
-        model.addAttribute("action", "/game/add/submit");
-
-        // Add something to help thymeleaf determine whether the form should be 'add' or update.
-        model.addAttribute("isAdd", true);
+        // Add an attribute to the method to tell Thymeleaf that this is an add operation.
+        model.addAttribute("operation", "add");
 
         if (!bindingResult.hasErrors()) {
             // Save the mapped entity.
@@ -105,13 +100,10 @@ public class GameController {
         // Convert to GameDTO and add to model.
         model.addAttribute("game", new GameDTO(game));
 
-        // Route to provide to the form for the action attribute.
-        model.addAttribute("action", "/game/update/submit(id=${" + id + "})");
+        // Add an attribute to the method to tell Thymeleaf that this is an update operation.
+        model.addAttribute("operation", "update");
 
-        // Add something to help thymeleaf determine whether the form should be 'add' or update.
-        model.addAttribute("isAdd", false);
-
-        return "games/update";
+        return "games/add";
     }
 
     /**
@@ -122,28 +114,25 @@ public class GameController {
      * @since 20261111
      */
     @PostMapping("/update/submit")
-    public String updateSubmit(Model model, @RequestParam int id, @Valid @ModelAttribute("game") GameDTO game, BindingResult bindingResult) {
+    public String updateSubmit(Model model, @Valid @ModelAttribute("game") GameDTO game, BindingResult bindingResult) {
         logger.info("Running the GameController updateSubmit() method.");
 
         // Print errors to console for debugging.
         logger.debug(bindingResult.toString());
 
-        // Route to provide to the form for the action attribute.
-        model.addAttribute("action", "/game/update/submit(id=${" + id + "})");
-
-        // Add something to help thymeleaf determine whether the form should be 'add' or update.
-        model.addAttribute("isAdd", false);
-
         if (!bindingResult.hasErrors()) {
             // Save the mapped entity.
-            service.updateGame(id, game);
+            service.updateGame(game.getId(), game);
 
-            logger.info("Updated game with id: {}", id);
+            logger.info("Updated game with id: {}", game.getId());
 
             // Return to the index page. Using redirect should get the BaseController's @ModelAttribute method to run automatically.
             return "redirect:/";
         }
 
-        return "games/update";
+        // Add an attribute to the method to tell Thymeleaf that this is an update operation.
+        model.addAttribute("operation", "update");
+
+        return "games/add";
     }
 }

@@ -91,9 +91,9 @@ form {
 
     grid-row: span 3;
 
-    border: thin solid darkgray;
-    border-radius: 10px;
-    padding: 20px;
+    /*border: thin solid darkgray;*/
+    /*border-radius: 10px;*/
+    /*padding: 20px;*/
 
     min-height: 0;
     width: min-content;
