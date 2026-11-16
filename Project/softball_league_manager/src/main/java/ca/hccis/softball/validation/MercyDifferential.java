@@ -14,6 +14,7 @@ import java.util.Collection;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = MercyDifferential.Validator.class)
 @Documented
+@Repeatable(MercyDifferential.List.class)
 public @interface MercyDifferential {
     String message() default "The difference in scores is not great enough to trigger the Mercy Rule.";
     Class<?>[] groups() default {};
@@ -25,7 +26,15 @@ public @interface MercyDifferential {
     long numberOfInnings() default 5;
     long minDifference() default 7;
 
-    public static class Validator implements ConstraintValidator<MercyDifferential, GameDTO> {
+    // This interface allows this constraint to be applied more than once to a single class.
+    @Target({ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @interface List {
+        MercyDifferential[] value();
+    }
+
+    class Validator implements ConstraintValidator<MercyDifferential, GameDTO> {
         private String listField;
         private String homeRuns;
         private String roadRuns;
@@ -51,14 +60,15 @@ public @interface MercyDifferential {
                 BeanWrapperImpl wrapper = new BeanWrapperImpl(value);
                 Object collectionObj = wrapper.getPropertyValue(listField);
 
-                // If empty or null, skip this validation (let @NotEmpty or @NotNull handle it)
+                // If there are no innings to validate, return true.
                 if (!(collectionObj instanceof Collection<?> items) || items.isEmpty()) {
                     return true;
                 }
 
-                // If the number of innings isn't 5, skip this validation.
+                // If the number of innings isn't equal to numberOfInnings, skip this validation.
                 if (items.size() != numberOfInnings) return true;
 
+                // Get the home and road scores.
                 Object val1 = wrapper.getPropertyValue(homeRuns);
                 Object val2 = wrapper.getPropertyValue(roadRuns);
 
@@ -78,7 +88,8 @@ public @interface MercyDifferential {
                 }
 
             } catch (Exception e) {
-                return false; // Safely fail validation if properties do not map correctly
+                // Safely fail validation if properties do not map correctly
+                return false;
             }
 
             return true;
