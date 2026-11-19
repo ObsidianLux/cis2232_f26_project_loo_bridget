@@ -5,7 +5,11 @@ const forfeitSwitch = document.getElementById('switchForfeit');
 const teamAtFaultSelect = document.getElementById('teamAtFault');
 
 const inningsContainerInner = document.getElementById('inningsContainerInner');
+
 const addInningButton = document.getElementById('btnAddInning');
+
+const totalHomeRunsElement = document.getElementById('totalHomeRuns');
+const totalRoadRunsElement = document.getElementById('totalRoadRuns');
 
 function updateTeamAtFaultSelect() {
     teamAtFaultSelect.innerHTML = "";
@@ -76,23 +80,37 @@ addInningButton.addEventListener('click', () => {
     inningsContainerInner.appendChild(newInning);
 
     // Recalculate numbering and set attributes.
-    updateInningNumbers();
+    updateInnings();
 });
 
 /* FUNCTIONS */
+
+function updateTotalScores() {
+    let homeRuns = 0;
+    let roadRuns = 0;
+
+    Array.from(inningsContainerInner.querySelectorAll('input[type="number"]')).forEach(input => {
+        const value = Number(input.value) || 0;
+        if (input.dataset.field === "homeRuns") homeRuns += value;
+        else roadRuns += value;
+    });
+
+    totalRoadRunsElement.textContent = roadRuns.toString();
+    totalHomeRunsElement.textContent = homeRuns.toString();
+}
 
 function removeInning(element) {
     // Remove this row.
     element.parentElement.remove();
 
-    // Fix inning numbering.
-    updateInningNumbers();
+    // Fix inning numbering and total scores.
+    updateInnings();
 }
 
 /**
- * Ensure the inning numbering is in a proper sequence.
+ * Ensure the inning numbering is in a proper sequence and update the team score totals.
  */
-function updateInningNumbers() {
+function updateInnings() {
     // Get the inning rows.
     const innings = inningsContainerInner.querySelectorAll('.inning-row');
 
@@ -104,12 +122,15 @@ function updateInningNumbers() {
         // Set the Spring MVC name and id attributes for each field that should map to an Inning object.
         const inputs = inning.querySelectorAll('input[data-field]');
         inputs.forEach(input => {
-            const fieldName = input.getAttribute('data-field');
-
+            const fieldName = input.dataset.field;
             input.name = `innings[${index}].${fieldName}`;
             input.id = `innings[${index}].${fieldName}`;
-        });
 
-        // TODO Associate labels.
+            // Add an event listener to the input to listen for changes to its value. When there's a change, update the total scores.
+            input.addEventListener('change', updateTotalScores);
+        });
     });
+
+    // Update the elements with total scores.
+    updateTotalScores();
 }

@@ -96,6 +96,13 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                 <article id="formInnings" class="rowspan-3">
                     <!-- Inning information -->
                     <div id="inningsContainerOuter">
+                        <div id="inningTotalsRow">
+                            <!-- These elements display the calculated (by JavaScript) total scores for each team. They default to 0. -->
+                            <p th:text="#{add.subheader.innings.total.home}"></p>
+                            <p id="totalHomeRuns">0</p>
+                            <p th:text="#{add.subheader.innings.total.road}"></p>
+                            <p id="totalRoadRuns">0</p>
+                        </div>
                         <div id="inningsContainerInner">
                             <div class="inning-row" th:each="item, iterStat : *{innings}">
                                 <p class="inning-number" data-field="inningNumber" th:text="${iterStat.index + 1}"></p>
@@ -109,7 +116,7 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                                 <button th:text="#{common.button.remove}" onclick="removeInning(this)" class="remove-button" type="button"></button>
                             </div>
                         </div>
-                        <div class="inning-row-add">
+                        <div id="inningRowAdd">
                             <button id="btnAddInning" type="button" th:disabled="*{wasForfeited}">
                                 <!-- This is the add box Material Icon from Google -->
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M11,17h2V13h4V11H13V7H11v4H7v2h4v4ZM5,21q-0.83,0-1.41-0.59T3,19V5Q3,4.17 3.59,3.59T5,3H19q0.83,0 1.41,0.59T21,5V19q0,0.82-0.59,1.41T19,21H5Zm0-2H19V5H5V19ZM5,5V19V5Z"/></svg>

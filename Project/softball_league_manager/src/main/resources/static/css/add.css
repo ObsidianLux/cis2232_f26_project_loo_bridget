@@ -50,13 +50,10 @@ form {
     #formBaseInfo {
         display: grid;
         column-gap: var(--gap-large);
+        row-gap: var(--gap-medium);
 
         grid-template-columns: min-content 1fr;
         grid-template-rows: repeat(6, min-content);
-
-        > *:not(:last-child) {
-            margin-bottom: var(--gap-medium);
-        }
 
         > * {
             /* This centers everything vertically without having to use flexbox. */
@@ -71,10 +68,6 @@ form {
 
         height: min-content;
         width: fit-content;
-
-        /*border: thin solid darkgray;*/
-        /*border-radius: 10px;*/
-        padding-top: 20px;
 
         > *, div > * {
             margin: auto 0;
@@ -110,6 +103,21 @@ form {
             overflow-y: auto;
             scrollbar-gutter: stable;
 
+            #inningTotalsRow {
+                display: flex;
+                flex-flow: row nowrap;
+                gap: var(--gap-medium);
+
+                > :nth-child(even) {
+                    margin-right: auto;
+                }
+
+                > * {
+                    font-size: small;
+                    font-weight: bold;
+                }
+            }
+
             #inningsContainerInner {
                 display: flex;
                 flex-flow: column nowrap;
@@ -138,7 +146,7 @@ form {
                 }
             }
 
-            .inning-row-add {
+            #inningRowAdd {
                 display: flex;
                 border: 2px dashed darkgray;
                 justify-content: center;

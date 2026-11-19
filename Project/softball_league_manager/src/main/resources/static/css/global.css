@@ -113,6 +113,7 @@ footer {
 .error-message {
     color: red;
     font-style: italic;
+    font-size: small;
 }
 
 .text-nowrap {
