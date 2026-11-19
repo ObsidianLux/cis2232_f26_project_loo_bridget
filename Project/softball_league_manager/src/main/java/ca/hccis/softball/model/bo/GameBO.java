@@ -123,8 +123,28 @@ public class GameBO {
     public static ArrayList<Team> selectAllTeamsSortedByPCT() {
         ArrayList<Team> teams = selectAllTeams();
 
-        // Sort the array of teams first by win percentage, then number of mercy wins, and finally by number of forfeit wins.
-        teams.sort(Comparator.comparingDouble(Team::getWinPercentage).thenComparingInt(Team::getMercyWins).thenComparingInt(Team::getForfeitWins).reversed());
+        // TODO Consider likelihood of 3-way ties throwing exceptions.
+
+        // Sort the array of teams first by win percentage. If there are any teams with the same PCT, place the team with more wins against the other first. Putting team two first in the comparisons will place the resulting list in descending order.
+        teams.sort((teamOne, teamTwo) -> {
+            // Sort by PCT first.
+            int pctCompare = Double.compare(teamTwo.getWinPercentage(), teamOne.getWinPercentage());
+
+            // If the win percentages are different, return the comparison result.
+            if (pctCompare != 0) return pctCompare;
+
+            // Tie-breaker: Compare head-to-head wins against each other.
+            int teamOneWins = teamOne.getWinsAgainst(teamTwo);
+            int teamTwoWins = teamTwo.getWinsAgainst(teamOne);
+
+            return Integer.compare(teamTwoWins, teamOneWins);
+        });
+
+        // Get the leading team from the list.
+        Team leadingTeam = teams.get(0);
+
+        // Set the Games Behind value for each team using the leadingTeam.
+        for (Team team : teams) team.setGamesBehind(leadingTeam);
 
         return teams;
     }

@@ -104,30 +104,28 @@ Purpose: Index / home page for the Softball League Manager app.
                             <span th:if="${!isWinner and forfeited}" th:text="#{common.label.forfeit}"></span>
                         </p>
 
-                        <table th:unless="${game.getWasForfeited()}" class="row-4" th:with="innings=${game.getInnings()}">
-                            <colgroup>
+                        <div class="flex-table row-4" th:unless="${game.getWasForfeited()}" th:with="innings=${game.getInnings()}" th:style="|--middle-cols: ${game.getInnings().size()};|">
+                            <!-- First / Row Header Column -->
+                            <div>
+                                <p class="table-header" th:text="#{index.table.head.inning}"></p>
+                                <p class="table-header" th:text="#{index.table.head.home}"></p>
+                                <p class="table-header" th:text="#{index.table.head.road}"></p>
+                            </div>
 
-                            </colgroup>
-                            <thead>
-                            <tr>
-                                <th scope="col" th:text="#{index.table.head.inning}"></th>
-                                <th scope="col" th:each="inningNumber : ${#numbers.sequence(1, innings.size())}" th:text="${inningNumber}"></th>
-                                <th scope="col" th:text="#{index.table.head.total}"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <th scope="row" th:text="#{index.table.head.home}"></th>
-                                <td th:each="inning, iterStat : ${innings}" th:text="${inning.getHomeRuns()}" th:classappend="${iterStat.last ? '' : 'fit-content'}"></td>
-                                <td class="fit-content" th:text="${game.getHomeScore()}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" th:text="#{index.table.head.road}"></th>
-                                <td th:each="inning, iterStat : ${innings}" th:text="${inning.getRoadRuns()}" th:classappend="${iterStat.last ? '' : 'fit-content'}"></td>
-                                <td class="fit-content" th:text="${game.getRoadScore()}"></td>
-                            </tr>
-                            </tbody>
-                        </table>
+                            <!-- Repeatable Column for Innings -->
+                            <div th:each="inning : ${innings}">
+                                <p class="table-header" th:text="${inning.getInningNumber()}"></p>
+                                <p th:text="${inning.getHomeRuns()}"></p>
+                                <p th:text="${inning.getRoadRuns()}"></p>
+                            </div>
+
+                            <!-- Last / Totals Column -->
+                            <div>
+                                <p class="table-header" th:text="#{index.table.head.total}"></p>
+                                <p class="table-header" th:text="${game.getHomeScore()}"></p>
+                                <p class="table-header" th:text="${game.getRoadScore()}"></p>
+                            </div>
+                        </div>
 
                         <a class="button secondary row-5 col-1 align-right" th:href="@{/game/update(id=${game.getId()})}" th:text="#{common.button.edit}"></a>
                         <!-- Confirm with the user that they want to delete the game before allowing Thymeleaf to redirect to the Controller. -->
@@ -160,49 +158,72 @@ Purpose: Index / home page for the Softball League Manager app.
                     'teams' refers to an attribute that was added to the model by the Controller that mapped to this page.
                     'team' refers to an instance of the Team class in the 'teams' list.
                     -->
+                    <!-- /*@thymesVar id="team" type="ca.hccis.softball.model.domain.Team"*/ -->
                     <div class="card-wide standing" th:each="team, iterStat : ${teams}" th:with="rank=${iterStat.index + 1}">
-                        <p class="rank subtitle" th:text="|#{common.label.hash}${rank}|"></p>
+                        <p class="row-1 col-1 subtitle" th:text="|#{common.label.hash}${rank}|"></p>
 
-                        <p class="pct" th:text="${team.getWinPercentageString()}"></p>
-                        <h3 class="team quantico-bold font-secondary-colour" th:text="${team.getTeamName()}"></h3>
+                        <p class="row-1 col-2 pct" th:text="${team.getWinPercentageString()}"></p>
+                        <h3 class="row-1 colgroup quantico-bold font-secondary-colour" th:text="${team.getTeamName()}"></h3>
 
-                        <!-- The card has 3 'metrics' that I created with inspiration from Streamlit's native metric component. -->
-                        <div class="metric games">
+                        <!-- Links to the Team History Report and passes the team name as a parameter to generate the report without having to select the team first. -->
+                        <a class="button row-1 col-10" th:href="@{/reports/history/view(teamName=${team.getTeamName()})}">
+                            <!--                                <img th:src="@{/images/history.svg}" alt="History icon.">-->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M12,21q-3.45,0-6.01-2.29Q3.43,16.43 3.05,13H5.1q0.35,2.6 2.31,4.3T12,19q2.93,0 4.96-2.04Q19,14.93 19,12q0-2.93-2.04-4.96T12,5Q10.28,5 8.78,5.8T6.25,8H9v2H3V4H5V6.35q1.28-1.6 3.11-2.47T12,3q1.88,0 3.51,0.71t2.85,1.93t1.93,2.85T21,12t-0.71,3.51t-1.93,2.85t-2.85,1.93T12,21Zm2.8-4.8L11,12.4V7h2v4.6l3.2,3.2l-1.4,1.4Z"/></svg>
+                        </a>
+
+                        <!-- The card has 7 'metrics' that I created with inspiration from Streamlit's native metric component. -->
+                        <div class="metric row-2 col-3">
                             <p class="metric-label" th:text="#{common.metric.game}"></p>
                             <p class="metric-value" th:text="${team.getNumberOfGamesPlayed()}"></p>
                         </div>
 
-                        <div class="metric wins">
+                        <div class="metric row-2 col-4">
+                            <!-- The total number of games won by this team -->
                             <p class="metric-label font-win" th:text="#{common.metric.win}"></p>
-
-                            <!-- Displays the total number of wins, the number of wins via Mercy Rule, and the number of wins by forfeit. -->
-                            <div class="metric-group">
-                                <p class="metric-value" th:text="${team.getWins().total()}"></p>
-                                <p class="metric-divider" th:text="#{common.metric.divider.bullet}"></p>
-                                <p class="metric-value" th:text="${team.getWins().mercy()}"></p>
-                                <p class="metric-divider" th:text="#{common.metric.divider.bullet}"></p>
-                                <p class="metric-value" th:text="${team.getWins().forfeit()}"></p>
-                            </div>
+                            <p class="metric-value" th:text="${team.getWins().total()}"></p>
                         </div>
 
-                        <div class="metric losses">
+                        <div class="metric row-2 col-5">
+                            <!-- The total number of games won by this team -->
                             <p class="metric-label font-loss" th:text="#{common.metric.loss}"></p>
-
-                            <!-- Displays the total number of losses, the number of losses via Mercy Rule, and the number of losses by forfeit. -->
-                            <div class="metric-group">
-                                <p class="metric-value" th:text="${team.getLosses().total()}"></p>
-                                <p class="metric-divider" th:text="#{common.metric.divider.bullet}"></p>
-                                <p class="metric-value" th:text="${team.getLosses().mercy()}"></p>
-                                <p class="metric-divider" th:text="#{common.metric.divider.bullet}"></p>
-                                <p class="metric-value" th:text="${team.getLosses().forfeit()}"></p>
-                            </div>
+                            <p class="metric-value" th:text="${team.getLosses().total()}"></p>
                         </div>
 
-                        <!-- Links to the Team History Report and passes the team name as a parameter to generate the report without having to select the team first. -->
-                        <a class="button history" th:href="@{/reports/history/view(teamName=${team.getTeamName()})}">
-                            <!--                                <img th:src="@{/images/history.svg}" alt="History icon.">-->
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M12,21q-3.45,0-6.01-2.29Q3.43,16.43 3.05,13H5.1q0.35,2.6 2.31,4.3T12,19q2.93,0 4.96-2.04Q19,14.93 19,12q0-2.93-2.04-4.96T12,5Q10.28,5 8.78,5.8T6.25,8H9v2H3V4H5V6.35q1.28-1.6 3.11-2.47T12,3q1.88,0 3.51,0.71t2.85,1.93t1.93,2.85T21,12t-0.71,3.51t-1.93,2.85t-2.85,1.93T12,21Zm2.8-4.8L11,12.4V7h2v4.6l3.2,3.2l-1.4,1.4Z"/></svg>
-                        </a>
+                        <div class="metric row-2 col-6">
+                            <!-- The Games Behind value for this team -->
+                            <p class="metric-label" th:text="#{common.metric.gb}"></p>
+                            <p class="metric-value" th:text="${team.getGamesBehind() == 0 ? '-' : team.getGamesBehind()}"></p>
+                        </div>
+
+                        <div class="metric row-2 col-7">
+                            <!-- The Home Stadium win-loss record for this team -->
+                            <p class="metric-label" th:text="#{common.metric.home}"></p>
+                            <p class="metric-group" th:with="record=${team.getHomeRecord()}">
+                                <span class="metric-value" th:text="${record.wins()}"></span>
+                                <span class="metric-divider" th:text="#{common.metric.divider.bullet}"></span>
+                                <span class="metric-value" th:text="${record.losses()}"></span>
+                            </p>
+                        </div>
+
+                        <div class="metric row-2 col-8">
+                            <!-- The Road Stadium win-loss record for this team -->
+                            <p class="metric-label" th:text="#{common.metric.road}"></p>
+                            <p class="metric-group" th:with="record=${team.getRoadRecord()}">
+                                <span class="metric-value" th:text="${record.wins()}"></span>
+                                <span class="metric-divider" th:text="#{common.metric.divider.bullet}"></span>
+                                <span class="metric-value" th:text="${record.losses()}"></span>
+                            </p>
+                        </div>
+
+                        <div class="metric row-2 col-9">
+                            <!-- The win-loss record for the last 5 games played by this team -->
+                            <p class="metric-label" th:text="#{common.metric.l5}"></p>
+                            <p class="metric-group" th:with="record=${team.getL5()}">
+                                <span class="metric-value" th:text="${record.gamesWon()}"></span>
+                                <span class="metric-divider" th:text="#{common.metric.divider.bullet}"></span>
+                                <span class="metric-value" th:text="${record.gamesLost()}"></span>
+                            </p>
+                        </div>
                     </div>
                 </article>
             </div>
