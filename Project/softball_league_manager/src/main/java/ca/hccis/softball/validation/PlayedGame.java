@@ -9,10 +9,7 @@ import jakarta.validation.Payload;
 import org.springframework.beans.BeanWrapperImpl;
 
 import java.lang.annotation.*;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,22 +29,13 @@ public @interface PlayedGame {
     String homeRuns();
     String roadRuns();
 
+    int mercyInningCount() default 5;
+    int mercyMinimumDifference() default 10;
+
     int standardInningMinimum() default 7;
     String invalidInningsMessage() default "At least one inning must have a score for either the home team or the road team.";
     String noTieMessage() default "The game cannot end in a tie.";
     String mercyRuleMessage() default "The difference in scores is not great enough to trigger the Mercy Rule.";
-
-    // Default rules covering 3, 4, and 5 innings out of the box.
-    PlayedGame.Rule[] rules() default {
-        @PlayedGame.Rule(innings = 3, minDifference = 15),
-        @PlayedGame.Rule(innings = 4, minDifference = 10),
-        @PlayedGame.Rule(innings = 5, minDifference = 7)
-    };
-
-    @interface Rule {
-        int innings();
-        int minDifference();
-    }
 
     class Validator implements ConstraintValidator<PlayedGame, GameDTO> {
         private String requiredField;
@@ -55,8 +43,9 @@ public @interface PlayedGame {
 
         private String homeRuns;
         private String roadRuns;
-        private Map<Integer, Integer> inningThresholds;
         private Integer standardInningMinimum;
+        private Integer mercyInningCount;
+        private Integer mercyMinimumDifference;
 
         private String message;
         private String mercyRuleMessage;
@@ -73,12 +62,8 @@ public @interface PlayedGame {
             this.roadRuns = constraintAnnotation.roadRuns();
             this.message = constraintAnnotation.message();
             this.mercyRuleMessage = constraintAnnotation.mercyRuleMessage();
-            this.inningThresholds = Arrays.stream(constraintAnnotation.rules())
-                    .collect(Collectors.toMap(
-                            PlayedGame.Rule::innings,
-                            PlayedGame.Rule::minDifference,
-                            (existing, replacement) -> replacement
-                    ));
+            this.mercyMinimumDifference = constraintAnnotation.mercyMinimumDifference();
+            this.mercyInningCount = constraintAnnotation.mercyInningCount();
             this.noTieMessage = constraintAnnotation.noTieMessage();
         }
 
@@ -112,8 +97,10 @@ public @interface PlayedGame {
                     Double homeRuns = ((Number) objHomeRuns).doubleValue();
                     Double roadRuns = ((Number) objRoadRuns).doubleValue();
 
+                    int numberOfInnings = items.size();
+
                     // Check the number of innings to see if the game ended with a valid number of innings for a standard game or one that ended by mercy rule.
-                    if (items.size() < standardInningMinimum && !inningThresholds.containsKey(items.size())) {
+                    if (numberOfInnings < standardInningMinimum && numberOfInnings != mercyInningCount) {
                         context.disableDefaultConstraintViolation();
                         context.buildConstraintViolationWithTemplate(message)
                                 .addPropertyNode(innings)
@@ -141,8 +128,8 @@ public @interface PlayedGame {
                             return false;
                         }
 
-                        // Check if the score difference is greater than the required threshold for any mercy rule applications.
-                        if (inningThresholds.containsKey(items.size()) && Math.abs(homeRuns - roadRuns) < inningThresholds.get(items.size())) {
+                        // Check if the score difference is less than the required threshold for mercy rule application.
+                        if (numberOfInnings == mercyInningCount && Math.abs(homeRuns - roadRuns) < mercyMinimumDifference) {
                             context.disableDefaultConstraintViolation();
                             // Attach the error to the list property node so Thymeleaf can reference it
                             context.buildConstraintViolationWithTemplate(mercyRuleMessage)
