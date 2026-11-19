@@ -20,6 +20,9 @@ Purpose: Global stylesheet.
     --font-on-dark: white;
     --font-on-light: black;
 
+    --success: #80EF80;
+    --error: #FF746C;
+
     --win-colour: #80EF80;
     --loss-colour: #FF746C;
 
@@ -466,3 +469,51 @@ input[type="number"], input[list] {
 }
 
 /*endregion*/
+
+.toast {
+    padding: 10px 20px;
+    border-radius: 10px;
+
+    width: fit-content;
+    max-width: 600px;
+
+    height: fit-content;
+
+    display: grid;
+    grid-template: repeat(2, min-content) / min-content minmax(200px, 1fr) min-content;
+    row-gap: var(--gap-small);
+    column-gap: var(--gap-large);
+
+    margin: 0 auto;
+
+    svg {
+        stroke: white;
+        fill: white;
+
+        height: 75%;
+        width: auto;
+
+        margin: auto;
+    }
+
+    button {
+        width: fit-content;
+        height: fit-content;
+
+        color: white;
+        background: transparent;
+        border: none;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    &.success {
+        background-color: var(--success);
+
+        * {
+            color: var(--font-on-dark);
+        }
+    }
+}

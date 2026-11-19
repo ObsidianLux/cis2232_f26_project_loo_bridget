@@ -34,10 +34,17 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                     <option th:each="teamName : ${teamNames}" th:value="${teamName}"></option>
                 </datalist>
 
-                <hgroup class="colspan-2">
-                    <h1 class="primary-heading" th:if="${operation == 'add'}" th:text="#{add.heading.title}"></h1>
-                    <h1 class="primary-heading" th:unless="${operation == 'add'}" th:text="#{update.heading.title}"></h1>
-                </hgroup>
+                <div class="colspan-2">
+                    <hgroup>
+                        <h1 class="primary-heading" th:if="${operation == 'add'}" th:text="#{add.heading.title}"></h1>
+                        <h1 class="primary-heading" th:unless="${operation == 'add'}" th:text="#{update.heading.title}"></h1>
+                    </hgroup>
+
+                    <!-- Using a th:block so that the th:if is evaluated before th:replace since th:replace takes precedence -->
+                    <th:block th:if="${successfulInsert}">
+                        <div th:replace="~{fragments/toast :: toastSuccess(${successfulInsert})}"></div>
+                    </th:block>
+                </div>
 
                 <!-- Left Side of the Form -->
 

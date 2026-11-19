@@ -77,7 +77,8 @@ public class GameController {
             // Add a new GameDTO object to the model to store form data.
             model.addAttribute("game", new GameDTO());
 
-            // TODO Add some kind of notification to tell the user that their game was added to the database.
+            // Add a message to the model to tell the user that their game was added to the database.
+            model.addAttribute("successfulInsert", "%s vs. %s game added successfully.".formatted(game.getHomeTeam(), game.getRoadTeam()));
         }
 
         return "games/add";

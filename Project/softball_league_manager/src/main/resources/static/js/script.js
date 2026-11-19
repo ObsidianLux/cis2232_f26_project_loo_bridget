@@ -40,3 +40,11 @@ function applyInvalid(element) {
 function removeInvalid(element) {
     if (element.classList.contains('invalid')) element.classList.remove('invalid');
 }
+
+/**
+ * Remove the parent element for this dismissal button.
+ * @param element The toast element.
+ */
+function dismissToast(element) {
+    element.parentElement.remove();
+}
