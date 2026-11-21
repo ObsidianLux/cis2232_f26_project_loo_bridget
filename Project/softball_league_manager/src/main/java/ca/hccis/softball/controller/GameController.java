@@ -78,7 +78,7 @@ public class GameController {
             model.addAttribute("game", new GameDTO());
 
             // Add a message to the model to tell the user that their game was added to the database.
-            model.addAttribute("successfulInsert", "%s vs. %s game added successfully.".formatted(game.getHomeTeam(), game.getRoadTeam()));
+            model.addAttribute("successMessage", "%s vs. %s game added successfully.".formatted(game.getHomeTeam(), game.getRoadTeam()));
         }
 
         return "games/add";

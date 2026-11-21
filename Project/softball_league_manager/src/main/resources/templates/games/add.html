@@ -10,22 +10,40 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{fragments/head :: headerFragment(~{::title}, ~{::link}, ~{::script})}">
+    <!-- I want to avoid pulling all scripts on the page into the head, so I limit parameter scripts to only those in this head element. -->
     <title th:text="#{application.name}"></title>
     <link rel="stylesheet" th:href="@{/css/add.css}">
     <script th:src="@{/js/add.js}" type="text/javascript" defer></script>
+
+    <!-- Display success message if insert was successful. -->
+    <script th:if="${successMessage != null}" th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            const message = /*[[${successMessage}]]*/ 'Insert successful!';
+
+            Toastify({
+                text: message,
+                duration: 4000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)"
+                }
+            }).showToast();
+        });
+    </script>
 </head>
 
 <body>
-<header th:replace="~{fragments/nav :: navMenu('add')}">
-    <!--
-    Replaces this header element with the navMenu fragment in the nav.html file.
-    Passes the word 'add' into the fragment so that it assigns the 'active' class to the correct navigation item.
-    -->
-</header>
+    <header th:replace="~{fragments/nav :: navMenu('add')}">
+        <!--
+        Replaces this header element with the navMenu fragment in the nav.html file.
+        Passes the word 'add' into the fragment so that it assigns the 'active' class to the correct navigation item.
+        -->
+    </header>
 
     <main>
         <div>
-            <!-- TODO Display success message to user -->
             <form th:action="@{/game/__${operation}__/submit(id=${operation == 'update' ? game.id : null})}" th:object="${game}" method="post">
                 <!-- th:object directly ties the output of this form to the Game object that was attached to the model by the Controller. -->
 
@@ -39,11 +57,6 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                         <h1 class="primary-heading" th:if="${operation == 'add'}" th:text="#{add.heading.title}"></h1>
                         <h1 class="primary-heading" th:unless="${operation == 'add'}" th:text="#{update.heading.title}"></h1>
                     </hgroup>
-
-                    <!-- Using a th:block so that the th:if is evaluated before th:replace since th:replace takes precedence -->
-                    <th:block th:if="${successfulInsert}">
-                        <div th:replace="~{fragments/toast :: toastSuccess(${successfulInsert})}"></div>
-                    </th:block>
                 </div>
 
                 <!-- Left Side of the Form -->
