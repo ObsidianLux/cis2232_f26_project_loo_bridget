@@ -1,9 +1,11 @@
 # Softball League Manager
 An app for team managers to simplify tracking softball games and viewing team standings.
 
-For each game, it will keep track of which teams played, whether they were forfeited or won under the Mercy Rule, and which team won.
+For future games, it will keep track of which teams will play and on which date.
 
-Team managers will be able to see each team's overall standing based on the records of each game provided.
+For past games, it will keep track of which teams played, the date they played, who won and whether it was by forfeit or mercy rule, total scores, and innings with each team's number of runs scored.
+
+Team managers will be able to see each team's overall standing based on the records of each game provided. They will also be able to see which games are upcoming, which ones have been played, and which ones should have been played but were not updated in the app yet.
 ## Development Team
 **BA / Business Client:** Richard Baird
 
@@ -39,9 +41,9 @@ Team managers will be able to see each team's overall standing based on the reco
 ## Report
 **Standings**
 
-On the home page, teams are displayed in order of their standings within the league (sorted in descending order). 
+On the home page, teams are displayed in order of their standings within the league (sorted in descending order). Displays the number of games played, current standing, number of wins and losses, games behind rating, records for wins and losses at home and on the road, and the record of wins and losses for the last 5 games played.
 
-Displays the number of games, current standing, number of wins (total, mercy rule, and forfeit), and number of losses (total, mercy rule, and forfeit).
+Upcoming and past games are also displayed with basic information about them. All games provide the option to update or delete them.
 
 **Team History Report**
 
