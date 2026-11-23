@@ -12,6 +12,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * Separate class for request/response data.
+ * This prevents leaking internal fields, avoids issues with serializing entities, and rejects bad input before reaching the database.
+ */
 // This constraint applies to all games.
 @UniqueNames(
         firstName = "homeTeam",

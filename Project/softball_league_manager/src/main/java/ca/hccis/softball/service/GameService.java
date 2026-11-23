@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Holds business logic and calls repository.
+ * Methods that modify data are typically marked @Transactional.
+ * This keeps business rules out of controllers, makes them testable, and defines transaction boundaries so that a multistep change either fully succeeds or fully rolls back.
+ */
 @Service
 public class GameService {
     private final GameRepository gameRepository;

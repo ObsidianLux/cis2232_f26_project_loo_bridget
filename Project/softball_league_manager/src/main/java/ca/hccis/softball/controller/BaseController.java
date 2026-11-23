@@ -15,6 +15,8 @@ import java.time.LocalDate;
 
 /**
  * Base controller for the general functionality of the application.
+ * The web layer which returns HTML views.
+ * The controller receives a request, calls the service, and returns a response.
  * @author BML
  * @since 20261018
  */
