@@ -1,12 +1,13 @@
 package ca.hccis.softball.service;
 
-import ca.hccis.softball.model.dto.GameDTO;
+import ca.hccis.softball.model.dto.GameRequest;
 import ca.hccis.softball.model.entity.Game;
 import ca.hccis.softball.repository.GameRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -22,55 +23,67 @@ public class GameService {
         this.gameRepository = gameRepository;
     }
 
+    /* Boilerplate Exceptions */
+
+    private EntityNotFoundException notFound(Integer id) {
+        return new EntityNotFoundException("Game not found with id: " + id);
+    }
+
     /* READ */
 
-    public List<Game> getPlayedGames() {
-        return gameRepository.findByPlayedTrueOrderByDateDesc();
+    public List<GameRequest> getAllGames() { return gameRepository.findAll().stream().map(GameRequest::from).toList(); }
+
+    public List<GameRequest> getPlayedGames(LocalDate date) {
+        return gameRepository.findByDateLessThanEqualOrderByDateDesc(date).stream().map(GameRequest::from).toList();
     }
 
-    public List<Game> getUnplayedGames() {
-        return gameRepository.findByPlayedFalseOrderByDateAsc();
+    public List<GameRequest> getUnplayedGames(LocalDate date) {
+        return gameRepository.findByDateGreaterThanOrderByDateAsc(date).stream().map(GameRequest::from).toList();
     }
 
-    public Game getGameById(int id) {
-        return gameRepository.findById(id).orElse(null);
+    public Game getGameById(Integer id) {
+        // If the id is null or there is no game with the same id, throw an exception that the @RestControllerAdvice class can catch and handle.
+        return gameRepository.findById(id).orElseThrow(() -> notFound(id));
+    }
+
+    public boolean existsById(Integer id) {
+        return id != null && gameRepository.existsById(id);
     }
 
     /* UPDATE */
 
     @Transactional
-    public void updateGame(Integer id, GameDTO gameDTO) {
+    public Game updateGame(Integer id, GameRequest dto) {
         // Get the existing database entity.
-        Game game = gameRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id));
+        Game game = gameRepository.findById(id).orElseThrow(() -> notFound(id));
 
         // Update the game fields using the DTO.
-        Game mappedGame = gameDTO.getMappedGame();
+        Game mappedGame = dto.toEntity();
 
         game.setHomeTeam(mappedGame.getHomeTeam());
-        game.setRoadTeam(mappedGame.getRoadTeam());
+        game.setAwayTeam(mappedGame.getAwayTeam());
         game.setDate(mappedGame.getDate());
-        game.setPlayed(mappedGame.getPlayed());
-        game.setWasMercyWin(mappedGame.getWasMercyWin());
         game.setWasForfeited(mappedGame.getWasForfeited());
+        game.setTeamAtFault(mappedGame.getTeamAtFault());
         game.setInnings(mappedGame.getInnings());
-        game.setHomeScore(mappedGame.getHomeScore());
-        game.setRoadScore(mappedGame.getRoadScore());
 
         // Save the updated game.
-        gameRepository.save(game);
+        return gameRepository.save(game);
     }
 
     /* INSERT */
 
     @Transactional
-    public void insertGame(Game game) {
-        gameRepository.save(game);
+    public Game insertGame(Game game) {
+        return gameRepository.save(game);
     }
 
     /* DELETE */
 
     @Transactional
     public void deleteGame(Integer id) {
+        // If the id is null or there is no game with the same id, throw an exception that the @RestControllerAdvice class can catch and handle.
+        if (!existsById(id)) throw notFound(id);
         gameRepository.deleteById(id);
     }
 }

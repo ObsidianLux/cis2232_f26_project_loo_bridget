@@ -7,7 +7,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Converts a JSON string to an ArrayList and vice versa.
@@ -15,12 +15,12 @@ import java.util.ArrayList;
  * @since 20261025
  */
 @Converter
-public class JsonListConverter implements AttributeConverter<ArrayList<Inning>, String> {
+public class JsonListConverter implements AttributeConverter<List<Inning>, String> {
     /** Reusable Gson instance */
     private static final Gson gson = new Gson();
 
     /** Explicit type for the ArrayList<Inning> so Gson preserves it during deserialization */
-    private static final Type LIST_TYPE = new TypeToken<ArrayList<Inning>>() {}.getType();
+    private static final Type LIST_TYPE = new TypeToken<List<Inning>>() {}.getType();
 
     /**
      * Convert an ArrayList to JSON String. This will be done right before saving to the database.
@@ -30,8 +30,8 @@ public class JsonListConverter implements AttributeConverter<ArrayList<Inning>, 
      * @since 20261025
      */
     @Override
-    public String convertToDatabaseColumn(ArrayList<Inning> attribute) {
-        if (attribute == null) {
+    public String convertToDatabaseColumn(List<Inning> attribute) {
+        if (attribute == null || attribute.isEmpty()) {
             return null;
         }
         return gson.toJson(attribute);
@@ -45,10 +45,10 @@ public class JsonListConverter implements AttributeConverter<ArrayList<Inning>, 
      * @since 20261025
      */
     @Override
-    public ArrayList<Inning> convertToEntityAttribute(String dbData) {
+    public List<Inning> convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.isEmpty()) {
-            // Return an empty list instead of null.
-            return new ArrayList<>();
+            // Return null.
+            return null;
         }
         return gson.fromJson(dbData, LIST_TYPE);
     }

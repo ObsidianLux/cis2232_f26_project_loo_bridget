@@ -58,53 +58,55 @@ Purpose: Index / home page for the Softball League Manager app.
 
                 <article class="card-container" id="scheduleUpcomingGames">
                     <!-- Create a card for each upcoming game. -->
+                    <!-- /*@thymesVar id="game" type="ca.hccis.softball.model.dto.GameRequest"*/ -->
                     <div class="card-wide upcoming" th:each="game : ${upcomingGames}">
                         <p class="subtitle colspan-2" th:text="#{common.label.home}"></p>
                         <p class="subtitle colspan-2" th:text="#{common.label.road}"></p>
 
-                        <h2 th:text="${game.getHomeTeam()}"></h2>
+                        <h2 th:text="${game.homeTeamName()}"></h2>
                         <p class="colspan-2" th:text="#{common.label.versus}"></p>
-                        <h2 th:text="${game.getRoadTeam()}"></h2>
+                        <h2 th:text="${game.awayTeamName()}"></h2>
 
                         <div class="colspan-4 flex-row">
-                            <p class="subtitle" th:text="${game.getDate()}"></p>
-                            <span class="tooltip" tabindex="0" th:if="${game.getDate().isBefore(session.today)}" th:data-tooltip="#{index.warning.upcoming}">
+                            <p class="subtitle" th:text="${game.gameDay()}"></p>
+                            <span class="tooltip" tabindex="0" th:if="${game.gameDay().isBefore(session.today)}" th:data-tooltip="#{index.warning.upcoming}">
                                 <img th:src="@{/images/error.svg}" alt="Error">
                             </span>
                         </div>
 
-                        <a class="button secondary colspan-2" th:href="@{/game/update(id=${game.getId()})}" th:text="#{common.button.edit}"></a>
+                        <a class="button secondary colspan-2" th:href="@{/game/update/{id}(id=${game.id()})}" th:text="#{common.button.edit}"></a>
 
                         <!-- Confirm with the user that they want to delete the game before allowing Thymeleaf to redirect to the Controller. -->
-                        <a class="button delete colspan-2" th:href="@{/delete(id=${game.getId()})}" th:text="#{common.button.delete}" onclick="return confirm('Are you sure you want to delete this game?');"></a>
+                        <a class="button delete colspan-2" th:href="@{/delete/{id}(id=${game.id()})}" th:text="#{common.button.delete}" onclick="return confirm('Are you sure you want to delete this game?');"></a>
                     </div>
                 </article>
 
                 <article class="card-container hidden" id="schedulePastGames">
                     <!-- Create a card for each past game. -->
-                    <div class="card-wide played" th:each="game : ${pastGames}">
+                    <!-- /*@thymesVar id="game" type="ca.hccis.softball.model.dto.GameRequest"*/ -->
+                    <div class="card-wide played" th:each="game : ${pastGames}" th:with="forfeited=${game.forfeited()}, mercy=${game.mercyWin()}">
                         <p class="subtitle row-1 col-1" th:text="#{common.label.home}"></p>
                         <p class="subtitle row-1 col-3" th:text="#{common.label.road}"></p>
 
-                        <h2 class="row-2 col-1" th:text="${game.getHomeTeam()}"></h2>
+                        <h2 class="row-2 col-1" th:text="${game.homeTeamName()}"></h2>
                         <p class="row-2 col-2" th:text="#{common.label.versus}"></p>
-                        <h2 class="row-2 col-3" th:text="${game.getRoadTeam()}"></h2>
+                        <h2 class="row-2 col-3" th:text="${game.awayTeamName()}"></h2>
 
-                        <p class="subtitle row-3 col-1" th:with="isWinner=${game.getHomeTeam() == game.getWinningTeam()}, forfeited=${game.getWasForfeited()}, mercy=${game.getWasMercyWin()}">
+                        <p class="subtitle row-3 col-1" th:with="isWinner=${game.homeTeamName() == game.winningTeamName()}">
                             <span th:text="${isWinner ? 'Win' : 'Loss'}"></span>
                             <span th:if="${isWinner and mercy or !isWinner and forfeited}" th:text="#{common.metric.divider.bullet}"></span>
                             <span th:if="${isWinner and mercy}" th:text="#{common.label.mercy}"></span>
                             <span th:if="${!isWinner and forfeited}" th:text="#{common.label.forfeit}"></span>
                         </p>
-                        <p class="subtitle row-3 col-2 text-nowrap" th:text="${game.getDate()}"></p>
-                        <p class="subtitle row-3 col-3" th:with="isWinner=${game.getRoadTeam() == game.getWinningTeam()}, forfeited=${game.getWasForfeited()}, mercy=${game.getWasMercyWin()}">
+                        <p class="subtitle row-3 col-2 text-nowrap" th:text="${game.gameDay()}"></p>
+                        <p class="subtitle row-3 col-3" th:with="isWinner=${game.awayTeamName() == game.winningTeamName()}">
                             <span th:text="${isWinner ? 'Win' : 'Loss'}"></span>
                             <span th:if="${isWinner and mercy or !isWinner and forfeited}" th:text="#{common.metric.divider.bullet}"></span>
                             <span th:if="${isWinner and mercy}" th:text="#{common.label.mercy}"></span>
                             <span th:if="${!isWinner and forfeited}" th:text="#{common.label.forfeit}"></span>
                         </p>
 
-                        <div class="flex-table row-4" th:unless="${game.getWasForfeited()}" th:with="innings=${game.getInnings()}" th:style="|--middle-cols: ${game.getInnings().size()};|">
+                        <div class="flex-table row-4" th:unless="${game.forfeited()}" th:with="innings=${game.innings()}" th:style="|--middle-cols: ${game.innings().size()};|">
                             <!-- First / Row Header Column -->
                             <div>
                                 <p class="table-header" th:text="#{index.table.head.inning}"></p>
@@ -113,23 +115,23 @@ Purpose: Index / home page for the Softball League Manager app.
                             </div>
 
                             <!-- Repeatable Column for Innings -->
-                            <div th:each="inning : ${innings}">
-                                <p class="table-header" th:text="${inning.getInningNumber()}"></p>
-                                <p th:text="${inning.getHomeRuns()}"></p>
-                                <p th:text="${inning.getRoadRuns()}"></p>
+                            <div th:each="inning, iterStat : ${innings}">
+                                <p class="table-header" th:text="${iterStat.index + 1}"></p>
+                                <p th:text="${inning.homeRuns()}"></p>
+                                <p th:text="${inning.awayRuns()}"></p>
                             </div>
 
                             <!-- Last / Totals Column -->
                             <div>
                                 <p class="table-header" th:text="#{index.table.head.total}"></p>
-                                <p class="table-header" th:text="${game.getHomeScore()}"></p>
-                                <p class="table-header" th:text="${game.getRoadScore()}"></p>
+                                <p class="table-header" th:text="${game.homeRuns()}"></p>
+                                <p class="table-header" th:text="${game.awayRuns()}"></p>
                             </div>
                         </div>
 
-                        <a class="button secondary row-5 col-1 align-right" th:href="@{/game/update(id=${game.getId()})}" th:text="#{common.button.edit}"></a>
+                        <a class="button secondary row-5 col-1 align-right" th:href="@{/game/update/{id}(id=${game.id()})}" th:text="#{common.button.edit}"></a>
                         <!-- Confirm with the user that they want to delete the game before allowing Thymeleaf to redirect to the Controller. -->
-                        <a class="button delete row-5 col-3 align-left" th:href="@{/delete(id=${game.getId()})}" th:text="#{common.button.delete}" onclick="return confirm('Are you sure you want to delete this game?');"></a>
+                        <a class="button delete row-5 col-3 align-left" th:href="@{/delete/{id}(id=${game.id()})}" th:text="#{common.button.delete}" onclick="return confirm('Are you sure you want to delete this game?');"></a>
                     </div>
                 </article>
             </div>
@@ -180,13 +182,13 @@ Purpose: Index / home page for the Softball League Manager app.
                         <div class="metric row-2 col-4">
                             <!-- The total number of games won by this team -->
                             <p class="metric-label font-win" th:text="#{common.metric.win}"></p>
-                            <p class="metric-value" th:text="${team.getWins().total()}"></p>
+                            <p class="metric-value" th:text="${team.getWins()}"></p>
                         </div>
 
                         <div class="metric row-2 col-5">
                             <!-- The total number of games won by this team -->
                             <p class="metric-label font-loss" th:text="#{common.metric.loss}"></p>
-                            <p class="metric-value" th:text="${team.getLosses().total()}"></p>
+                            <p class="metric-value" th:text="${team.getLosses()}"></p>
                         </div>
 
                         <div class="metric row-2 col-6">

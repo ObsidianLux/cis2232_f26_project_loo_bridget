@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -56,8 +57,8 @@ public class Utility {
      * @author BML
      * @since 20261025
      */
-    public static void writeGamesToFile(String fileName, ArrayList<Game> games) throws IOException {
-        ArrayList<String> lines = games.stream()
+    public static void writeGamesToFile(String fileName, List<Game> games) throws IOException {
+        List<String> lines = games.stream()
                 .map(Game::toString)
                 .collect(Collectors.toCollection(ArrayList::new));
 
@@ -72,7 +73,7 @@ public class Utility {
      * @author BML
      * @since 20261025
      */
-    private static void writeReportToFile(String fileName, ArrayList<String> lines) throws IOException {
+    private static void writeReportToFile(String fileName, List<String> lines) throws IOException {
         // Append the current date to the given filename along with the .txt file extension.
         String fullFileName = DEFAULT_DIRECTORY + fileName + getCurrentDate("_yyyyMMddHHmmss") + ".txt";
 

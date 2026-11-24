@@ -9,21 +9,14 @@ public class Inning implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private int inningNumber;
-
     private int homeRuns;
-    private int roadRuns;
+    private int awayRuns;
 
     public Inning() {}
 
-    public Inning(int inningNumber) {
-        this.inningNumber = inningNumber;
-    }
-
-    public Inning(int inningNum, int homeRuns, int roadRuns) {
-        this.inningNumber = inningNum;
+    public Inning(int homeRuns, int roadRuns) {
         this.homeRuns = homeRuns;
-        this.roadRuns = roadRuns;
+        this.awayRuns = roadRuns;
     }
 
     /**
@@ -36,17 +29,16 @@ public class Inning implements Serializable {
         Gson gson = new Gson();
         Inning inning = gson.fromJson(json, Inning.class);
 
-        this.inningNumber = inning.getInningNumber();
         this.homeRuns = inning.getHomeRuns();
-        this.roadRuns = inning.getRoadRuns();
+        this.awayRuns = inning.getAwayRuns();
     }
 
-    public int getRoadRuns() {
-        return roadRuns;
+    public int getAwayRuns() {
+        return awayRuns;
     }
 
-    public void setRoadRuns(int roadRuns) {
-        this.roadRuns = roadRuns;
+    public void setAwayRuns(int awayRuns) {
+        this.awayRuns = awayRuns;
     }
 
     public int getHomeRuns() {
@@ -55,13 +47,5 @@ public class Inning implements Serializable {
 
     public void setHomeRuns(int homeRuns) {
         this.homeRuns = homeRuns;
-    }
-
-    public int getInningNumber() {
-        return inningNumber;
-    }
-
-    public void setInningNumber(int inningNumber) {
-        this.inningNumber = inningNumber;
     }
 }

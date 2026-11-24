@@ -1,7 +1,7 @@
 package ca.hccis.softball.controller;
 
 import ca.hccis.softball.model.bo.GameBO;
-import ca.hccis.softball.model.dto.GameDTO;
+import ca.hccis.softball.model.dto.GameRequest;
 import ca.hccis.softball.model.entity.Game;
 import ca.hccis.softball.service.GameService;
 import jakarta.validation.Valid;
@@ -25,6 +25,7 @@ public class GameController {
         this.service = service;
     }
 
+    // This attribute is always added to the model anytime something routes through this controller.
     @ModelAttribute
     public void addGameAttributes(Model model) {
         // Get a list of team names and pass to the view through the model.
@@ -38,15 +39,12 @@ public class GameController {
      * @author BML
      * @since 20261020
      */
-    @GetMapping("/add")
+    @RequestMapping("/add")
     public String add(Model model) {
         logger.info("Running the GameController add() method.");
 
-        // Add a new GameDTO object to the model to store form data.
-        model.addAttribute("game", new GameDTO());
-
-        // Add an attribute to the method to tell Thymeleaf that this is an add operation.
-        model.addAttribute("operation", "add");
+        // Add a new GameRequest object to the model to store form data.
+        model.addAttribute("game", new GameRequest());
 
         return "games/add";
     }
@@ -58,27 +56,24 @@ public class GameController {
      * @author BML
      * @since 20261020
      */
-    @PostMapping("/add/submit")
-    public String addSubmit(Model model, @Valid @ModelAttribute("game") GameDTO game, BindingResult bindingResult) {
+    @RequestMapping("/add/submit")
+    public String addSubmit(Model model, @Valid @ModelAttribute("game") GameRequest game, BindingResult bindingResult) {
         logger.info("Running the GameController addSubmit() method.");
 
         // Print errors to console for debugging.
         logger.info(bindingResult.toString());
 
-        // Add an attribute to the method to tell Thymeleaf that this is an add operation.
-        model.addAttribute("operation", "add");
-
         if (!bindingResult.hasErrors()) {
             // Save the mapped entity.
-            service.insertGame(game.getMappedGame());
+            service.insertGame(game.toEntity());
 
             logger.info("Added new game to repository.");
 
             // Add a new GameDTO object to the model to store form data.
-            model.addAttribute("game", new GameDTO());
+            model.addAttribute("game", new GameRequest());
 
             // Add a message to the model to tell the user that their game was added to the database.
-            model.addAttribute("successMessage", "%s vs. %s game added successfully.".formatted(game.getHomeTeam(), game.getRoadTeam()));
+            model.addAttribute("successMessage", "%s vs. %s game added successfully.".formatted(game.homeTeamName(), game.awayTeamName()));
         }
 
         return "games/add";
@@ -91,18 +86,17 @@ public class GameController {
      * @author BML
      * @since 20261028
      */
-    @GetMapping("/update")
-    public String update(Model model, @RequestParam int id) {
+    @RequestMapping("/update/{id}")
+    public String update(Model model, @PathVariable int id) {
         logger.info("Running the GameController update() method.");
 
         // Get the existing game from the database.
         Game game = service.getGameById(id);
 
-        // Convert to GameDTO and add to model.
-        model.addAttribute("game", new GameDTO(game));
+        // Convert to GameRequest and add to model.
+        model.addAttribute("game", GameRequest.from(game));
 
-        // Add an attribute to the method to tell Thymeleaf that this is an update operation.
-        model.addAttribute("operation", "update");
+        logger.info(GameRequest.from(game).toString());
 
         return "games/add";
     }
@@ -114,8 +108,8 @@ public class GameController {
      * @author BML
      * @since 20261111
      */
-    @PostMapping("/update/submit")
-    public String updateSubmit(Model model, @Valid @ModelAttribute("game") GameDTO game, BindingResult bindingResult) {
+    @RequestMapping("/update/{id}/submit")
+    public String updateSubmit(@PathVariable int id, @Valid @ModelAttribute("game") GameRequest game, BindingResult bindingResult) {
         logger.info("Running the GameController updateSubmit() method.");
 
         // Print errors to console for debugging.
@@ -123,16 +117,13 @@ public class GameController {
 
         if (!bindingResult.hasErrors()) {
             // Save the mapped entity.
-            service.updateGame(game.getId(), game);
+            service.updateGame(id, game);
 
-            logger.info("Updated game with id: {}", game.getId());
+            logger.info("Updated game with id: {}", id);
 
             // Return to the index page. Using redirect should get the BaseController's @ModelAttribute method to run automatically.
             return "redirect:/";
         }
-
-        // Add an attribute to the method to tell Thymeleaf that this is an update operation.
-        model.addAttribute("operation", "update");
 
         return "games/add";
     }

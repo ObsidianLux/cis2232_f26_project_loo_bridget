@@ -31,11 +31,12 @@ public class BaseController {
         this.service = service;
     }
 
+    // These model attributes are always added to the model anytime something routes through this controller.
     @ModelAttribute
     public void addIndexAttributes(Model model) {
         // Get the upcoming and past games and add them to the model.
-        model.addAttribute("pastGames", service.getPlayedGames());
-        model.addAttribute("upcomingGames", service.getUnplayedGames());
+        model.addAttribute("pastGames", service.getPlayedGames(LocalDate.now()));
+        model.addAttribute("upcomingGames", service.getUnplayedGames(LocalDate.now()));
 
         // Get a sorted list of teams and add it to the model.
         model.addAttribute("teams", GameBO.selectAllTeamsSortedByPCT());
@@ -65,9 +66,9 @@ public class BaseController {
      * @author BML
      * @since 20261028
      */
-    @RequestMapping("/delete")
-    public String delete(@RequestParam("id") int id) {
-        logger.info("Running the GameController delete() method.");
+    @RequestMapping("/delete/{id}")
+    public String delete(@PathVariable int id) {
+        logger.info("Running the BaseController delete() method.");
         logger.debug("ID of game to delete: {}", id);
 
         // Try to delete the record.

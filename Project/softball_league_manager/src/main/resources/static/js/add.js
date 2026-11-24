@@ -1,5 +1,5 @@
 const homeTeamInput = document.getElementById('inputHomeTeam');
-const roadTeamInput = document.getElementById('inputRoadTeam');
+const awayTeamInput = document.getElementById('inputAwayTeam');
 
 const forfeitSwitch = document.getElementById('switchForfeit');
 const teamAtFaultSelect = document.getElementById('teamAtFault');
@@ -9,7 +9,7 @@ const inningsContainerInner = document.getElementById('inningsContainerInner');
 const addInningButton = document.getElementById('btnAddInning');
 
 const totalHomeRunsElement = document.getElementById('totalHomeRuns');
-const totalRoadRunsElement = document.getElementById('totalRoadRuns');
+const totalAwayRunsElement = document.getElementById('totalAwayRuns');
 
 function updateTeamAtFaultSelect() {
     teamAtFaultSelect.innerHTML = "";
@@ -19,7 +19,7 @@ function updateTeamAtFaultSelect() {
     // Add a blank option.
     fragment.appendChild(new Option("", ""));
 
-    const teamNames = [homeTeamInput.value.trim(), roadTeamInput.value.trim()];
+    const teamNames = [homeTeamInput.value.trim(), awayTeamInput.value.trim()];
 
     if (teamNames[0] === teamNames[1]) teamNames.pop()
 
@@ -33,7 +33,7 @@ function updateTeamAtFaultSelect() {
 /* EVENT LISTENERS */
 
 homeTeamInput.addEventListener('change', updateTeamAtFaultSelect);
-roadTeamInput.addEventListener('change', updateTeamAtFaultSelect);
+awayTeamInput.addEventListener('change', updateTeamAtFaultSelect);
 
 // Listen to forfeit checkbox to enable/disable other inputs.
 forfeitSwitch.addEventListener('change', (event) => {
@@ -69,8 +69,6 @@ function setForfeitState(disabled) {
 
 // Listen for a click to add a new inning row.
 addInningButton.addEventListener('click', () => {
-    console.log("Clicked add!");
-
     const templateInning = document.getElementById('templateInningRow');
 
     // Get a deep copy of the template inning.
@@ -87,15 +85,15 @@ addInningButton.addEventListener('click', () => {
 
 function updateTotalScores() {
     let homeRuns = 0;
-    let roadRuns = 0;
+    let awayRuns = 0;
 
     Array.from(inningsContainerInner.querySelectorAll('input[type="number"]')).forEach(input => {
         const value = Number(input.value) || 0;
         if (input.dataset.field === "homeRuns") homeRuns += value;
-        else roadRuns += value;
+        else awayRuns += value;
     });
 
-    totalRoadRunsElement.textContent = roadRuns.toString();
+    totalAwayRunsElement.textContent = awayRuns.toString();
     totalHomeRunsElement.textContent = homeRuns.toString();
 }
 

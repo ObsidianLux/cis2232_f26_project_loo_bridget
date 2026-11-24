@@ -24,9 +24,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> {
-                    // 1. SECURE: Lock down your APIs
+                    // SECURE: Lock down your APIs
                     auth.requestMatchers("/apisecure/**").authenticated();
-                    // 2. PUBLIC: Allow your home page and everything else
+                    // PUBLIC: Allow your home page and everything else
                     auth.anyRequest().permitAll();
                 })
                 // Tells Spring to check for the custom jwtDecoder bean defined below
@@ -40,10 +40,10 @@ public class SecurityConfig {
         // Use Google's published JWKS endpoint (includes 'www' and correct path)
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withJwkSetUri("https://www.googleapis.com/oauth2/v3/certs").build();
 
-        // 1. Validate token timing (ensures it is not expired)
+        // Validate token timing (ensures it is not expired)
         OAuth2TokenValidator<Jwt> timestampValidator = new JwtTimestampValidator();
 
-        // 2. Custom Issuer validation (Accepts Google's standard formats without doing network lookups)
+        // Custom Issuer validation (Accepts Google's standard formats without doing network lookups)
         OAuth2TokenValidator<Jwt> combinedValidator = getJwtOAuth2TokenValidator(timestampValidator);
         jwtDecoder.setJwtValidator(combinedValidator);
 

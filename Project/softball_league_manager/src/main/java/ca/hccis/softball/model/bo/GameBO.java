@@ -1,13 +1,22 @@
 package ca.hccis.softball.model.bo;
 
 import ca.hccis.softball.dao.GameDAO;
-import ca.hccis.softball.model.domain.Inning;
 import ca.hccis.softball.model.domain.Team;
+import ca.hccis.softball.model.dto.GameRequest;
+import ca.hccis.softball.model.dto.InningRequest;
 import ca.hccis.softball.model.entity.Game;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class GameBO {
+    /**
+     * The number of innings required to apply the mercy rule.
+     */
+    public static final int MERCY_RULE_INNINGS = 5;
+    public static final int MERCY_DIFFERENCE_MINIMUM = 10;
+    public static final int MINIMUM_INNINGS_STANDARD = 7;
+
     /**
      * Get the name of the winning team.
      * @param game The game to check
@@ -15,8 +24,12 @@ public class GameBO {
      * @author BML
      * @since 20261025
      */
-    public static String getWinningTeam(Game game) {
-        return game.getHomeScore() > game.getRoadScore() ? game.getHomeTeam() : game.getRoadTeam();
+    public static String getWinningTeam(GameRequest game) {
+        // If the game was forfeited, the winning team is the one that isn't at fault.
+        if (game.forfeited() && game.teamAtFault() != null) return game.teamAtFault().equalsIgnoreCase(game.homeTeamName()) ? game.awayTeamName() : game.homeTeamName();
+
+        // Game wasn't forfeited, so need to calculate the total number of runs for each team and compare.
+        else return getHomeRuns(game) > getAwayRuns(game) ? game.homeTeamName() : game.awayTeamName();
     }
 
     /**
@@ -27,72 +40,54 @@ public class GameBO {
      * @author BML
      * @since 20261103
      */
-    public static String getPlusMinus(Game game, String teamName) {
-        boolean isWinner = teamName.equals(getWinningTeam(game));
-        int scoreDifference = Math.abs(game.getHomeScore() - game.getRoadScore());
-        return (isWinner ? "+" : "-") + scoreDifference;
-    }
+    public static String getPlusMinus(GameRequest game, String teamName) {
+        // Make sure the game was played first.
+        if (isPlayed(game.gameDay())) {
+            // Get the winning team's name.
+            boolean isWinner = teamName.equals(getWinningTeam(game));
 
-    /**
-     * Checks which team has the higher score and returns the name of the other one.
-     * @param game The game to check for
-     * @return The name of the team that forfeited
-     * @author BML
-     * @since 20261107
-     */
-    public static String getTeamAtFault(Game game) {
-        return game.getHomeScore() > game.getRoadScore() ? game.getRoadTeam() : game.getHomeTeam();
-    }
+            // Default to 7 which matches the difference if the game was forfeited.
+            int scoreDifference = 7;
 
-    /**
-     * Update an existing game to indicate that it was forfeited.
-     * @param game The game to update
-     * @param teamAtFault The team who forfeited
-     * @return The updated game
-     * @author BML
-     * @since 20261107
-     */
-    public static Game setPlayForfeit(Game game, String teamAtFault) {
-        game.setPlayed(true);
-        game.setWasForfeited(true);
-        game.setWasMercyWin(false);
+            // If the game wasn't forfeited, calculate the difference.
+            if (!game.forfeited()) {
+                // Get the absolute difference between the two scores.
+                scoreDifference = Math.abs(getHomeRuns(game) - getAwayRuns(game));
+            }
 
-        if (game.getHomeTeam().equals(teamAtFault)) {
-            game.setHomeScore(0);
-            game.setRoadScore(7);
-        } else {
-            game.setHomeScore(7);
-            game.setRoadScore(0);
+            // Return the difference in scores with a plus or minus prepended.
+            return (isWinner ? "+" : "-") + scoreDifference;
         }
 
-        return game;
+        return "-";
+    }
+
+    public static int getHomeRuns(GameRequest game) {
+        List<InningRequest> innings = game.innings();
+
+        if (innings == null) return 0;
+        else return innings.stream()
+                .mapToInt(InningRequest::homeRuns)
+                .sum();
+    }
+
+    public static int getAwayRuns(GameRequest game) {
+        List<InningRequest> innings = game.innings();
+
+        if (innings == null) return 0;
+        else return innings.stream()
+                .mapToInt(InningRequest::awayRuns)
+                .sum();
     }
 
     /**
-     * Update an existing game to indicate that it was played.
-     * @param game The game to update
-     * @return The updated game
-     * @author BML
-     * @since 20261107
+     * Determine whether the game would have been played based on the date compared to today.
+     * @param gameDay Thr date to compare
+     * @return True if date is past or present, false if date is future.
      */
-    public static Game setPlayNotForfeit(Game game) {
-        game.setPlayed(true);
-        game.setWasForfeited(false);
-
-        int homeScore = 0;
-        int roadScore = 0;
-
-        for (Inning inning : game.getInnings()) {
-            homeScore += inning.getHomeRuns();
-            roadScore += inning.getRoadRuns();
-        }
-
-        game.setHomeScore(homeScore);
-        game.setRoadScore(roadScore);
-
-        game.setWasMercyWin(game.getInnings().size() == 5);
-
-        return game;
+    public static boolean isPlayed(LocalDate gameDay) {
+        // Use ! with .isAfter() so that true returns for played if the date is not in the future (i.e. after today).
+        return !gameDay.isAfter(LocalDate.now());
     }
 
     /**
@@ -106,8 +101,8 @@ public class GameBO {
         Map<String, Team> teams = new LinkedHashMap<>();
 
         for (Game game : new GameDAO().selectAll()) {
-            teams.computeIfAbsent(game.getHomeTeam(), Team::new).addGame(game);
-            teams.computeIfAbsent(game.getRoadTeam(), Team::new).addGame(game);
+            teams.computeIfAbsent(game.getHomeTeam(), Team::new).addGame(GameRequest.from(game));
+            teams.computeIfAbsent(game.getAwayTeam(), Team::new).addGame(GameRequest.from(game));
         }
 
         // Returns an empty list if no teams were found.

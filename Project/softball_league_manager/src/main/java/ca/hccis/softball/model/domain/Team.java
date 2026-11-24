@@ -1,27 +1,22 @@
 package ca.hccis.softball.model.domain;
 
 import ca.hccis.softball.model.bo.GameBO;
-import ca.hccis.softball.model.entity.Game;
+import ca.hccis.softball.model.dto.GameRequest;
 
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Team {
-    private String teamName;
-    private ArrayList<Game> games = new ArrayList<>();
-
-    public record Wins(int total, int mercy, int forfeit) {}
-    public record Losses(int total, int mercy, int forfeit) {}
-
     // Record for storing the number of games won and lost from the last 5 games.
     public record L5(int gamesWon, int gamesLost) {}
 
     // Record for the number of games won and lost in a particular stadium (home/road).
     public record StadiumRecord(int wins, int losses) {}
 
-    private Wins wins = new Wins(0, 0, 0);
-    private Losses losses = new Losses(0, 0, 0);
+    private String teamName;
+    private List<GameRequest> games = new ArrayList<>();
+    private int wins = 0;
+    private int losses = 0;
 
     // Keys are opponent team names, values are number of wins against that team.
     public Map<String, Integer> headToHeadWins = new HashMap<>();
@@ -42,7 +37,7 @@ public class Team {
      * @author BML
      * @since 20261020
      */
-    public Team(String name, Game game) {
+    public Team(String name, GameRequest game) {
         this.setTeamName(name);
         this.addGame(game);
     }
@@ -54,30 +49,30 @@ public class Team {
      * @author BML
      * @since 20261020
      */
-    public Team(String name, ArrayList<Game> games) {
+    public Team(String name, List<GameRequest> games) {
         this.setTeamName(name);
         this.setGames(games);
     }
 
-    public ArrayList<Game> getGames() {
+    public List<GameRequest> getGames() {
         return this.games;
     }
 
-    public ArrayList<Game> getPlayedGames() {
-        return this.games.stream().filter(Game::getPlayed).collect(Collectors.toCollection(ArrayList::new));
+    public List<GameRequest> getPlayedGames() {
+        return this.games.stream().filter(GameRequest::played).toList();
     }
 
-    public void setGames(ArrayList<Game> games) {
+    public void setGames(List<GameRequest> games) {
         this.games = games;
         this.calculateStanding();
     }
 
-    public void addGame(Game game) {
+    public void addGame(GameRequest game) {
         this.games.add(game);
         this.calculateStanding();
     }
 
-    public void removeGame(Game game) {
+    public void removeGame(GameRequest game) {
         this.games.remove(game);
         this.calculateStanding();
     }
@@ -97,7 +92,7 @@ public class Team {
     public int getNumberOfGamesScheduled() { return this.games.size(); }
 
     public double getWinPercentage() {
-        return (this.getNumberOfGamesPlayed() == 0 ? 0 : (double) this.getWins().total / this.getNumberOfGamesPlayed());
+        return (this.getNumberOfGamesPlayed() == 0 ? 0 : (double) this.wins / this.getNumberOfGamesPlayed());
     }
 
     public String getWinPercentageString() {
@@ -106,28 +101,20 @@ public class Team {
         return df.format(this.getWinPercentage());
     }
 
-    public Wins getWins() {
+    public int getWins() {
         return wins;
     }
 
-    public void setWins(Wins wins) {
+    public void setWins(int wins) {
         this.wins = wins;
     }
 
-    public Losses getLosses() {
+    public int getLosses() {
         return losses;
     }
 
-    public void setLosses(Losses losses) {
+    public void setLosses(int losses) {
         this.losses = losses;
-    }
-
-    public int getMercyWins() {
-        return this.getWins().mercy;
-    }
-
-    public int getForfeitWins() {
-        return this.getWins().forfeit;
     }
 
     public Map<String, Integer> getHeadToHeadWins() {
@@ -149,9 +136,7 @@ public class Team {
     public void setGamesBehind(Team leadingTeam) {
         // If this is the leading team, Games Behind is 0.
         if (this.equals(leadingTeam)) this.gamesBehind = 0;
-        else {
-            this.gamesBehind = (double) ((leadingTeam.getWins().total - leadingTeam.getLosses().total) - (this.getWins().total - this.getLosses().total)) / 2;
-        }
+        else this.gamesBehind = (double) ((leadingTeam.getWins() - leadingTeam.getLosses()) - (this.getWins() - this.getLosses())) / 2;
     }
 
     /**
@@ -163,13 +148,13 @@ public class Team {
         int numberOfLosses = 0;
 
         // Get the 5 most recently played games.
-        List<Game> mostRecentGames = this.getPlayedGames().stream()
-                .sorted(Comparator.comparing(Game::getDate).reversed())
+        List<GameRequest> mostRecentGames = this.getPlayedGames().stream()
+                .sorted(Comparator.comparing(GameRequest::gameDay).reversed())
                 .limit(5)
                 .toList();
 
-        for (Game game : mostRecentGames) {
-            if (game.getWinningTeam().equals(this.getTeamName())) numberOfWins++;
+        for (GameRequest game : mostRecentGames) {
+            if (game.winningTeamName().equals(this.getTeamName())) numberOfWins++;
             else numberOfLosses++;
         }
 
@@ -186,16 +171,16 @@ public class Team {
 
     private StadiumRecord getStadiumRecord(String stadium) {
         // Get a filtered list of games so that only those where this team was the specified team are included.
-        List<Game> stadiumGames = this.getPlayedGames().stream()
-                .filter((game) -> this.getTeamName().equals(stadium.equals("home") ? game.getHomeTeam() : game.getRoadTeam()))
+        List<GameRequest> stadiumGames = this.getPlayedGames().stream()
+                .filter((game) -> this.getTeamName().equals(stadium.equals("home") ? game.homeTeamName() : game.awayTeamName()))
                 .toList();
 
         int numberOfWins = 0;
         int numberOfLosses = 0;
 
-        for (Game game : stadiumGames) {
+        for (GameRequest game : stadiumGames) {
             // Check whether this team won the game or not and update the variables.
-            if (game.getWinningTeam().equals(this.getTeamName())) numberOfWins++;
+            if (game.winningTeamName().equals(this.getTeamName())) numberOfWins++;
             else numberOfLosses++;
         }
 
@@ -213,23 +198,16 @@ public class Team {
 
     public void calculateStanding() {
         int numberOfWins = 0;
-        int numberOfMercyWins = 0;
-        int numberOfForfeitWins = 0;
 
         int numberOfLosses = 0;
-        int numberOfMercyLosses = 0;
-        int numberOfForfeitLosses = 0;
         
         Map<String, Integer> headToHeadWinsMap = new HashMap<>();
 
         // Loop through each game in the team's games property.
-        for (Game game : this.getPlayedGames()) {
+        for (GameRequest game : this.getPlayedGames()) {
             if (GameBO.getWinningTeam(game).equals(this.getTeamName())) {
                 numberOfWins++;
-                if (game.getWasMercyWin()) numberOfMercyWins++;
-                else if (game.getWasForfeited()) numberOfForfeitWins++;
-
-                String opponentName = game.getHomeTeam().equals(this.teamName) ? game.getRoadTeam() : game.getHomeTeam();
+                String opponentName = game.homeTeamName().equals(this.teamName) ? game.awayTeamName() : game.homeTeamName();
 
                 // Get the current number of wins against this opponent and add 1. Default to 0 + 1 if this team has never won against this opponent before.
                 int numberOfWinsAgainstOpponent = this.headToHeadWins.getOrDefault(opponentName, 0) + 1;
@@ -237,15 +215,11 @@ public class Team {
                 // Update the map by replacing an existing value or adding a new key-value pair.
                 headToHeadWinsMap.put(opponentName, numberOfWinsAgainstOpponent);
             }
-            else {
-                numberOfLosses++;
-                if (game.getWasForfeited()) numberOfForfeitLosses++;
-                else if (game.getWasMercyWin()) numberOfMercyLosses++;
-            }
+            else numberOfLosses++;
         }
 
-        this.setWins(new Wins(numberOfWins, numberOfMercyWins, numberOfForfeitWins));
-        this.setLosses(new Losses(numberOfLosses, numberOfMercyLosses, numberOfForfeitLosses));
+        this.setWins(numberOfWins);
+        this.setLosses(numberOfLosses);
         this.setHeadToHeadWins(headToHeadWinsMap);
     }
 
@@ -253,7 +227,7 @@ public class Team {
     public String toString() {
         StringBuilder output = new StringBuilder("Name: %s; Games: ".formatted(this.getTeamName()));
 
-        for (Game game : this.getGames()) {
+        for (GameRequest game : this.getGames()) {
             output.append(game.toString());
         }
 

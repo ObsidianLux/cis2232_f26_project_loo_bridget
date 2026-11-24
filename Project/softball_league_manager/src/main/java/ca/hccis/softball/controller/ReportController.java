@@ -2,6 +2,7 @@ package ca.hccis.softball.controller;
 
 import ca.hccis.softball.model.domain.ReportHistory;
 
+import ca.hccis.softball.model.dto.GameRequest;
 import ca.hccis.softball.util.Utility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +85,7 @@ public class ReportController {
             model.addAttribute("message", "This team has not played any games yet!");
         } else {
             // Write the report to a file.
-            Utility.writeGamesToFile("teamHistoryReport", reportHistory.getTeam().getPlayedGames());
+            Utility.writeGamesToFile("teamHistoryReport", reportHistory.getTeam().getPlayedGames().stream().map(GameRequest::toEntity).toList());
         }
 
         // Add the report object back to the model so it can be used in the report view.

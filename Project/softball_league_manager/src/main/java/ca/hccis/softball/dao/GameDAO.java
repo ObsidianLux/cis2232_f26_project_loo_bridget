@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -42,7 +43,7 @@ public class GameDAO {
      * @author BML
      * @since 20261016
      */
-    public ArrayList<Game> selectAll() {
+    public List<Game> selectAll() {
         try (
                 Connection conn = DriverManager.getConnection(connectionString, userName, password);
                 Statement stmt = conn.createStatement();
@@ -63,8 +64,8 @@ public class GameDAO {
      * @author BML
      * @since 20261016
      */
-    public ArrayList<Game> selectAllByTeamName(String teamName) {
-        String query = "SELECT * FROM SoftballGame WHERE homeTeam = ? OR roadTeam = ?;";
+    public List<Game> selectAllByTeamName(String teamName) {
+        String query = "SELECT * FROM SoftballGame WHERE homeTeam = ? OR awayTeam = ?;";
 
         try (
                 Connection conn = DriverManager.getConnection(connectionString, userName, password);
@@ -90,11 +91,11 @@ public class GameDAO {
      * @author BML
      * @since 20261016
      */
-    private ArrayList<Game> loadList(ResultSet rs) throws SQLException {
-        ArrayList<Game> games = new ArrayList<>();
+    private List<Game> loadList(ResultSet rs) throws SQLException {
+        List<Game> games = new ArrayList<>();
 
         Gson gson = new Gson();
-        Type inningListType = new TypeToken<ArrayList<Inning>>() {}.getType();
+        Type inningListType = new TypeToken<List<Inning>>() {}.getType();
 
         // Loop through the result set to convert each record.
         while (rs.next()) {
@@ -102,24 +103,21 @@ public class GameDAO {
 
             game.setId(rs.getInt("id"));
             game.setHomeTeam(rs.getString("homeTeam"));
-            game.setRoadTeam(rs.getString("roadTeam"));
+            game.setAwayTeam(rs.getString("awayTeam"));
             game.setDate(rs.getDate("date").toLocalDate());
-            game.setHomeScore(rs.getInt("homeScore"));
-            game.setRoadScore(rs.getInt("roadScore"));
             game.setWasForfeited(rs.getBoolean("wasForfeited"));
-            game.setWasMercyWin(rs.getBoolean("wasMercyWin"));
-            game.setPlayed(rs.getBoolean("played"));
+            game.setTeamAtFault(rs.getString("teamAtFault"));
 
             // Extract raw JSON string from the database.
             String jsonInnings = rs.getString("innings");
 
-            // Convert the JSON string to ArrayList<Inning> using Gson.
-            ArrayList<Inning> inningsList;
+            // Convert the JSON string to List<Inning> using Gson.
+            List<Inning> inningsList;
             if (jsonInnings != null && !jsonInnings.isBlank()) {
                 inningsList = gson.fromJson(jsonInnings, inningListType);
             } else {
-                // If the JSON string is empty, set to empty ArrayList.
-                inningsList = new ArrayList<>();
+                // If the JSON string is empty, set to null.
+                inningsList = null;
             }
 
             game.setInnings(inningsList);
@@ -127,7 +125,7 @@ public class GameDAO {
             games.add(game);
         }
 
-        // Returns an empty ArrayList if no games were retrieved.
+        // Returns an empty List if no games were retrieved.
         return games;
     }
 }

@@ -44,7 +44,7 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
 
     <main>
         <div>
-            <form th:action="@{/game/__${operation}__/submit(id=${operation == 'update' ? game.id : null})}" th:object="${game}" method="post">
+            <form th:action="@{/game/__${game.id == null ? 'add' : 'update/' + game.id}__/submit}" th:object="${game}" method="post">
                 <!-- th:object directly ties the output of this form to the Game object that was attached to the model by the Controller. -->
 
                 <!-- Datalist that is built up from the teamNames attribute on the model. This will be used by the home team and road team inputs. -->
@@ -54,8 +54,8 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
 
                 <div class="colspan-2">
                     <hgroup>
-                        <h1 class="primary-heading" th:if="${operation == 'add'}" th:text="#{add.heading.title}"></h1>
-                        <h1 class="primary-heading" th:unless="${operation == 'add'}" th:text="#{update.heading.title}"></h1>
+                        <h1 class="primary-heading" th:if="*{id == null}" th:text="#{add.heading.title}"></h1>
+                        <h1 class="primary-heading" th:unless="*{id == null}" th:text="#{update.heading.title}"></h1>
                     </hgroup>
                 </div>
 
@@ -73,30 +73,30 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                     Little subtitle at the top to give the user a bit of guidance on how to fill out this part of the form.
                     -->
                     <label for="inputHomeTeam" th:text="#{add.input.label.home}"></label>
-                    <input list="teamNames" id="inputHomeTeam" th:field="*{homeTeam}" th:placeholder="#{add.input.placeholder.team}">
-                    <p class="error-message colspan-2" th:if="${#fields.hasErrors('homeTeam')}" th:errors="*{homeTeam}"></p>
+                    <input list="teamNames" id="inputHomeTeam" th:field="*{homeTeamName}" th:placeholder="#{add.input.placeholder.team}">
+                    <p class="error-message colspan-2" th:if="${#fields.hasErrors('homeTeamName')}" th:errors="*{homeTeamName}"></p>
 
-                    <label for="inputRoadTeam" th:text="#{add.input.label.road}"></label>
-                    <input list="teamNames" id="inputRoadTeam" th:field="*{roadTeam}" th:placeholder="#{add.input.placeholder.team}">
-                    <p class="error-message colspan-2" th:if="${#fields.hasErrors('roadTeam')}" th:errors="*{roadTeam}"></p>
+                    <label for="inputAwayTeam" th:text="#{add.input.label.road}"></label>
+                    <input list="teamNames" id="inputAwayTeam" th:field="*{awayTeamName}" th:placeholder="#{add.input.placeholder.team}">
+                    <p class="error-message colspan-2" th:if="${#fields.hasErrors('awayTeamName')}" th:errors="*{awayTeamName}"></p>
 
                     <label for="inputGameDay" th:text="#{add.input.label.date}"></label>
-                    <input type="date" id="inputGameDay" th:field="*{date}">
-                    <p class="error-message colspan-2" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></p>
+                    <input type="date" id="inputGameDay" th:field="*{gameDay}">
+                    <p class="error-message colspan-2" th:if="${#fields.hasErrors('gameDay')}" th:errors="*{gameDay}"></p>
                 </article>
 
                 <article id="forfeitSelectContainer">
                     <div>
-                        <input type="checkbox" role="switch" id="switchForfeit" th:field="*{wasForfeited}">
+                        <input type="checkbox" role="switch" id="switchForfeit" th:field="*{forfeited}">
                         <label for="switchForfeit" th:text="#{add.input.label.decision}"></label>
                     </div>
 
                     <div>
                         <label for="teamAtFault" th:text="#{add.select.label.teamAtFault}"></label>
-                        <select th:field="*{teamAtFault}" id="teamAtFault" th:disabled="${!game.getWasForfeited()}">
-                            <option th:if="*{wasForfeited}" value=""></option>
-                            <option th:if="*{wasForfeited}" th:value="*{homeTeam}" th:selected="${game.getWasForfeited() && game.getHomeTeam() == game.getTeamAtFault()}" th:text="*{homeTeam}"></option>
-                            <option th:if="*{wasForfeited}" th:value="*{roadTeam}" th:selected="${game.getWasForfeited() && game.getRoadTeam() == game.getTeamAtFault()}" th:text="*{roadTeam}"></option>
+                        <select th:with="forfeited=${game.forfeited() != null && game.forfeited()}" th:field="*{teamAtFault}" id="teamAtFault" th:disabled="${!forfeited}">
+                            <option th:if="${forfeited}" value=""></option>
+                            <option th:if="${forfeited}" th:value="*{homeTeamName}" th:selected="${forfeited && game.homeTeamName() == game.teamAtFault()}" th:text="*{homeTeamName}"></option>
+                            <option th:if="${forfeited}" th:value="*{awayTeamName}" th:selected="${forfeited && game.awayTeamName() == game.teamAtFault()}" th:text="*{awayTeamName}"></option>
                         </select>
                     </div>
 
@@ -121,7 +121,7 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                             <p th:text="#{add.subheader.innings.total.home}"></p>
                             <p id="totalHomeRuns">0</p>
                             <p th:text="#{add.subheader.innings.total.road}"></p>
-                            <p id="totalRoadRuns">0</p>
+                            <p id="totalAwayRuns">0</p>
                         </div>
                         <div id="inningsContainerInner">
                             <div class="inning-row" th:each="item, iterStat : *{innings}">
@@ -130,14 +130,14 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
                                 <label th:for="|innings[${iterStat.index}].homeRuns|" th:text="#{add.input.label.inning.home}"></label>
                                 <input type="number" th:id="|innings[${iterStat.index}].homeRuns|" min="0" step="1" value="0" data-field="homeRuns" th:field="*{innings[__${iterStat.index}__].homeRuns}">
 
-                                <label th:for="|innings[${iterStat.index}].roadRuns|" th:text="#{add.input.label.inning.road}"></label>
-                                <input type="number" th:id="|innings[${iterStat.index}].roadRuns|" min="0" step="1" value="0" data-field="roadRuns" th:field="*{innings[__${iterStat.index}__].roadRuns}">
+                                <label th:for="|innings[${iterStat.index}].awayRuns|" th:text="#{add.input.label.inning.road}"></label>
+                                <input type="number" th:id="|innings[${iterStat.index}].awayRuns|" min="0" step="1" value="0" data-field="awayRuns" th:field="*{innings[__${iterStat.index}__].awayRuns}">
 
                                 <button th:text="#{common.button.remove}" onclick="removeInning(this)" class="remove-button" type="button"></button>
                             </div>
                         </div>
                         <div id="inningRowAdd">
-                            <button id="btnAddInning" type="button" th:disabled="*{wasForfeited}">
+                            <button id="btnAddInning" type="button" th:disabled="*{forfeited}">
                                 <!-- This is the add box Material Icon from Google -->
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M11,17h2V13h4V11H13V7H11v4H7v2h4v4ZM5,21q-0.83,0-1.41-0.59T3,19V5Q3,4.17 3.59,3.59T5,3H19q0.83,0 1.41,0.59T21,5V19q0,0.82-0.59,1.41T19,21H5Zm0-2H19V5H5V19ZM5,5V19V5Z"/></svg>
                             </button>
@@ -157,7 +157,7 @@ Purpose: Sprint 3 - Add Functionality. Allows the user to add a new game to the 
 
                         <!-- Need to set the id and name for the input, and the label's for. -->
                         <label th:text="#{add.input.label.inning.road}"></label>
-                        <input type="number" min="0" step="1" value="0" data-field="roadRuns">
+                        <input type="number" min="0" step="1" value="0" data-field="awayRuns">
 
                         <button th:text="#{common.button.remove}" onclick="removeInning(this)" class="remove-button" type="button"></button>
                     </div>

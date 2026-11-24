@@ -1,17 +1,14 @@
 package ca.hccis.softball.model.entity;
 
-import ca.hccis.softball.model.bo.GameBO;
-
 import ca.hccis.softball.model.domain.Inning;
 import ca.hccis.softball.util.JsonListConverter;
-
 import jakarta.persistence.*;
-import jakarta.validation.ValidationException;
-import jakarta.validation.constraints.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
@@ -22,72 +19,30 @@ public class Game {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max = 30, message = "Team name must not exceed 30 characters.")
-    @NotBlank(message = "Home team name is required.")
+    @Size(max = 30, message = "The home team's name must not exceed 30 characters.")
+    @NotBlank(message = "The home team's name is required.")
     @Column(name = "homeTeam", nullable = false, length = 30)
     private String homeTeam;
 
-    @Size(max = 30, message = "Team name must not exceed 30 characters.")
-    @NotBlank(message = "Road team name is required.")
-    @Column(name = "roadTeam", nullable = false, length = 30)
-    private String roadTeam;
+    @Size(max = 30, message = "The away team's name must not exceed 30 characters.")
+    @NotBlank(message = "The away team's name is required.")
+    @Column(name = "awayTeam", nullable = false, length = 30)
+    private String awayTeam;
 
-    @NotNull(message = "Scheduled game date is required.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "The scheduled game date is required.")
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @NotNull(message = "It must be clear whether the game has been played or not.")
-    @Column(name = "played", nullable = false, columnDefinition = "BIT(1) DEFAULT 0")
-    private Boolean played = false;
+    @Column(name = "wasForfeited")
+    private Boolean wasForfeited;
 
-    /* The rest of the attributes are nullable */
-
-    @Column(name = "wasForfeited", columnDefinition = "BIT(1) DEFAULT 0")
-    private Boolean wasForfeited = false;
-
-    @Column(name = "wasMercyWin", columnDefinition = "BIT(1) DEFAULT 0")
-    private Boolean wasMercyWin = false;
-
-    @Min(value = 0, message = "Home runs cannot be less than 0.")
-    @Column(name = "homeScore", columnDefinition = "INT UNSIGNED")
-    private Integer homeScore;
-
-    @Min(value = 0, message = "Road runs cannot be less than 0.")
-    @Column(name = "roadScore", columnDefinition = "INT UNSIGNED")
-    private Integer roadScore;
+    @Size(max = 30, message = "The team at fault's name must not exceed 30 characters.")
+    @Column(name = "teamAtFault")
+    private String teamAtFault;
 
     @Column(name = "innings", columnDefinition = "LONGTEXT")
     @Convert(converter = JsonListConverter.class)
-    private ArrayList<Inning> innings;
-
-    public Game() {}
-
-    public Game(String homeTeam, String roadTeam, LocalDate date, Boolean played) {
-        this.homeTeam = homeTeam;
-        this.roadTeam = roadTeam;
-        this.date = date;
-        this.played = played;
-    }
-
-    /* VALIDATION */
-
-    /**
-     * If the game was played, all fields are required (except innings). Otherwise, only the teams and date are required.
-     * @author BML
-     * @since 20261107
-     */
-    @PrePersist
-    @PreUpdate
-    private void validateConditionalFields() {
-        if (Boolean.TRUE.equals(this.played)) {
-            if (this.roadScore == null || this.homeScore == null || this.wasMercyWin == null || this.wasForfeited == null) {
-                throw new ValidationException("Attributes cannot be null (except innings) when the game has been played.");
-            }
-        }
-    }
-
-    /* GETTERS & SETTERS */
+    private List<Inning> innings;
 
     public Integer getId() {
         return id;
@@ -95,30 +50,6 @@ public class Game {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Boolean getWasForfeited() {
-        return wasForfeited;
-    }
-
-    public void setWasForfeited(Boolean forfeited) {
-        this.wasForfeited = forfeited;
-    }
-
-    public Boolean getWasMercyWin() {
-        return wasMercyWin;
-    }
-
-    public void setWasMercyWin(Boolean isMercyWin) {
-        this.wasMercyWin = isMercyWin;
-    }
-
-    public ArrayList<Inning> getInnings() {
-        return innings;
-    }
-
-    public void setInnings(ArrayList<Inning> innings) {
-        this.innings = innings;
     }
 
     public String getHomeTeam() {
@@ -129,12 +60,12 @@ public class Game {
         this.homeTeam = homeTeam;
     }
 
-    public String getRoadTeam() {
-        return roadTeam;
+    public String getAwayTeam() {
+        return awayTeam;
     }
 
-    public void setRoadTeam(String roadTeam) {
-        this.roadTeam = roadTeam;
+    public void setAwayTeam(String roadTeam) {
+        this.awayTeam = roadTeam;
     }
 
     public LocalDate getDate() {
@@ -145,49 +76,40 @@ public class Game {
         this.date = date;
     }
 
-    public Integer getHomeScore() {
-        return homeScore;
+    public Boolean getWasForfeited() {
+        return wasForfeited;
     }
 
-    public void setHomeScore(Integer homeScore) {
-        this.homeScore = homeScore;
-    }
-
-    public Integer getRoadScore() {
-        return roadScore;
-    }
-
-    public void setRoadScore(Integer roadScore) {
-        this.roadScore = roadScore;
-    }
-
-    public Boolean getPlayed() {
-        return played;
-    }
-
-    public void setPlayed(Boolean played) {
-        this.played = played;
-    }
-
-    /* BO METHODS */
-
-    public String getWinningTeam() {
-        return GameBO.getWinningTeam(this);
-    }
-
-    public String getPlusMinus(String teamName) {
-        return GameBO.getPlusMinus(this, teamName);
+    public void setWasForfeited(Boolean wasForfeited) {
+        this.wasForfeited = wasForfeited;
     }
 
     public String getTeamAtFault() {
-        return GameBO.getTeamAtFault(this);
+        return teamAtFault;
     }
 
-    /* OVERRIDES */
+    public void setTeamAtFault(String teamAtFault) {
+        this.teamAtFault = teamAtFault;
+    }
+
+    public List<Inning> getInnings() {
+        return innings;
+    }
+
+    public void setInnings(List<Inning> innings) {
+        this.innings = innings;
+    }
 
     @Override
     public String toString() {
-        if (this.played) return "ID: %d; Home Team: %s; Road Team: %s; Date: %s; Winning Team: %s; Mercy Win: %b; Forfeited: %b; Innings: %s; Home Score: %d; Road Score: %d".formatted(id, homeTeam, roadTeam, date.toString(), getWinningTeam(), wasMercyWin, wasForfeited, innings.stream().map(Inning::toString).collect(Collectors.joining(", ")), homeScore, roadScore);
-        else return "ID: %d; Home Team: %s; Road Team: %s; Date: %s".formatted(id, homeTeam, roadTeam, date.toString());
+        return "Game{" +
+                "id=" + id +
+                ", homeTeam='" + homeTeam + '\'' +
+                ", awayTeam='" + awayTeam + '\'' +
+                ", date=" + date.toString() +
+                ", wasForfeited=" + wasForfeited +
+                ", teamAtFault='" + teamAtFault + '\'' +
+                ", innings=" + (innings == null ? "" : innings.stream().map(Inning::toString).collect(Collectors.joining(", "))) +
+                '}';
     }
 }
