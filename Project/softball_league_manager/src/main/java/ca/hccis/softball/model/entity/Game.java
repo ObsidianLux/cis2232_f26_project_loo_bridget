@@ -44,6 +44,18 @@ public class Game {
     @Convert(converter = JsonListConverter.class)
     private List<Inning> innings;
 
+    public Game() { }
+
+    public Game(Integer id, String homeTeam, String awayTeam, LocalDate date, Boolean wasForfeited, String teamAtFault, List<Inning> innings) {
+        this.id = id;
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+        this.date = date;
+        this.wasForfeited = wasForfeited;
+        this.teamAtFault = teamAtFault;
+        this.innings = innings;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -1,0 +1,45 @@
+# This is the schema file for GraphQL. This is required so that Postman can identify the available queries and mutations.
+# ! denotes NotNull values.
+
+type InningRequest {
+    homeRuns: Int!
+    awayRuns: Int!
+}
+
+type GameRequest {
+    id: Int!
+    homeTeamName: String!
+    awayTeamName: String!
+    gameDay: String!
+    forfeited: Boolean
+    teamAtFault: String
+    innings: [InningRequest]
+}
+
+input InningInput {
+    homeRuns: Int!
+    awayRuns: Int!
+}
+
+input GameInput {
+    id: Int!
+    homeTeamName: String!
+    awayTeamName: String!
+    gameDay: String!
+    forfeited: Boolean
+    teamAtFault: String
+    innings: [InningInput]
+}
+
+type Query {
+    getAllGames: [GameRequest!]!
+    getUpcomingGames: [GameRequest!]!
+    getPlayedGames: [GameRequest!]!
+    getGameById(id: Int!): GameRequest!
+}
+
+type Mutation {
+    updateGame(id: Int!, input: GameInput!): GameRequest!
+    deleteGame(id: Int!): Boolean!
+    createGame(input: GameInput!): GameRequest!
+}

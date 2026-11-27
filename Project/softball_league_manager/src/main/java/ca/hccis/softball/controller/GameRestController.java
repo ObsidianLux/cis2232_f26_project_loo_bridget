@@ -46,7 +46,7 @@ public class GameRestController {
     @GetMapping("/{id}")
     public ResponseEntity<GameRequest> getGameById(@PathVariable @Parameter(description = "Game id", example = "5") Integer id) {
         // Throws if there is no game with the provided id.
-        return ResponseEntity.ok(GameRequest.from(service.getGameById(id)));
+        return ResponseEntity.ok(service.getGameById(id));
     }
 
     /**
@@ -98,8 +98,8 @@ public class GameRestController {
     })
     @PostMapping
     public ResponseEntity<GameRequest> addGame(@Valid @RequestBody GameRequest dto) {
-        Game game = service.insertGame(dto.toEntity());
-        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(game.getId()).toUri()).body(GameRequest.from(game));
+        GameRequest game = service.insertGame(dto.toEntity());
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(game.id()).toUri()).body(game);
     }
 
     /**
@@ -117,6 +117,6 @@ public class GameRestController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<GameRequest> updateGame(@PathVariable @Parameter(description = "Game id", example = "5") Integer id, @Valid @RequestBody GameRequest dto) {
-        return ResponseEntity.ok(GameRequest.from(service.updateGame(id, dto)));
+        return ResponseEntity.ok(service.updateGame(id, dto));
     }
 }

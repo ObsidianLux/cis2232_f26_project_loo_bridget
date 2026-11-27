@@ -91,12 +91,13 @@ public class GameController {
         logger.info("Running the GameController update() method.");
 
         // Get the existing game from the database.
-        Game game = service.getGameById(id);
+        GameRequest game = service.getGameById(id);
 
         // Convert to GameRequest and add to model.
-        model.addAttribute("game", GameRequest.from(game));
+        model.addAttribute("game", game);
 
-        logger.info(GameRequest.from(game).toString());
+        // For debugging.
+        logger.info(game.toString());
 
         return "games/add";
     }

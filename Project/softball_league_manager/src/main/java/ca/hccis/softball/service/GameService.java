@@ -41,9 +41,10 @@ public class GameService {
         return gameRepository.findByDateGreaterThanOrderByDateAsc(date).stream().map(GameRequest::from).toList();
     }
 
-    public Game getGameById(Integer id) {
+    public GameRequest getGameById(Integer id) {
         // If the id is null or there is no game with the same id, throw an exception that the @RestControllerAdvice class can catch and handle.
-        return gameRepository.findById(id).orElseThrow(() -> notFound(id));
+        Game game = gameRepository.findById(id).orElseThrow(() -> notFound(id));
+        return GameRequest.from(game);
     }
 
     public boolean existsById(Integer id) {
@@ -53,7 +54,7 @@ public class GameService {
     /* UPDATE */
 
     @Transactional
-    public Game updateGame(Integer id, GameRequest dto) {
+    public GameRequest updateGame(Integer id, GameRequest dto) {
         // Get the existing database entity.
         Game game = gameRepository.findById(id).orElseThrow(() -> notFound(id));
 
@@ -68,14 +69,14 @@ public class GameService {
         game.setInnings(mappedGame.getInnings());
 
         // Save the updated game.
-        return gameRepository.save(game);
+        return GameRequest.from(gameRepository.save(game));
     }
 
     /* INSERT */
 
     @Transactional
-    public Game insertGame(Game game) {
-        return gameRepository.save(game);
+    public GameRequest insertGame(Game game) {
+        return GameRequest.from(gameRepository.save(game));
     }
 
     /* DELETE */
